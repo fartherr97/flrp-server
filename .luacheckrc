@@ -75,5 +75,8 @@ files['**/client/**'] = {
     'BeginTextCommandDisplayHelp', 'EndTextCommandDisplayHelp', 'DrawMarker',
     -- weapons / peds
     'GetWeaponComponentTypeModel', 'SetPedComponentVariation',
+    -- vehicles
+    'IsModelInCdimage', 'IsModelAVehicle', 'GetEntityHeading', 'CreateVehicle',
+    'SetPedIntoVehicle', 'SetModelAsNoLongerNeeded', 'SetVehicleNumberPlateText',
   },
 }
