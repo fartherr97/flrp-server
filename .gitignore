@@ -1,0 +1,96 @@
+# ==========================================================================
+# FLRP Server .gitignore
+# ==========================================================================
+# GitHub is the authoritative upstream. Never commit secrets or runtime data.
+# ==========================================================================
+
+# --------------------------------------------------------------------------
+# Secrets — NEVER commit real credentials.
+# Only the *.example.cfg templates are tracked.
+# --------------------------------------------------------------------------
+secrets.cfg
+server-data/config/secrets.cfg
+**/secrets.cfg
+*.secret
+*.secret.*
+.env
+.env.*
+!.env.example
+
+# Discord tokens, DB connection strings, API keys accidentally dropped here
+*token*.cfg
+!*.example.cfg
+
+# --------------------------------------------------------------------------
+# FiveM runtime / server artifacts
+# --------------------------------------------------------------------------
+# FXServer binaries / artifacts (installed per-host, never committed)
+server-data/alpine/
+server-data/*.exe
+server-data/run.sh
+server-data/run.cmd
+FXServer*
+fxserver*
+cache/
+server-files/
+citizen/
+
+# txAdmin data
+txData/
+
+# Server logs / crash dumps
+*.log
+logs/
+crashes/
+CitizenFX.log*
+
+# --------------------------------------------------------------------------
+# Third-party / imported assets (provided later, NOT stored in Git)
+# See docs/ASSET_IMPORT.md
+# --------------------------------------------------------------------------
+asset-imports/
+../asset-imports/
+server-data/resources/[vehicles]/*/
+server-data/resources/[maps]/*/
+server-data/resources/[eup]/*/
+# Keep the placeholder .keep / README files that describe the empty folders:
+!server-data/resources/[vehicles]/.keep
+!server-data/resources/[vehicles]/README.md
+!server-data/resources/[maps]/.keep
+!server-data/resources/[maps]/README.md
+!server-data/resources/[eup]/.keep
+!server-data/resources/[eup]/README.md
+
+# Escrowed / paid resource caches
+*.fxap
+
+# --------------------------------------------------------------------------
+# Database dumps / local data
+# --------------------------------------------------------------------------
+*.sql.bak
+*.dump
+database/local/
+*.sqlite
+*.sqlite3
+
+# --------------------------------------------------------------------------
+# Editor / OS
+# --------------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+*.swp
+*.swo
+*~
+
+# --------------------------------------------------------------------------
+# Node / tooling (flrp_api or build tooling may use Node)
+# --------------------------------------------------------------------------
+node_modules/
+npm-debug.log*
+yarn-error.log
+package-lock.json.bak
+dist/
+build/
