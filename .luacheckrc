@@ -66,6 +66,14 @@ files['**/client/**'] = {
     'RemoveAllPedWeapons', 'GetHashKey', 'PlayerId', 'GetPlayerServerId',
     'DrawText3D', 'SetTextScale', 'SetTextFont', 'SetTextColour', 'BeginTextCommandDisplayText',
     'AddTextComponentSubstringPlayerName', 'EndTextCommandDisplayText', 'SetDrawOrigin',
-    'ClearDrawOrigin', 'World3dToScreen2d',
+    'ClearDrawOrigin', 'World3dToScreen2d', 'vector3', 'vector2', 'vec3',
+    -- blips
+    'AddBlipForCoord', 'SetBlipSprite', 'SetBlipColour', 'SetBlipScale',
+    'SetBlipAsShortRange', 'BeginTextCommandSetBlipName', 'EndTextCommandSetBlipName',
+    'RemoveBlip',
+    -- help text / markers
+    'BeginTextCommandDisplayHelp', 'EndTextCommandDisplayHelp', 'DrawMarker',
+    -- weapons / peds
+    'GetWeaponComponentTypeModel', 'SetPedComponentVariation',
   },
 }
