@@ -1,0 +1,80 @@
+# FLRP Build Status
+
+Component-by-component status of the FLRP server foundation.
+
+## Legend
+
+- **COMPLETE** — built and statically validated; ready to use.
+- **IN PROGRESS** — partially built.
+- **BLOCKED** — cannot proceed without something.
+- **NEEDS CONFIGURATION** — code done; needs real secrets/IDs to function.
+- **NEEDS ASSETS** — waiting on third-party assets (vehicles/maps/EUP).
+- **NEEDS RUNTIME TESTING** — code done + statically validated, but not yet
+  exercised on a live FXServer + DB + Discord.
+
+## Validation state (read this first)
+
+**STATICALLY VALIDATED.** All Lua passes `luac -p` (syntax) and `luacheck`
+(**0 warnings / 0 errors**, 47 files); NUI/tooling JS passes `node --check`. Run
+it yourself: `./tools/validate.sh`.
+
+**NOT RUNTIME TESTED.** No FXServer, MySQL/MariaDB, or Discord runtime testing
+has been performed in this environment. Claims below are about code
+completeness + static validation, **not** proof the live server works. Anything
+touching the DB, Discord API, vMenu, or in-game behavior must be verified on a
+real server before being trusted.
+
+## Status table
+
+| Component | Status |
+|-----------|--------|
+| Core Architecture (flrp_core) | COMPLETE (static) |
+| Database schema + migrations | COMPLETE (static) — NEEDS RUNTIME TESTING (apply on real DB) |
+| Discord Access gate (flrp_access) | COMPLETE (code) — NEEDS CONFIGURATION (token/guild/role IDs) |
+| Permissions engine (flrp_permissions) | COMPLETE (static) |
+| ACE / vMenu weapon policy | COMPLETE (config) — NEEDS RUNTIME TESTING (vMenu not installed) |
+| Economy (flrp_economy) | COMPLETE (static) — NEEDS RUNTIME TESTING |
+| Duty system (flrp_duty) | COMPLETE (static) — NEEDS RUNTIME TESTING |
+| Anti-AFK / active playtime | COMPLETE (static) — NEEDS RUNTIME TESTING |
+| Weapon registry + ownership (flrp_weapons) | COMPLETE (static); catalog NEEDS ASSETS (DEV rows only) |
+| Gun stores (flrp_gunstores) | COMPLETE (static) — NEEDS RUNTIME TESTING |
+| Vehicle registry + permissions (flrp_vehicles) | COMPLETE (static) — registry empty, NEEDS ASSETS |
+| FLRP Manager API contract (flrp_api) | COMPLETE (static) — NEEDS CONFIGURATION (shared secret) |
+| Audit logging | COMPLETE (static) |
+| BCSO Vehicle Import | NEEDS ASSETS |
+| FHP Vehicle Import | NEEDS ASSETS |
+| MPD Vehicle Import | NEEDS ASSETS |
+| Maps / MLOs | NEEDS ASSETS |
+| EUP | NEEDS ASSETS |
+| vMenu install + wiring | NEEDS CONFIGURATION / RUNTIME TESTING |
+| Documentation | COMPLETE |
+| Static validation tooling | COMPLETE |
+
+## What needs configuration before first live boot
+
+1. `config/secrets.cfg` from the example — license key, DB connection, Discord
+   token/guild/invite, `flrp_role_*` IDs, `flrp_api_shared_secret`. See
+   [INSTALLATION.md](INSTALLATION.md) / [DISCORD_INTEGRATION.md](DISCORD_INTEGRATION.md).
+2. Apply DB migrations against the real database.
+3. Install `oxmysql` (`[dependencies]`) and `vMenu` (`[core]`).
+
+## What needs runtime testing (after configuration)
+
+- Connect gate allows verified members / denies non-members.
+- Permissions resolve correctly; ACE groups attach; vMenu weapon spawner is
+  restricted to `cert_civ_3` / `director` / `ownership`.
+- Money: pay accrues only while active; debits are atomic; no double-charge on
+  rapid purchases.
+- Duty: `/duty` only works for held departments; department pay follows duty.
+- Gun store: full purchase flow incl. proximity, price authority, ownership,
+  refund-on-failure.
+- API: auth, reads, audited writes, hot reload.
+
+## What needs assets (blocked on third-party import)
+
+- Real weapon catalog (replace `[DEV]` rows).
+- Vehicle registry entries (BCSO/FHP/MPD/civilian) from imported packs.
+- Maps/MLOs (and updating gun-store coordinates to match).
+- EUP.
+
+See [ASSET_IMPORT.md](ASSET_IMPORT.md).
