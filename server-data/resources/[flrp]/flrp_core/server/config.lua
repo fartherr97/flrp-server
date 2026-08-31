@@ -56,7 +56,7 @@ end
 -- the caller (this function only persists). Returns true on success.
 function FLRP.ConfigStore.Set(key, value, valueType, updatedBy)
   valueType = valueType or 'string'
-  local stored = value
+  local stored
   if valueType == 'json' then stored = json.encode(value) else stored = tostring(value) end
   if not FLRP.DB.IsReady() then return false end
   FLRP.DB.Update([[
