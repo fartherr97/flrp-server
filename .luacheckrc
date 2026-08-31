@@ -60,8 +60,12 @@ files['**/exports.lua'] = { ignore = { '131', '111' } }
 files['**/client/**'] = {
   read_globals = {
     'RegisterNuiCallback', 'SendNUIMessage', 'SetNuiFocus', 'RegisterNUICallback',
-    'PlayerPedId', 'GetEntityCoords', 'Vdist', 'DrawMarker', 'IsControlJustReleased',
-    'RequestModel', 'HasModelLoaded', 'GiveWeaponToPed', 'RemoveAllPedWeapons',
-    'PlayerId', 'GetPlayerServerId',
+    'PlayerPedId', 'GetEntityCoords', 'Vdist', 'Vdist2', 'DrawMarker',
+    'IsControlJustReleased', 'IsControlPressed', 'IsDisabledControlPressed',
+    'IsEntityDead', 'RequestModel', 'HasModelLoaded', 'GiveWeaponToPed',
+    'RemoveAllPedWeapons', 'GetHashKey', 'PlayerId', 'GetPlayerServerId',
+    'DrawText3D', 'SetTextScale', 'SetTextFont', 'SetTextColour', 'BeginTextCommandDisplayText',
+    'AddTextComponentSubstringPlayerName', 'EndTextCommandDisplayText', 'SetDrawOrigin',
+    'ClearDrawOrigin', 'World3dToScreen2d',
   },
 }
