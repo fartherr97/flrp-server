@@ -1,10 +1,11 @@
 -- ==========================================================================
--- FLRP :: flrp_duty/server/exports.lua — public API
+-- FLRP :: flrp_duty/server/exports.lua — public API (read-only adapter)
 -- ==========================================================================
---   exports.flrp_duty:GetDuty(source)               -> { department, onDuty }
---   exports.flrp_duty:IsOnDuty(source, department?)  -> bool
---   exports.flrp_duty:SetDuty(source, dept, onDuty)  -> ok, err   (validated)
---   exports.flrp_duty:GoOffDuty(source)              -> ok
+--   exports.flrp_duty:GetDuty(source)              -> { department, onDuty }
+--   exports.flrp_duty:IsOnDuty(source, department?) -> bool
+--
+-- Backed by nex-duty (duty_members). nex-duty owns changing duty; there is no
+-- SetDuty/GoOffDuty here anymore (use the nex-duty /duty menu).
 -- ==========================================================================
 
 function GetDuty(source)
@@ -16,12 +17,4 @@ function IsOnDuty(source, department)
   if not d.onDuty then return false end
   if department == nil then return true end
   return string.upper(tostring(department)) == string.upper(tostring(d.department or ''))
-end
-
-function SetDuty(source, department, onDuty)
-  return FLRPD.SetDuty(source, department, onDuty)
-end
-
-function GoOffDuty(source)
-  return FLRPD.GoOffDuty(source)
 end

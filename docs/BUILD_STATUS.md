@@ -38,7 +38,7 @@ real server before being trusted.
 | Content repos (scripts/vehicles/maps) | POPULATED — NEEDS ASSEMBLE + RUNTIME TESTING |
 | Vehicle registry seed (BCSO/FHP real spawns) | COMPLETE (migration 009) |
 | MPD vehicles / departments / EUP content | NEEDS ASSETS (repos empty) |
-| Duty system | **DECIDED: keep nex-duty** — `flrp_duty` becomes a thin adapter over nex-duty `duty_members`; economy pay unchanged. Adapter NEEDS BUILD |
+| Duty system | **KEEP nex-duty**; `flrp_duty` rebuilt as a read-only adapter over nex-duty `duty_members` (configurable entity→dept map). COMPLETE (static) — NEEDS nex-duty setup + RUNTIME TESTING |
 | Remove nex-hud / nex-loading / nex-spawn | DECIDED — remove from flrp-scripts (not `ensure`d); keep lb-phone, sonoran-radar, SmartTaser, cd_doorlock |
 | Control plane | DECIDED: **florida-roleplay-site (Postgres)** is source of truth; pCore FROZEN (owner gone); FLRP is the live permission authority |
 | Live config sync — FLRP side (flrp_api) | COMPLETE (static) — `POST /sync` webhook + site pull + re-apply-to-online + background reconcile; NEEDS RUNTIME TESTING |

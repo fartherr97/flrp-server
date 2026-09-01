@@ -42,6 +42,21 @@ What this removes: FLRP's own duty state/persistence, the `/duty` command, and
 the `player_duty_state` / `player_duty_log` writes (nex-duty keeps its own).
 What it keeps: department pay in `flrp_economy` (still calls `flrp_duty:GetDuty`).
 
-Needs from you: the nex-duty **entity IDs** you configure for BCSO / FHP / MPD
-(e.g. `bcso`, `fhp`, `mpd`, or whatever you name them in nex-duty's config), so
-the adapter can map entity → FLRP department. Then I build the adapter.
+**Status: the adapter is BUILT** (`flrp_duty` v0.2.0). It reads nex-duty's
+`duty_members` (matching on license or discord), maps the nex-duty **entity** to
+an FLRP department, and reports `{ department, onDuty }`. It caches per player
+(15s) and no-ops safely (everyone civilian) until nex-duty's table exists.
+
+To finish once you set up nex-duty: name the BCSO/FHP/MPD entities, then set the
+map. Defaults assume entity IDs `bcso` / `fhp` / `mpd`; override per department
+in `secrets.cfg` / server.cfg if you name them differently:
+
+```
+set flrp_duty_entity_bcso "yourBcsoEntityId"
+set flrp_duty_entity_fhp  "yourFhpEntityId"
+set flrp_duty_entity_mpd  "yourMpdEntityId"
+```
+
+Then `flrp_reload_duty` (console) rebuilds the map with no restart. Any other
+nex-duty entity (e.g. a `staff` dual-duty entity) is ignored for department pay.
+`flrp_economy` is unchanged — it still calls `flrp_duty:GetDuty`.

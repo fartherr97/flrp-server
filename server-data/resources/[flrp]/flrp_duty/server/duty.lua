@@ -1,106 +1,99 @@
 -- ==========================================================================
--- FLRP :: flrp_duty/server/duty.lua — duty logic
+-- FLRP :: flrp_duty/server/duty.lua — nex-duty adapter
 -- ==========================================================================
+-- Reads the live on-duty roster from nex-duty's `duty_members` table and maps
+-- the nex-duty entity -> FLRP department. Read-only: nex-duty owns toggling
+-- duty (its /duty menu). We only report which FLRP department (if any) a player
+-- is currently on duty for, so flrp_economy can pay department wages.
+-- ==========================================================================
+
 FLRPD = FLRPD or {}
-FLRPD.State = { bySource = {} } -- source -> { department, onDuty }
+FLRPD.State = { cache = {} } -- source -> { department, onDuty, expires }
 
-local VALID_DEPTS = { BCSO = 'bcso', FHP = 'fhp', MPD = 'mpd' }
+-- Resolve the nex-duty entity -> FLRP department map from convars (falling back
+-- to defaults in shared/config.lua). Built once, refreshable via command.
+FLRPD.entityMap = nil
 
--- Normalize a department string to canonical UPPER or nil.
-local function normalizeDept(dept)
-  if type(dept) ~= 'string' then return nil end
-  local up = string.upper(dept)
-  if VALID_DEPTS[up] then return up end
-  return nil
-end
-
--- Does the player hold the role for this department? (authoritative)
-local function playerHoldsDept(source, deptUpper)
-  local roleKey = VALID_DEPTS[deptUpper]
-  if not roleKey then return false end
-  if not exports.flrp_permissions then return false end
-  local ok, inGroup = pcall(function() return exports.flrp_permissions:IsInGroup(source, roleKey) end)
-  return ok and inGroup == true
-end
-
--- Load persisted duty on player load into cache (default: off/civilian).
-function FLRPD.Load(source, playerId)
-  local row = FLRP.DB.Single(
-    'SELECT `department`, `on_duty` FROM `player_duty_state` WHERE `player_id` = ?', { playerId })
-  local state = { department = row and row.department or nil, onDuty = row and row.on_duty == 1 or false }
-
-  -- Safety: if persisted on-duty but the player no longer holds that dept role,
-  -- force off duty (roles may have changed since last session).
-  if state.onDuty and state.department and not playerHoldsDept(source, state.department) then
-    state = { department = nil, onDuty = false }
-    FLRPD._persist(playerId, nil, false)
+function FLRPD.BuildEntityMap()
+  local map = {}
+  for entity, dept in pairs(FLRPD.Config.DefaultEntityMap) do
+    -- convar override, e.g. flrp_duty_entity_bcso
+    local convar = ('flrp_duty_entity_%s'):format(string.lower(dept))
+    local override = GetConvar(convar, '')
+    local id = (override ~= '' and override) or entity
+    map[string.lower(id)] = string.upper(dept)
   end
-  FLRPD.State.bySource[source] = state
+  FLRPD.entityMap = map
+  return map
+end
+
+local function entityToDepartment(entity)
+  if not entity then return nil end
+  local map = FLRPD.entityMap or FLRPD.BuildEntityMap()
+  return map[string.lower(entity)]
+end
+
+-- Whether nex-duty's table exists yet (before nex-duty is installed/migrated).
+local dutyTableReady = nil
+local function dutyTableExists()
+  if dutyTableReady ~= nil then return dutyTableReady end
+  if not FLRP.DB.IsReady() then return false end
+  local ok, row = pcall(function()
+    return FLRP.DB.Scalar([[
+      SELECT COUNT(*) FROM information_schema.tables
+      WHERE table_schema = DATABASE() AND table_name = 'duty_members'
+    ]])
+  end)
+  dutyTableReady = ok and (tonumber(row) or 0) > 0
+  if not dutyTableReady then
+    FLRP.Logger.Warn('duty', 'nex-duty `duty_members` table not found yet; duty = civilian until nex-duty is installed')
+  end
+  return dutyTableReady
+end
+
+-- Fetch the player's current department from nex-duty. Returns { department, onDuty }.
+local function fetchDuty(source)
+  local rec = exports.flrp_core:GetPlayer(source)
+  if not rec or not rec.license then return { department = nil, onDuty = false } end
+  if not dutyTableExists() then return { department = nil, onDuty = false } end
+
+  -- nex-duty may store the license with or without the "license:" prefix, and
+  -- a player may have multiple duty rows (dual duty). Fetch all their rows and
+  -- pick the first that maps to a FLRP department.
+  local rows = FLRP.DB.Query([[
+    SELECT `entity` FROM `duty_members`
+    WHERE `license` = ? OR `license` = CONCAT('license:', ?) OR `discord` = ? OR `discord` = CONCAT('discord:', ?)
+  ]], { rec.license, rec.license, rec.discordId or '', rec.discordId or '' }) or {}
+
+  for _, row in ipairs(rows) do
+    local dept = entityToDepartment(row.entity)
+    if dept then return { department = dept, onDuty = true } end
+  end
+  return { department = nil, onDuty = false }
+end
+
+-- Cached duty getter.
+function FLRPD.Get(source)
+  source = tonumber(source)
+  if not source then return { department = nil, onDuty = false } end
+  local c = FLRPD.State.cache[source]
+  local now = os.time()
+  if c and c.expires > now then
+    return { department = c.department, onDuty = c.onDuty }
+  end
+  local d = fetchDuty(source)
+  FLRPD.State.cache[source] = {
+    department = d.department, onDuty = d.onDuty,
+    expires = now + (FLRPD.Config.CacheTtlSeconds or 15),
+  }
+  return d
 end
 
 function FLRPD.Remove(source)
-  FLRPD.State.bySource[source] = nil
+  FLRPD.State.cache[tonumber(source)] = nil
 end
 
-function FLRPD.Get(source)
-  return FLRPD.State.bySource[tonumber(source)] or { department = nil, onDuty = false }
-end
-
-function FLRPD._persist(playerId, deptUpper, onDuty)
-  FLRP.DB.Update([[
-    INSERT INTO `player_duty_state` (`player_id`, `department`, `on_duty`, `changed_at`)
-    VALUES (?, ?, ?, CURRENT_TIMESTAMP)
-    ON DUPLICATE KEY UPDATE `department` = VALUES(`department`),
-      `on_duty` = VALUES(`on_duty`), `changed_at` = CURRENT_TIMESTAMP
-  ]], { playerId, deptUpper, onDuty and 1 or 0 })
-  FLRP.DB.Insert([[
-    INSERT INTO `player_duty_log` (`player_id`, `department`, `on_duty`) VALUES (?, ?, ?)
-  ]], { playerId, deptUpper, onDuty and 1 or 0 })
-end
-
--- Set duty. Returns ok, errCode. Validates department role membership.
-function FLRPD.SetDuty(source, department, onDuty)
-  source = tonumber(source)
-  local rec = exports.flrp_core:GetPlayer(source)
-  if not rec then return false, 'no_player' end
-
-  if not onDuty then
-    return FLRPD.GoOffDuty(source)
-  end
-
-  local deptUpper = normalizeDept(department)
-  if not deptUpper then return false, 'bad_department' end
-
-  -- AUTHORITATIVE role check — cannot be bypassed by the client.
-  if not playerHoldsDept(source, deptUpper) then
-    FLRP.Logger.Warn('duty', 'Duty change denied (no dept role)', {
-      source = source, department = deptUpper })
-    return false, 'not_authorized'
-  end
-
-  FLRPD.State.bySource[source] = { department = deptUpper, onDuty = true }
-  FLRPD._persist(rec.playerId, deptUpper, true)
-  FLRP.Logger.Info('duty', 'On duty', { source = source, department = deptUpper })
-  FLRP.Logger.Audit({
-    actorPlayerId = rec.playerId, actorIdentifier = rec.license, actorDiscordId = rec.discordId,
-    category = 'duty', action = 'on_duty', targetType = 'department', targetId = deptUpper,
-    newValue = { onDuty = true, department = deptUpper } })
-  TriggerClientEvent('flrp_duty:changed', source, deptUpper, true)
-  return true
-end
-
-function FLRPD.GoOffDuty(source)
-  source = tonumber(source)
-  local rec = exports.flrp_core:GetPlayer(source)
-  if not rec then return false, 'no_player' end
-  local prev = FLRPD.Get(source)
-  FLRPD.State.bySource[source] = { department = nil, onDuty = false }
-  FLRPD._persist(rec.playerId, nil, false)
-  FLRP.Logger.Info('duty', 'Off duty', { source = source, wasDept = prev.department })
-  FLRP.Logger.Audit({
-    actorPlayerId = rec.playerId, actorIdentifier = rec.license, actorDiscordId = rec.discordId,
-    category = 'duty', action = 'off_duty', targetType = 'department', targetId = prev.department,
-    oldValue = { onDuty = true, department = prev.department }, newValue = { onDuty = false } })
-  TriggerClientEvent('flrp_duty:changed', source, nil, false)
-  return true
+function FLRPD.Invalidate(source)
+  if source then FLRPD.State.cache[tonumber(source)] = nil
+  else FLRPD.State.cache = {} end
 end
