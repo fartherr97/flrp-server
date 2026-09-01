@@ -15,7 +15,13 @@ FLRP.DB = {}
 local dbReady = false
 
 function FLRP.DB.IsReady()
-  return dbReady
+  if dbReady then return true end
+  -- This wrapper is also included (via @flrp_core/server/db.lua) into other
+  -- flrp_* resources that don't run flrp_core's boot probe. In those copies
+  -- dbReady is never set, so fall back to oxmysql's resource state. Callers in
+  -- other resources always gate on exports.flrp_core:IsReady() (schema-confirmed)
+  -- before doing work, so by the time this fallback is consulted oxmysql is up.
+  return GetResourceState('oxmysql') == 'started'
 end
 
 function FLRP.DB._setReady(v)
