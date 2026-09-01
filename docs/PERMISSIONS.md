@@ -1,5 +1,11 @@
 # FLRP Permissions
 
+> **Architecture update:** FLRP now runs **on top of pCore** — pCore owns the
+> Discord connection gate, queue, permission groups, and vMenu. This document
+> is being reconciled with that model; where it describes `flrp_access` or
+> FLRP fetching Discord roles directly, see
+> [PCORE_INTEGRATION.md](PCORE_INTEGRATION.md) for the authoritative flow.
+
 One centralized permission engine (`flrp_permissions`) answers **“may this
 player do X?”**. No resource does its own Discord role checks.
 

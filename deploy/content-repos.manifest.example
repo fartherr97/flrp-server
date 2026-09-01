@@ -13,7 +13,7 @@
 # Format (whitespace-separated, one repo per line):
 #   <category>   <repo-name>        <git-url>                            [branch]
 #
-#   category   : vehicles | maps | eup | standalone | departments
+#   category   : scripts | vehicles | maps | eup | standalone | departments
 #                (maps to server-data/resources/[<category>])
 #   repo-name  : folder name for the clone; it is placed in a BRACKETED
 #                subfolder so FiveM treats it as a resource group, e.g.
@@ -28,6 +28,7 @@
 
 # category      repo-name        git-url                                              branch
 # ------------  ---------------  ---------------------------------------------------  ------
+# scripts       flrp-scripts     git@REPLACE_GITEA_HOST:flrp/flrp-scripts.git         main
 # vehicles      flrp-vehicles    git@REPLACE_GITEA_HOST:flrp/flrp-vehicles.git        main
 # eup           flrp-eup         git@REPLACE_GITEA_HOST:flrp/flrp-eup.git             main
 # maps          flrp-maps        git@REPLACE_GITEA_HOST:flrp/flrp-maps.git            main

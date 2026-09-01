@@ -53,6 +53,7 @@ category_dir() {
     vehicles)    echo "[vehicles]" ;;
     maps)        echo "[maps]" ;;
     eup)         echo "[eup]" ;;
+    scripts)     echo "[scripts]" ;;
     standalone)  echo "[standalone]" ;;
     departments) echo "[departments]" ;;
     *) echo "" ;;

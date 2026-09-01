@@ -1,5 +1,11 @@
 # FLRP Discord Integration
 
+> **Architecture update:** FLRP now runs **on top of pCore** — pCore owns the
+> Discord connection gate, queue, permission groups, and vMenu. This document
+> is being reconciled with that model; where it describes `flrp_access` or
+> FLRP fetching Discord roles directly, see
+> [PCORE_INTEGRATION.md](PCORE_INTEGRATION.md) for the authoritative flow.
+
 Players **must** be verified members of the FLRP Discord to join FiveM. The gate
 is enforced server-side in `flrp_access` using `playerConnecting` deferrals.
 

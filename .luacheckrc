@@ -38,7 +38,8 @@ read_globals = {
   'TriggerLatentClientEvent',
   -- commands / principals / convars
   'RegisterCommand', 'ExecuteCommand', 'GetConvar', 'GetConvarInt', 'SetConvar',
-  'IsPrincipalAceAllowed', 'GetPlayerName', 'GetPlayers', 'DropPlayer',
+  'IsPrincipalAceAllowed', 'IsPlayerAceAllowed', 'GetPlayerName', 'GetPlayers',
+  'DropPlayer', 'GetResourceState', 'StopResource', 'GetPlayerIdentifierByType',
   -- identifiers
   'GetNumPlayerIdentifiers', 'GetPlayerIdentifier', 'GetPlayerIdentifierByType',
   'GetPlayerEndpoint', 'GetPlayerPing',

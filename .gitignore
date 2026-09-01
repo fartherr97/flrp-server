@@ -61,6 +61,7 @@ asset-imports/
 server-data/resources/[vehicles]/*/
 server-data/resources/[maps]/*/
 server-data/resources/[eup]/*/
+server-data/resources/[scripts]/*/
 # Keep the placeholder .keep / README files that describe the empty folders:
 !server-data/resources/[vehicles]/.keep
 !server-data/resources/[vehicles]/README.md
@@ -68,6 +69,8 @@ server-data/resources/[eup]/*/
 !server-data/resources/[maps]/README.md
 !server-data/resources/[eup]/.keep
 !server-data/resources/[eup]/README.md
+!server-data/resources/[scripts]/.keep
+!server-data/resources/[scripts]/README.md
 
 # Escrowed / paid resource caches
 *.fxap

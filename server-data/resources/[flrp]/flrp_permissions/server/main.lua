@@ -10,34 +10,24 @@ CreateThread(function()
   TriggerEvent('flrp_permissions:ready')
 end)
 
--- flrp_access publishes the Discord roles it read during the connection gate.
--- Payload: (license, discordRoleIds[]). We stash by license and resolve when
--- flrp_core loads the player. This is a SERVER-side event only (never a
--- RegisterNetEvent), so a client cannot inject its own roles. This keeps
--- flrp_access -> flrp_permissions a one-way, event-based dependency (no cycle).
-AddEventHandler('flrp_access:discordRolesResolved', function(license, discordRoleIds)
-  if type(license) ~= 'string' then return end
-  FLRPP.PendingDiscordRoles[license] = discordRoleIds or {}
-  FLRP.Logger.Debug('permissions', 'Stored pending discord roles', {
-    license = license, count = #(discordRoleIds or {}) })
-end)
-
--- When flrp_core finishes loading a player, resolve + apply their permissions.
+-- Role membership comes from pCore via the ACE bridge (server/pcore.lua). By
+-- the time flrp_core loads a player (playerJoining), pCore has already resolved
+-- them during the connection deferral and attached their group principals, so
+-- IsPlayerAceAllowed reflects their roles. We resolve + apply here.
 AddEventHandler('flrp_core:playerLoaded', function(source, playerId, record)
-  -- Ensure the store is loaded.
   if not FLRPP.Store.loaded then FLRPP.Store.Load() end
   FLRPP.ApplyForSource(source)
 end)
 
 AddEventHandler('flrp_core:playerDropped', function(source, playerId)
   FLRPP.Remove(source)
-  -- Keep pending discord roles only briefly; clear on drop by license lookup.
 end)
 
-AddEventHandler('playerDropped', function()
-  local rec = exports.flrp_core:GetPlayer(source)
-  if rec and rec.license then FLRPP.PendingDiscordRoles[rec.license] = nil end
-end)
+-- A Discord role change (pCore re-resolves + re-attaches group principals) takes
+-- effect for FLRP on the player's next join, or immediately for everyone via the
+-- console/admin `flrp_reload_perms` (which re-reads pCore ACE for all players).
+-- We deliberately do NOT listen for the client-facing pDiscord:setPerms event —
+-- it is client-triggerable and role membership must be read server-side only.
 
 -- Console/admin reload command.
 RegisterCommand('flrp_reload_perms', function(source)

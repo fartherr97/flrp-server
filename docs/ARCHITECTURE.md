@@ -1,5 +1,11 @@
 # FLRP Architecture
 
+> **Architecture update:** FLRP now runs **on top of pCore** — pCore owns the
+> Discord connection gate, queue, permission groups, and vMenu. This document
+> is being reconciled with that model; where it describes `flrp_access` or
+> FLRP fetching Discord roles directly, see
+> [PCORE_INTEGRATION.md](PCORE_INTEGRATION.md) for the authoritative flow.
+
 How the FLRP server foundation fits together, and why the boundaries are drawn
 where they are.
 

@@ -30,9 +30,15 @@ real server before being trusted.
 |-----------|--------|
 | Core Architecture (flrp_core) | COMPLETE (static) |
 | Database schema + migrations | COMPLETE (static) — NEEDS RUNTIME TESTING (apply on real DB) |
-| Discord Access gate (flrp_access) | COMPLETE (code) — NEEDS CONFIGURATION (token/guild/role IDs) |
-| Permissions engine (flrp_permissions) | COMPLETE (static) |
-| ACE / vMenu weapon policy | COMPLETE (config) — NEEDS RUNTIME TESTING (vMenu not installed) |
+| **pCore integration (build-on-top)** | COMPLETE (static) — NEEDS CONFIGURATION (rebrand build) + RUNTIME TESTING |
+| Discord Access gate | **pCore owns it** — `flrp_access` RETIRED (deprecated in repo) |
+| Permissions engine (flrp_permissions) | COMPLETE (static) — now bridged to pCore via ACE |
+| ACE / vMenu weapon policy | **pCore `weaponPerms`** — NEEDS CONFIGURATION (rebrand) + RUNTIME TESTING |
+| pCore FLRP config rebrand (integration/pcore/) | PROPOSED — NEEDS OWNER REVIEW + BUILD |
+| Content repos (scripts/vehicles/maps) | POPULATED — NEEDS ASSEMBLE + RUNTIME TESTING |
+| Vehicle registry seed (BCSO/FHP real spawns) | IN PROGRESS |
+| MPD vehicles / departments / EUP content | NEEDS ASSETS (repos empty) |
+| Overlapping scripts (nex-duty/spawn/hud) keep-or-replace | NEEDS DECISION |
 | Economy (flrp_economy) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Duty system (flrp_duty) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Anti-AFK / active playtime | COMPLETE (static) — NEEDS RUNTIME TESTING |

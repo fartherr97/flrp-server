@@ -1,5 +1,11 @@
 # FLRP Weapons
 
+> **Architecture update:** FLRP now runs **on top of pCore** — pCore owns the
+> Discord connection gate, queue, permission groups, and vMenu. This document
+> is being reconciled with that model; where it describes `flrp_access` or
+> FLRP fetching Discord roles directly, see
+> [PCORE_INTEGRATION.md](PCORE_INTEGRATION.md) for the authoritative flow.
+
 Weapon **registry** + persistent **ownership** (`flrp_weapons`) and the secure
 gun-store purchase flow (`flrp_gunstores`).
 
