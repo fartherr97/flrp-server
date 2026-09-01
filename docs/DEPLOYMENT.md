@@ -43,6 +43,24 @@ FLRP must run identically on **Nodecraft** (initial host) and later on
 Because state lives in the DB, a host move is: migrate DB → copy repo+secrets →
 start. No code changes.
 
+## Multi-repo content assembly
+
+FLRP uses a **core + content** repo split (SSRP-style): this repo is the
+framework; vehicles/EUP/maps/departments live in their own repos with their own
+access. On the deploy box:
+
+1. Check out `flrp-server` (this repo) as the server root and `git pull` it.
+2. `cp deploy/content-repos.manifest.example deploy/content-repos.manifest`,
+   fill in the real content-repo URLs (Gitea recommended for internal deploys).
+3. Run `deploy/assemble.sh` — it clones/pulls each content repo into the
+   bracketed drop zones (`[vehicles]/[flrp-vehicles]/…`) and regenerates
+   `config/content.cfg` so the server `ensure`s them. Idempotent; re-run to
+   update content.
+
+`main` is branch-protected on every repo (PRs + CODEOWNERS review). Apply it
+with `deploy/gitea_branch_protection.sh` (or the UI). Full details:
+[REPOSITORY_STRATEGY.md](REPOSITORY_STRATEGY.md).
+
 ## Releases / mirroring
 
 GitHub is the authoritative upstream, mirrored to a private Gitea server. Do not

@@ -1,0 +1,40 @@
+# ==========================================================================
+# FLRP :: CODEOWNERS — review ownership for the CORE repo (flrp-server)
+# ==========================================================================
+# Read by both Gitea and GitHub (root CODEOWNERS). Combined with `main` branch
+# protection (require CODEOWNERS review), this routes review of each path to the
+# right owners. It does NOT hide files — everyone with repo access can read
+# everything; it controls who must approve changes to each area on `main`.
+#
+# REPLACE the placeholder @FLRP/... team handles with your real Gitea/GitHub
+# org teams. Order matters: the LAST matching pattern wins.
+#
+# See docs/REPOSITORY_STRATEGY.md. Content areas (vehicles/eup/maps/departments)
+# live in their OWN repos with their OWN CODEOWNERS — not here.
+# ==========================================================================
+
+# Default owner for anything not matched below.
+*                                   @FLRP/leads
+
+# --- Core framework (highest trust) ---------------------------------------
+/server-data/resources/[flrp]/      @FLRP/dev-core
+/server-data/config/                @FLRP/dev-core @FLRP/leads
+/database/                          @FLRP/dev-core
+/deploy/                            @FLRP/leads
+/tools/                             @FLRP/dev-core
+
+# --- Security-sensitive: require leads specifically -----------------------
+/server-data/config/permissions.cfg           @FLRP/leads
+/server-data/config/secrets.example.cfg       @FLRP/leads
+/server-data/resources/[flrp]/flrp_permissions/  @FLRP/leads @FLRP/dev-core
+/server-data/resources/[flrp]/flrp_access/       @FLRP/leads @FLRP/dev-core
+/server-data/resources/[flrp]/flrp_economy/      @FLRP/leads @FLRP/dev-core
+/server-data/resources/[flrp]/flrp_api/          @FLRP/leads @FLRP/dev-core
+
+# --- Docs -----------------------------------------------------------------
+/docs/                              @FLRP/dev-core @FLRP/docs
+
+# --- CI / repo meta -------------------------------------------------------
+/.github/                           @FLRP/leads
+/.gitea/                            @FLRP/leads
+/CODEOWNERS                         @FLRP/leads

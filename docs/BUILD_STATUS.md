@@ -49,6 +49,8 @@ real server before being trusted.
 | vMenu install + wiring | NEEDS CONFIGURATION / RUNTIME TESTING |
 | Documentation | COMPLETE |
 | Static validation tooling | COMPLETE |
+| Multi-repo split + assembly (deploy/) | COMPLETE (scripts + docs) — NEEDS CONFIGURATION (create content repos + fill manifest) |
+| Core `main` branch protection | NEEDS CONFIGURATION (run deploy/gitea_branch_protection.sh + replace CODEOWNERS teams) |
 
 ## What needs configuration before first live boot
 

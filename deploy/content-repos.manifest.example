@@ -1,0 +1,37 @@
+# ==========================================================================
+# FLRP :: content-repos.manifest — content repo assembly list
+# ==========================================================================
+# COPY this file to `content-repos.manifest` (same dir) and fill in real URLs.
+# The copy is gitignored; only this .example is tracked.
+#
+# The SSRP-style model: the CORE repo (flrp-server) holds the framework; each
+# asset/content area lives in its OWN repo with its own access list. At deploy,
+# `deploy/assemble.sh` clones/pulls each repo listed here into the correct
+# bracketed resources folder, where FiveM discovers them. See
+# docs/REPOSITORY_STRATEGY.md.
+#
+# Format (whitespace-separated, one repo per line):
+#   <category>   <repo-name>        <git-url>                            [branch]
+#
+#   category   : vehicles | maps | eup | standalone | departments
+#                (maps to server-data/resources/[<category>])
+#   repo-name  : folder name for the clone; it is placed in a BRACKETED
+#                subfolder so FiveM treats it as a resource group, e.g.
+#                [vehicles]/[flrp-vehicles]/...   (also keeps it invisible to
+#                the core repo via .gitignore's [<category>]/*/ rule)
+#   git-url    : SSH or HTTPS URL (prefer Gitea for internal deploys)
+#   branch     : optional, defaults to the repo's default branch
+#
+# Do NOT commit real internal URLs if they are sensitive — this list can point
+# at Gitea (recommended for the deploy box) or GitHub.
+# --------------------------------------------------------------------------
+
+# category      repo-name        git-url                                              branch
+# ------------  ---------------  ---------------------------------------------------  ------
+# vehicles      flrp-vehicles    git@REPLACE_GITEA_HOST:flrp/flrp-vehicles.git        main
+# eup           flrp-eup         git@REPLACE_GITEA_HOST:flrp/flrp-eup.git             main
+# maps          flrp-maps        git@REPLACE_GITEA_HOST:flrp/flrp-maps.git            main
+# departments   flrp-bcso        git@REPLACE_GITEA_HOST:flrp/flrp-bcso.git            main
+# departments   flrp-fhp         git@REPLACE_GITEA_HOST:flrp/flrp-fhp.git             main
+# departments   flrp-mpd         git@REPLACE_GITEA_HOST:flrp/flrp-mpd.git             main
+# standalone    flrp-standalone  git@REPLACE_GITEA_HOST:flrp/flrp-standalone.git      main
