@@ -44,4 +44,7 @@ CreateThread(function()
   if not configured then
     FLRP.Logger.Warn('api', 'flrp_api_shared_secret not set — API refuses all requests until configured')
   end
+
+  -- Start the live config-sync reconcile loop (website is source of truth).
+  FLRPI.Sync.StartReconcile()
 end)

@@ -49,3 +49,6 @@ end
 
 function IsActive(source) return FLRPE.Activity.IsActive(tonumber(source)) end
 function GetActiveSeconds(source) return FLRPE.Activity.GetActiveSeconds(tonumber(source)) end
+
+-- Reload pay rates from the DB cache (used by live config sync — no restart).
+function ReloadPayRates() return FLRPE.PayRates.Load() end

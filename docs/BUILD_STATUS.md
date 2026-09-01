@@ -40,7 +40,9 @@ real server before being trusted.
 | MPD vehicles / departments / EUP content | NEEDS ASSETS (repos empty) |
 | Duty system | **DECIDED: keep nex-duty** — `flrp_duty` becomes a thin adapter over nex-duty `duty_members`; economy pay unchanged. Adapter NEEDS BUILD |
 | Remove nex-hud / nex-loading / nex-spawn | DECIDED — remove from flrp-scripts (not `ensure`d); keep lb-phone, sonoran-radar, SmartTaser, cd_doorlock |
-| Website-driven pCore groups/perms | FEASIBLE — florida-roleplay-site already has roles/perms/Discord-sync (Postgres); design pending control-plane decision |
+| Control plane | DECIDED: **florida-roleplay-site (Postgres)** is source of truth; pCore FROZEN (owner gone); FLRP is the live permission authority |
+| Live config sync — FLRP side (flrp_api) | COMPLETE (static) — `POST /sync` webhook + site pull + re-apply-to-online + background reconcile; NEEDS RUNTIME TESTING |
+| Live config sync — site side | NEEDS BUILD (needs push access to florida-roleplay-site): `GET /api/fivem/config` + call FXServer webhook on save |
 | Economy (flrp_economy) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Duty system (flrp_duty) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Anti-AFK / active playtime | COMPLETE (static) — NEEDS RUNTIME TESTING |

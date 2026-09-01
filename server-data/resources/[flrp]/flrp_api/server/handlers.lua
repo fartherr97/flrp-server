@@ -22,6 +22,24 @@ FLRPI.Router.Add('GET', '/health', function()
   return 200, { ok = true, ready = exports.flrp_core:IsReady() == true, service = 'flrp_api' }
 end)
 
+-- ---- Live config sync webhook (called by florida-roleplay-site on save) ---
+-- POST body: { scope: 'all'|'permissions'|'mappings'|'vehicles'|'weapons'|'payrates' }
+-- Pulls the authoritative config for that scope from the site read API and
+-- re-applies to all ONLINE players immediately — no restart. See
+-- docs/LIVE_CONFIG_SYNC.md.
+FLRPI.Router.Add('POST', '/sync', function(ctx)
+  local scope = (ctx.body and ctx.body.scope) or 'all'
+  local ok, res = FLRPI.Sync.PullAndApply(scope)
+  if not ok then return 502, { error = res or 'sync_failed' } end
+  return 200, { ok = true, scope = scope, applied = res }
+end)
+
+-- Manual trigger (no site pull) to re-apply the current cache live — useful for
+-- ops / testing without the site. Returns online players re-applied.
+FLRPI.Router.Add('POST', '/sync/reapply', function()
+  return 200, { ok = true, applied = FLRPI.Sync.ReapplyLive() }
+end)
+
 -- ---- Permissions: matrix (Owner/Director/Admin/CivIII/BCSO/FHP/MPD ...) ---
 FLRPI.Router.Add('GET', '/permissions/matrix', function()
   if not exports.flrp_permissions then return 503, { error = 'permissions_unavailable' } end

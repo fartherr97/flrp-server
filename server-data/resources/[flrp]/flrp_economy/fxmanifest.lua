@@ -40,4 +40,5 @@ server_exports {
   'CanAfford',
   'IsActive',
   'GetActiveSeconds',
+  'ReloadPayRates',
 }

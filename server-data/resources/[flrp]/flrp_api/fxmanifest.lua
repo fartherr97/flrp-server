@@ -21,6 +21,7 @@ dependency 'flrp_core'
 
 server_scripts {
   'server/router.lua',
+  'server/sync.lua',
   'server/handlers.lua',
   'server/main.lua',
 }
