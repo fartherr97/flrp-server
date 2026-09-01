@@ -2,8 +2,12 @@
 
 Snapshot of the content repos as of the first asset upload. Produced by
 inspecting each repo (structure, escrow, Git LFS, manifests). Update this as
-more assets land. See [ASSET_IMPORT.md](ASSET_IMPORT.md) for the process and
-[PCORE_INTEGRATION.md](PCORE_INTEGRATION.md) for the pCore architecture pivot.
+more assets land. See [ASSET_IMPORT.md](ASSET_IMPORT.md) for the process.
+
+> **Note:** this inventory captures the *first upload*, when building on **pCore**
+> was still on the table. pCore was later **dropped** (unbuildable source); FLRP
+> runs its own `flrp_access` + `flrp_permissions`. The pCore notes below are
+> historical.
 
 ## Repos
 
@@ -46,8 +50,10 @@ A monolithic **TypeScript** FiveM resource (built with `npm run build` →
   `sendWebhookMessage/Embed`.
 
 **Consequence:** pCore is the same layer as FLRP's `flrp_permissions` +
-`flrp_access`. Decision taken: **build FLRP on top of pCore** and **rebrand its
-config to FLRP**. See [PCORE_INTEGRATION.md](PCORE_INTEGRATION.md).
+`flrp_access`. The initial decision was to build FLRP on top of pCore, but its
+source proved incomplete/unbuildable, so pCore was **dropped** — FLRP keeps its
+own `flrp_access` + `flrp_permissions` (live and verified). See
+[PERMISSIONS.md](PERMISSIONS.md).
 
 The other 11 are standalone third-party scripts (phone, radar, HUD, spawn,
 loading, taser, doorlock). They integrate later as ordinary resources; several
@@ -69,8 +75,8 @@ Git LFS. Layout is by department:
 > register them under **BCSO** in the FLRP vehicle registry. MPD has no vehicles
 > yet.
 
-These 44 spawn names seed the FLRP vehicle registry and pCore `vehiclePerms`
-(proposed in `integration/pcore/`).
+These 44 spawn names seed the FLRP vehicle registry (migration
+`009_seed_vehicles_flrp.sql`).
 
 ## flrp-maps (14 MLOs/maps — Git LFS)
 

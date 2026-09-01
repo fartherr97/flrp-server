@@ -1,16 +1,15 @@
 # FLRP Live Config Sync (website-driven, no restart)
 
 **Goal:** permission / group / vehicle / weapon / economy changes made on the
-website take effect on the **live** server **immediately**, with **no restart**
-and **no rebuild** of pCore.
+website take effect on the **live** server **immediately**, with **no restart**.
 
 **Constraints that shape this design:**
 - `florida-roleplay-site` (Express + **PostgreSQL**) is the **single source of
   truth** — it already models roles, a permission catalogue + grants,
   departments, and Discord role sync.
-- The pCore owner is unavailable; **pCore is frozen**. We do not rebuild it for
-  day-to-day config. (We *could* build from source if ever forced — MIT + source
-  in `flrp-scripts` — but that means a one-time `restart pCore`, so we avoid it.)
+- FLRP owns identity and the connection gate itself (`flrp_access` +
+  `flrp_permissions`) — no third-party core in the loop, so a config change
+  never requires rebuilding or restarting anything.
 - In-game permission checks must be **synchronous and fast** (every gun
   purchase, pay tick, spawn) — FLRP cannot HTTP-call the site per check.
 
@@ -19,12 +18,12 @@ and **no rebuild** of pCore.
 | Layer | Responsibility | Changes live? |
 |-------|----------------|---------------|
 | **florida-roleplay-site** (Postgres) | Source of truth: groups, Discord-role→group mappings, role→permission grants, vehicle/weapon access, pay rates | Yes — it's the editor |
-| **pCore** (frozen) | Identity, Discord connection gate, queue, and stable Discord-role→group **ACE principals** | No (frozen) |
+| **`flrp_access`** (ours) | Identity + Discord connection gate; reads the member's Discord roles and hands them to `flrp_permissions` | Static (gate logic) |
 | **FLRP** (`flrp_*`, ours) | **Live permission authority**: caches the site's config, resolves `HasPermission`, applies vMenu/ACE, economy/duty/gunstores | **Yes — reloads with no restart** |
 
-pCore still tells us *who the player is* and attaches their base group
-principals from Discord roles. Everything the website edits **live** is owned by
-FLRP, which re-applies to connected players instantly.
+`flrp_access` tells us *who the player is* and `flrp_permissions` attaches their
+group principals from Discord roles. Everything the website edits **live** is
+owned by FLRP, which re-applies to connected players instantly.
 
 ## Data flow
 
@@ -60,7 +59,7 @@ FLRP, which re-applies to connected players instantly.
      then `vMenu:RequestPermissions` is fired so vMenu re-reads — live.
    - Economy pay rates / config refresh from cache on the next tick.
 
-No `restart`, no `ensure`, no pCore rebuild. A missed webhook self-heals via a
+No `restart`, no `ensure`, no resource reload. A missed webhook self-heals via a
 low-frequency background pull (belt-and-suspenders).
 
 ## Why this is live / no-restart
@@ -75,7 +74,7 @@ Nothing about a config change requires reloading a resource.
 
 ### A. Site read API (on `florida-roleplay-site`)
 `GET /api/fivem/config?scope=all|permissions|mappings|vehicles|weapons|payrates`
-→ returns the pCore/FLRP-shaped config for that scope. Auth: shared secret
+→ returns the FLRP-shaped config for that scope. Auth: shared secret
 header. (Backed by the site's existing roles/permissions/department tables.)
 
 ### B. Site → FXServer sync webhook (on FLRP `flrp_api`)
@@ -85,13 +84,12 @@ re-applies to online players. Auth: shared secret. Returns `{ applied: n }`.
 Plus FLRP background reconcile: pull `scope=all` every N minutes to catch missed
 webhooks.
 
-## What about pCore's own vehicle/weapon config?
+## The static cfg vehicle/weapon config
 
-pCore's static `vehiclePerms`/`weaponPerms` become the **fallback/initial**
+The static `config/permissions.cfg` vMenu/ACE rules are the **fallback/initial**
 state only. The **live authority is FLRP**: it manages the group-level `vMenu.*`
 (and FLRP capability) aces from the site config and fires
-`vMenu:RequestPermissions`. Where FLRP asserts a capability ace, it wins live. We
-do **not** edit pCore to change these.
+`vMenu:RequestPermissions`. Where FLRP asserts a capability ace, it wins live.
 
 > Runtime nuance to confirm on a live box: exact `vMenu.*` ace names for your
 > vMenu build, and that firing `vMenu:RequestPermissions` after an `add_ace`

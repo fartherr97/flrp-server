@@ -5,11 +5,11 @@ Decisions for the escrowed resources in the `flrp-scripts` content repo. See
 
 | Resource | Decision | Notes |
 |----------|----------|-------|
-| **pCore** | **KEEP (core)** | Identity / Discord gate / queue / permissions / vMenu. FLRP builds on it — [PCORE_INTEGRATION.md](PCORE_INTEGRATION.md). |
+| ~~pCore~~ | **DROPPED** | Source in flrp-scripts was incomplete/unbuildable. FLRP runs its own `flrp_access` + `flrp_permissions` instead. See [PERMISSIONS.md](PERMISSIONS.md) / [DISCORD_INTEGRATION.md](DISCORD_INTEGRATION.md). |
 | **nex-duty** | **KEEP (duty authority)** | Replaces `flrp_duty`'s own duty state. `flrp_duty` becomes a thin adapter (below). |
-| nex-hud | **REMOVE** | Not `ensure`d; delete from flrp-scripts. |
-| nex-loading | **REMOVE** | Not `ensure`d; delete from flrp-scripts. |
-| nex-spawn | **REMOVE** | Not `ensure`d; delete from flrp-scripts. |
+| nex-hud | **KEEP** | Owner is using the full nex suite (confirmed on live server). |
+| nex-loading | **KEEP** | Owner is using the full nex suite (confirmed on live server). |
+| nex-spawn | **KEEP** | Owner is using the full nex suite (confirmed on live server). |
 | lb-phone (+ lb-phoneprop) | keep (unless you say otherwise) | standalone phone |
 | sonoran-radar (+ helper) | keep | standalone radar |
 | smartsigns_sonoran | keep | standalone |
