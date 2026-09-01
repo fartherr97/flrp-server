@@ -30,11 +30,11 @@ real server before being trusted.
 |-----------|--------|
 | Core Architecture (flrp_core) | COMPLETE (static) |
 | Database schema + migrations | COMPLETE (static) — NEEDS RUNTIME TESTING (apply on real DB) |
-| **pCore integration (build-on-top)** | COMPLETE (static) — NEEDS CONFIGURATION (rebrand build) + RUNTIME TESTING |
-| Discord Access gate | **pCore owns it** — `flrp_access` RETIRED (deprecated in repo) |
-| Permissions engine (flrp_permissions) | COMPLETE (static) — now bridged to pCore via ACE |
-| ACE / vMenu weapon policy | **pCore `weaponPerms`** — NEEDS CONFIGURATION (rebrand) + RUNTIME TESTING |
-| pCore FLRP config rebrand (integration/pcore/) | PROPOSED — NEEDS OWNER REVIEW + BUILD |
+| pCore | **DROPPED** — source in flrp-scripts is incomplete (missing `src/*/modules/builders/*.ts`), cannot be built; only the escrowed `.fxap` works and it is locked to the (unavailable) owner's account. FLRP runs its own gate/permissions instead. |
+| Discord Access gate (flrp_access) | **ACTIVE (FLRP-native)** — COMPLETE (static); NEEDS CONFIGURATION (Discord token/guild/role IDs) + RUNTIME TESTING |
+| Permissions engine (flrp_permissions) | COMPLETE (static) — Discord-role driven + dynamic ACE/vMenu sync (self-contained) |
+| ACE / vMenu weapon policy | `config/permissions.cfg` (FLRP-native) — NEEDS RUNTIME TESTING (after vMenu) |
+| pCore FLRP config rebrand (integration/pcore/) | OBSOLETE (pCore dropped) — kept for reference only |
 | Content repos (scripts/vehicles/maps) | POPULATED — NEEDS ASSEMBLE + RUNTIME TESTING |
 | Vehicle registry seed (BCSO/FHP real spawns) | COMPLETE (migration 009) |
 | MPD vehicles / departments / EUP content | NEEDS ASSETS (repos empty) |

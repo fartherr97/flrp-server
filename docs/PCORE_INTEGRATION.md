@@ -1,5 +1,13 @@
 # FLRP ⇄ pCore Integration
 
+> **SUPERSEDED / pCore DROPPED.** pCore's source in `flrp-scripts` is incomplete
+> (missing `src/*/modules/builders/*.ts`) so it can't be built, and the escrowed
+> build is locked to the unavailable owner's account. FLRP now runs its **own**
+> Discord gate (`flrp_access`) + permission engine (`flrp_permissions`). This
+> document is kept for historical context only. See docs/PERMISSIONS.md and
+> docs/DISCORD_INTEGRATION.md for the live design.
+
+
 **Decision:** FLRP is built **on top of pCore**. pCore is the authority for
 identity, the Discord connection gate, the queue, permission groups, and vMenu.
 FLRP owns the persistent systems on top: economy, duty pay, gun stores, weapon

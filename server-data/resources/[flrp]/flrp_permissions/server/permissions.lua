@@ -9,8 +9,11 @@
 FLRPP = FLRPP or {}
 FLRPP.Players = {}          -- source -> { playerId, license, roleList, roleKeys, permissions }
 
--- Apply a full resolution for a connected source. Role membership comes from
--- pCore via the ACE bridge (server/pcore.lua); the DB matrix decides effect.
+-- Discord role IDs discovered by flrp_access during the deferral, keyed by
+-- license so we can resolve once flrp_core loads the player.
+FLRPP.PendingDiscordRoles = {} -- license -> { roleIds... }
+
+-- Apply a full resolution for a connected source.
 function FLRPP.ApplyForSource(source)
   source = tonumber(source)
   local rec = exports.flrp_core:GetPlayer(source)
@@ -19,8 +22,8 @@ function FLRPP.ApplyForSource(source)
     return false
   end
 
-  local roleKeys = FLRPP.PCore.GetFlrpRoleKeys(source)
-  local resolved = FLRPP.Resolver.Resolve(rec.playerId, roleKeys)
+  local discordRoleIds = FLRPP.PendingDiscordRoles[rec.license] or {}
+  local resolved = FLRPP.Resolver.Resolve(rec.playerId, discordRoleIds)
 
   FLRPP.Players[source] = {
     playerId = rec.playerId,
@@ -30,7 +33,8 @@ function FLRPP.ApplyForSource(source)
     permissions = resolved.permissions,
   }
 
-  -- NOTE: vMenu ACE is owned by pCore; FLRP does not attach principals here.
+  -- Mirror to ACE for vMenu.
+  FLRPP.Ace.Apply(rec.license, resolved.roleKeys)
 
   FLRP.Logger.Info('permissions', 'Resolved player permissions', {
     source = source, playerId = rec.playerId, roles = resolved.roleList,
@@ -41,6 +45,8 @@ end
 
 function FLRPP.Remove(source)
   source = tonumber(source)
+  local p = FLRPP.Players[source]
+  if p and p.license then FLRPP.Ace.Remove(p.license) end
   FLRPP.Players[source] = nil
 end
 

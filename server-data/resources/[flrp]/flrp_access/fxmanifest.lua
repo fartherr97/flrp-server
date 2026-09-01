@@ -12,7 +12,7 @@ game 'gta5'
 
 name 'flrp_access'
 author 'Florida Roleplay (FLRP)'
-description 'DEPRECATED (superseded by pCore) — FLRP Discord-gated connection deferrals'
+description 'FLRP Discord-gated connection deferrals + role read'
 version '0.1.0'
 
 dependency 'flrp_core'

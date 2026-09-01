@@ -23,8 +23,8 @@ dependency 'flrp_core'
 
 server_scripts {
   'server/store.lua',
-  'server/pcore.lua',
   'server/resolver.lua',
+  'server/ace.lua',
   'server/permissions.lua',
   'server/exports.lua',
   'server/main.lua',
