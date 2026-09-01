@@ -36,9 +36,11 @@ real server before being trusted.
 | ACE / vMenu weapon policy | **pCore `weaponPerms`** — NEEDS CONFIGURATION (rebrand) + RUNTIME TESTING |
 | pCore FLRP config rebrand (integration/pcore/) | PROPOSED — NEEDS OWNER REVIEW + BUILD |
 | Content repos (scripts/vehicles/maps) | POPULATED — NEEDS ASSEMBLE + RUNTIME TESTING |
-| Vehicle registry seed (BCSO/FHP real spawns) | IN PROGRESS |
+| Vehicle registry seed (BCSO/FHP real spawns) | COMPLETE (migration 009) |
 | MPD vehicles / departments / EUP content | NEEDS ASSETS (repos empty) |
-| Overlapping scripts (nex-duty/spawn/hud) keep-or-replace | NEEDS DECISION |
+| Duty system | **DECIDED: keep nex-duty** — `flrp_duty` becomes a thin adapter over nex-duty `duty_members`; economy pay unchanged. Adapter NEEDS BUILD |
+| Remove nex-hud / nex-loading / nex-spawn | DECIDED — remove from flrp-scripts (not `ensure`d); keep lb-phone, sonoran-radar, SmartTaser, cd_doorlock |
+| Website-driven pCore groups/perms | FEASIBLE — florida-roleplay-site already has roles/perms/Discord-sync (Postgres); design pending control-plane decision |
 | Economy (flrp_economy) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Duty system (flrp_duty) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Anti-AFK / active playtime | COMPLETE (static) — NEEDS RUNTIME TESTING |
