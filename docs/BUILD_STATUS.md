@@ -42,7 +42,8 @@ real server before being trusted.
 | Remove nex-hud / nex-loading / nex-spawn | DECIDED — remove from flrp-scripts (not `ensure`d); keep lb-phone, sonoran-radar, SmartTaser, cd_doorlock |
 | Control plane | DECIDED: **florida-roleplay-site (Postgres)** is source of truth; pCore FROZEN (owner gone); FLRP is the live permission authority |
 | Live config sync — FLRP side (flrp_api) | COMPLETE (static) — `POST /sync` webhook + site pull + re-apply-to-online + background reconcile; NEEDS RUNTIME TESTING |
-| Live config sync — site side | NEEDS BUILD (needs push access to florida-roleplay-site): `GET /api/fivem/config` + call FXServer webhook on save |
+| Live config sync — site side | BUILT on `florida-roleplay-site` branch `claude/fivem-config-api` (GET /api/fivem/config + fivem_* tables + seed + edit endpoints + FXServer webhook + fivem.view/manage perms). NEEDS: merge, `db:init`, env vars, RUNTIME TESTING |
+| Live config sync — site editor UI (React) | NEXT (build with site's client conventions loaded) |
 | Economy (flrp_economy) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Duty system (flrp_duty) | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Anti-AFK / active playtime | COMPLETE (static) — NEEDS RUNTIME TESTING |
