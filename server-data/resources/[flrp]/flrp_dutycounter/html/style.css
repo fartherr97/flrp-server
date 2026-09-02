@@ -1,0 +1,63 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --accent: rgb(0, 191, 196);
+  --leo: #f1c40f;   /* matches /leo chat */
+  --staff: #ff1717; /* matches /sc chat + staff role */
+  --panel: rgba(10, 16, 22, 0.82);
+  --line: rgba(255, 255, 255, 0.08);
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: transparent; overflow: hidden;
+  font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+  user-select: none;
+}
+
+/* Bottom-left, sitting to the right of the minimap (nudge left/bottom to move). */
+#counter {
+  position: absolute;
+  left: 16.2vw;
+  bottom: 3.2vh;
+  width: 8.9vw; min-width: 128px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  backdrop-filter: blur(2px);
+}
+
+.head {
+  font-size: 0.95vh; font-weight: 800; letter-spacing: 1.5px;
+  color: #9fb3bd; text-align: center;
+  padding: 4px 0 3px;
+  background: rgba(0, 191, 196, 0.10);
+  border-bottom: 1px solid var(--line);
+}
+
+.row {
+  display: flex; align-items: center;
+  padding: 5px 9px 5px 0;
+  position: relative;
+}
+.row + .row { border-top: 1px solid var(--line); }
+
+.bar { width: 3px; height: 1.9vh; border-radius: 2px; margin: 0 8px; }
+.bar.leo { background: var(--leo); box-shadow: 0 0 6px var(--leo); }
+.bar.staff { background: var(--staff); box-shadow: 0 0 6px var(--staff); }
+
+.tag {
+  flex: 1;
+  font-size: 1.25vh; font-weight: 700; letter-spacing: 1px;
+  color: #e7eef2;
+}
+
+.num {
+  font-size: 1.7vh; font-weight: 800;
+  color: #fff; font-variant-numeric: tabular-nums;
+  min-width: 1.4em; text-align: right;
+  transition: transform .15s ease, color .15s ease;
+}
+.num.bump { transform: scale(1.35); color: var(--accent); }
