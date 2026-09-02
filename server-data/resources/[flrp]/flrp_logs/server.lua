@@ -72,17 +72,20 @@ end
 exports('Send', Send)
 
 -- ---- Built-in wiring: joins / leaves ------------------------------------
--- Descriptions deliberately omit the name — it already appears in the Player
--- field below, so repeating it here just duplicated it in the embed.
+-- Name goes in the description; no Player field (the FiveM name already carries
+-- the full ID | rank | name, so the field was redundant here).
 AddEventHandler('playerJoining', function()
-  Send('join', { player = source, description = 'Connected.' })
+  local name = GetPlayerName(source) or ('Player ' .. source)
+  Send('join', { description = ('**%s** connected.'):format(name) })
 end)
 
 AddEventHandler('playerDropped', function(reason)
-  local src = source
-  Send('leave', { player = src, description = reason and ('Disconnected — %s'):format(reason) or 'Disconnected.' })
+  local name = GetPlayerName(source) or ('Player ' .. source)
+  Send('leave', { description = reason and ('**%s** disconnected — %s'):format(name, reason)
+                                        or ('**%s** disconnected.'):format(name) })
 end)
 
 RegisterNetEvent('flrp_logs:death', function(kind)
-  Send('death', { player = source, description = (kind == 'killed') and 'Was killed.' or 'Died.' })
+  local name = GetPlayerName(source) or ('Player ' .. source)
+  Send('death', { description = ('**%s** %s.'):format(name, kind == 'killed' and 'was killed' or 'died') })
 end)
