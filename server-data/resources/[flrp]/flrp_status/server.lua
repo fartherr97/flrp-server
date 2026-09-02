@@ -10,6 +10,7 @@
 local WEBHOOK, JOIN_URL = '', ''
 local msgId = nil
 local debugged = false
+local unitsDumped = false
 
 local function refreshConvars()
   WEBHOOK  = GetConvar(FLRP_STATUS.WebhookConvar, '')
@@ -92,45 +93,48 @@ local function vehicleCount()
   return (ok and type(v) == 'table') and #v or 0
 end
 
+-- nex-hud area code -> friendly name (falls back to upper-cased code).
+local function areaName(code)
+  code = tostring(code or '')
+  return FLRP_STATUS.AreaNames[code] or (code ~= '' and code:upper()) or 'Unknown'
+end
+
+-- getAop() -> { admin = 'Who', time = <ts>, areas = { 'ss', 'pb', ... } }
 local function formatAop()
   local aop = safeCall(function() return exports['nex-hud']:getAop() end)
-  if type(aop) == 'string' and aop ~= '' then return aop end
-  if type(aop) == 'table' then
-    -- common shapes: { aop = 'X' } / { label = 'X' } / { name = 'X' }
-    local s = aop.aop or aop.AOP or aop.label or aop.name or aop.text or aop.value or aop.current
-    if type(s) == 'string' and s ~= '' then return s end
+  if type(aop) == 'table' and type(aop.areas) == 'table' and #aop.areas > 0 then
+    local names = {}
+    for _, c in ipairs(aop.areas) do names[#names + 1] = areaName(c) end
+    return table.concat(names, ', ')
   end
+  if type(aop) == 'string' and aop ~= '' then return aop end
   return 'Statewide'
 end
 
--- SSRP shows Priority Status as two lines: County: <status>  /  City: <status>.
--- nex-hud getPriority shape is unknown at write time; try to pull county/city,
--- else render whatever keys exist. Raw shape is dumped at boot (Debug).
-local function priorityOf(v)
-  if type(v) == 'table' then
-    return tostring(v.state or v.status or v.priority or v.name or v.label or v.value or 'Available')
+-- getPriority() -> array of { area = 'bc', state = 'available', indefinite = false, ... }
+local function prettyState(p)
+  local state = tostring(p.state or 'available'):lower()
+  if state == 'available' or state == 'none' or state == '' then
+    return '🟢 Available'
   end
-  if v == nil or v == false then return 'Available' end
-  return tostring(v)
+  local label = state:gsub('^%l', string.upper)  -- capitalise first letter
+  if p.indefinite then label = label .. ' (indefinite)' end
+  return '🔴 ' .. label
 end
 
 local function formatPriority()
   local pr = safeCall(function() return exports['nex-hud']:getPriority() end)
-  if type(pr) == 'string' and pr ~= '' then
-    return ('County: **%s**\nCity: **%s**'):format(pr, pr)
-  end
-  if type(pr) == 'table' then
-    local county = pr.county or pr.County or pr.co or pr[1]
-    local city   = pr.city   or pr.City   or pr.ci or pr[2]
-    if county ~= nil or city ~= nil then
-      return ('County: **%s**\nCity: **%s**'):format(priorityOf(county), priorityOf(city))
-    end
-    -- fall back: list whatever keys are present
+  if type(pr) == 'table' and #pr > 0 then
     local lines = {}
-    for k, v in pairs(pr) do lines[#lines + 1] = ('%s: **%s**'):format(tostring(k), priorityOf(v)) end
-    if #lines > 0 then table.sort(lines); return table.concat(lines, '\n') end
+    for _, p in ipairs(pr) do
+      if type(p) == 'table' then
+        lines[#lines + 1] = ('**%s** — %s'):format(areaName(p.area), prettyState(p))
+      end
+    end
+    if #lines > 0 then return table.concat(lines, '\n') end
   end
-  return 'County: **Available**\nCity: **Available**'
+  if type(pr) == 'string' and pr ~= '' then return pr end
+  return '🟢 Available'
 end
 
 -- ---- embed ---------------------------------------------------------------
@@ -152,8 +156,8 @@ local function buildEmbed()
     { name = 'Players Online',  value = ('`%d / %d`'):format(nPlayers, maxPlayers()),   inline = true },
     { name = 'Staff In-Game',   value = ('`%d`'):format(staffCount),                    inline = true },
     { name = 'Current AOP',     value = formatAop(),                                    inline = true },
-    { name = 'Priority Status', value = formatPriority(),                               inline = true },
     { name = 'Vehicles',        value = ('`%d`'):format(vehicleCount()),                inline = true },
+    { name = 'Priority Status', value = formatPriority(),                               inline = false },
     { name = ('Law Enforcement On Duty (%d)'):format(leoTotal), value = duty,           inline = false },
   }
   if hasFire then
@@ -225,9 +229,15 @@ CreateThread(function()
       debugged = true
       print('[flrp_status] getAop -> '      .. json.encode(safeCall(function() return exports['nex-hud']:getAop() end)))
       print('[flrp_status] getPriority -> ' .. json.encode(safeCall(function() return exports['nex-hud']:getPriority() end)))
+    end
+    -- re-dump unit shape the first time anyone is actually on duty
+    if FLRP_STATUS.Debug and not unitsDumped then
       for _, d in ipairs(FLRP_STATUS.LeoDepts) do
-        print(('[flrp_status] units[%s] -> %s'):format(d.id,
-          json.encode(safeCall(function() return exports['nex-duty']:getUnitsByEntities({ d.id }) end))))
+        local u = safeCall(function() return exports['nex-duty']:getUnitsByEntities({ d.id }) end)
+        if type(u) == 'table' and #u > 0 then
+          unitsDumped = true
+          print(('[flrp_status] units[%s] -> %s'):format(d.id, json.encode(u)))
+        end
       end
     end
     if msgId then editExisting() else postNew() end

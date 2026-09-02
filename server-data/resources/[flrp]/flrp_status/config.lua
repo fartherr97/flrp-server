@@ -33,6 +33,21 @@ FLRP_STATUS.LeoDepts = {
 -- Fire/EMS entity ids (none yet — fill when a fire dept is added to nex-duty).
 FLRP_STATUS.FireDepts = {}
 
+-- nex-hud area codes -> friendly names, used for both the AOP list and the
+-- priority zones. Any code not listed here is shown upper-cased as-is, so add
+-- or correct entries as you learn what each code means.
+FLRP_STATUS.AreaNames = {
+  ss    = 'Sandy Shores',
+  pb    = 'Paleto Bay',
+  ls    = 'Los Santos',
+  bc    = 'Blaine County',
+  fz    = 'Fort Zancudo',
+  banks = 'Banham / Banks',
+  gs    = 'Grapeseed',
+  ch    = 'Chumash',
+}
+
 -- Set true to print the raw shapes of getAop/getPriority/getUnitsByEntities to
--- the server console once at boot (for mapping fields). Flip to false after.
+-- the server console once at boot (and once more the first time a unit is on
+-- duty, so the unit fields can be mapped). Flip to false when done.
 FLRP_STATUS.Debug = true
