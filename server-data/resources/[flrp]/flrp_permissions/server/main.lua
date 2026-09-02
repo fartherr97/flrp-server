@@ -18,7 +18,19 @@ end)
 AddEventHandler('flrp_access:discordRolesResolved', function(license, discordRoleIds)
   if type(license) ~= 'string' then return end
   FLRPP.PendingDiscordRoles[license] = discordRoleIds or {}
-  FLRP.Logger.Debug('permissions', 'Stored pending discord roles', {
+  -- Attach the ACE group principals NOW, during the connection gate, so vMenu
+  -- (and any other ACE consumer) sees the player's groups BEFORE the client
+  -- requests permissions on spawn. Waiting until flrp_core:playerLoaded races
+  -- vMenu's permission read and leaves the player with only builtin.everyone
+  -- perms (locked weapons / empty menu). The full player record + DB-role
+  -- resolution still runs on playerLoaded via ApplyForSource (idempotent —
+  -- Ace.Apply removes then re-adds).
+  if not FLRPP.Store.loaded then FLRPP.Store.Load() end
+  local ok, resolved = pcall(FLRPP.Resolver.Resolve, nil, discordRoleIds)
+  if ok and resolved and resolved.roleKeys then
+    FLRPP.Ace.Apply(license, resolved.roleKeys)
+  end
+  FLRP.Logger.Debug('permissions', 'Pending roles stored + ACE pre-attached', {
     license = license, count = #(discordRoleIds or {}) })
 end)
 
