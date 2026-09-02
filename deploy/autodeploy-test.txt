@@ -1,0 +1,3 @@
+Auto-deploy test marker.
+If this file appears on the VPS without you pulling, the deploy loop works.
+Pushed at: 2026-09-02 02:25:12Z
