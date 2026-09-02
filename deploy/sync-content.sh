@@ -15,12 +15,22 @@
 set -uo pipefail
 
 RES="${FLRP_RESOURCES:-/opt/fivem/flrp-server/server-data/resources}"
-OWNER="${FLRP_CONTENT_OWNER:-fartherr97}"
+
+# Source of truth for content repos. Gitea is the FLRP hub (git.flrp.us);
+# devs push there, Gitea push-mirrors to GitHub as backup, and the VPS pulls
+# from here. Override FLRP_CONTENT_BASE to repoint (e.g. the GitHub backup, or
+# an SSH base like "git@git.flrp.us:flrp"). Trailing slash is trimmed.
+#   HTTPS (needs a Gitea read cred in the VPS credential store for private repos)
+#   e.g. https://git.flrp.us/flrp
+#   SSH  (needs the deploy key on the VPS as a Gitea deploy key)
+#   e.g. git@git.flrp.us:flrp
+BASE="${FLRP_CONTENT_BASE:-https://git.flrp.us/flrp}"
+BASE="${BASE%/}"
 
 sync_one() {
   local dir="$1" repo="$2"
   local target="$RES/$dir"
-  local url="https://github.com/$OWNER/$repo.git"
+  local url="$BASE/$repo.git"
 
   if [ -d "$target/.git" ]; then
     local before after

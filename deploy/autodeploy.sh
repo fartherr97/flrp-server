@@ -14,6 +14,13 @@
 # resources/[deps]/oxmysql, and the cloned content drop-zones) are never touched
 # by the reset.
 #
+# Source of truth is the Gitea hub (git.flrp.us): point this clone's `origin`
+# at Gitea so job 1 pulls from there — `git -C /opt/fivem/flrp-server remote
+# set-url origin https://git.flrp.us/flrp/flrp-server.git`. Gitea pull-mirrors
+# flrp-server from GitHub, so my pushes still land here automatically. Content
+# repos (job 2) are pointed at Gitea via FLRP_CONTENT_BASE in sync-content.sh.
+# See docs/GITEA_HUB.md.
+#
 # One-time setup on the VPS (see docs/VPS_SETUP.md "Phase 7"):
 #   chmod +x /opt/fivem/flrp-server/deploy/autodeploy.sh
 #   chmod +x /opt/fivem/flrp-server/deploy/sync-content.sh

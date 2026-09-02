@@ -26,13 +26,17 @@
 # at Gitea (recommended for the deploy box) or GitHub.
 # --------------------------------------------------------------------------
 
-# category      repo-name        git-url                                              branch
-# ------------  ---------------  ---------------------------------------------------  ------
-# scripts       flrp-scripts     git@REPLACE_GITEA_HOST:flrp/flrp-scripts.git         main
-# vehicles      flrp-vehicles    git@REPLACE_GITEA_HOST:flrp/flrp-vehicles.git        main
-# eup           flrp-eup         git@REPLACE_GITEA_HOST:flrp/flrp-eup.git             main
-# maps          flrp-maps        git@REPLACE_GITEA_HOST:flrp/flrp-maps.git            main
-# departments   flrp-bcso        git@REPLACE_GITEA_HOST:flrp/flrp-bcso.git            main
-# departments   flrp-fhp         git@REPLACE_GITEA_HOST:flrp/flrp-fhp.git             main
-# departments   flrp-mpd         git@REPLACE_GITEA_HOST:flrp/flrp-mpd.git             main
-# standalone    flrp-standalone  git@REPLACE_GITEA_HOST:flrp/flrp-standalone.git      main
+# FLRP hub: Gitea at git.flrp.us, org `flrp`. Devs push here; Gitea
+# push-mirrors each repo to GitHub (fartherr97/*) as backup. The VPS pulls
+# from Gitea. See docs/GITEA_HUB.md.
+#
+# category      repo-name        git-url                                    branch
+# ------------  ---------------  -----------------------------------------  ------
+# scripts       flrp-scripts     https://git.flrp.us/flrp/flrp-scripts.git  main
+# vehicles      flrp-vehicles    https://git.flrp.us/flrp/flrp-vehicles.git main
+# eup           flrp-eup         https://git.flrp.us/flrp/flrp-eup.git      main
+# maps          flrp-maps        https://git.flrp.us/flrp/flrp-maps.git     main
+# departments   flrp-bso         https://git.flrp.us/flrp/flrp-bso.git      main
+# departments   flrp-fhp         https://git.flrp.us/flrp/flrp-fhp.git      main
+# departments   flrp-mpd         https://git.flrp.us/flrp/flrp-mpd.git      main
+# standalone    flrp-standalone  https://git.flrp.us/flrp/flrp-standalone.git main
