@@ -30,6 +30,7 @@ AddEventHandler('chatMessage', function(src, name, msg)
     multiline = true,
     args = { name, msg },
   })
+  pcall(function() exports.flrp_logs:Send('chat', { player = src, description = msg }) end)
 end)
 
 -- ---- 2. Gated channels ----------------------------------------------------
@@ -70,6 +71,13 @@ for cmd, ch in pairs(FLRP_CHAT.Channels) do
       return
     end
     sendChannel(ch, src, message)
+    pcall(function()
+      exports.flrp_logs:Send('staffchat', {
+        player = src,
+        title = 'COMMAND RAN',
+        description = ('/%s %s'):format(cmd, message),
+      })
+    end)
   end, false) -- unrestricted: we enforce access with the ACE check above
 
   -- Autocomplete hint in the chat box.
