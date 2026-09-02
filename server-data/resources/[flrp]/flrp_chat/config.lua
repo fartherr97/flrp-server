@@ -20,10 +20,10 @@ end
 -- Display-name colors for a player's HIGHEST staff tier. Non-staff use default.
 -- >>> REPLACE these placeholders with your Discord role hex codes. <<<
 FLRP_CHAT.NameColors = {
-  ownership = hex('#E67E22'), -- Ownership
-  director  = hex('#9B59B6'), -- Directorship
-  admin     = hex('#E74C3C'), -- Administrator
-  staff     = hex('#3498DB'), -- Moderator / staff team
+  ownership = hex('#2ecc71'), -- Ownership
+  director  = hex('#3498db'), -- Directorship
+  admin     = hex('#9b59b6'), -- Administrator
+  staff     = hex('#ff1717'), -- Moderator / staff team
   default   = { 235, 235, 235 }, -- everyone else
 }
 
