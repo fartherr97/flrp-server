@@ -4,8 +4,8 @@
   --accent: rgb(0, 191, 196);
   --leo: #f1c40f;   /* matches /leo chat */
   --staff: #ff1717; /* matches /sc chat + staff role */
-  --panel: rgba(10, 16, 22, 0.82);
-  --line: rgba(255, 255, 255, 0.08);
+  --panel: rgba(17, 20, 26, 0.55); /* matches nex-hud panels */
+  --line: rgba(255, 255, 255, 0.06);
 }
 
 html, body {
@@ -15,49 +15,44 @@ html, body {
   user-select: none;
 }
 
-/* Top-left, clear of nex-hud's bottom-left cluster (nudge top/left to move). */
+/* Sits just above nex-hud's Username panel (nudge top/left to move). */
 #counter {
   position: absolute;
-  left: 1.5vw;
-  top: 1.6vh;
-  width: 8.9vw; min-width: 128px;
+  left: 22.4vw;
+  bottom: 15.3vh;
+  width: fit-content;
   background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 6px;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
-  backdrop-filter: blur(2px);
 }
 
 .head {
-  font-size: 0.95vh; font-weight: 800; letter-spacing: 1.5px;
-  color: #9fb3bd; text-align: center;
-  padding: 4px 0 3px;
-  background: rgba(0, 191, 196, 0.10);
-  border-bottom: 1px solid var(--line);
+  font-size: 0.85vh; font-weight: 700; letter-spacing: 1.4px;
+  color: #aeb9c2; text-align: left;
+  padding: 3px 10px 2px;
 }
 
 .row {
   display: flex; align-items: center;
-  padding: 5px 9px 5px 0;
-  position: relative;
+  gap: 8px;
+  padding: 3px 10px;
 }
-.row + .row { border-top: 1px solid var(--line); }
 
-.bar { width: 3px; height: 1.9vh; border-radius: 2px; margin: 0 8px; }
-.bar.leo { background: var(--leo); box-shadow: 0 0 6px var(--leo); }
-.bar.staff { background: var(--staff); box-shadow: 0 0 6px var(--staff); }
+.bar { width: 3px; height: 1.55vh; border-radius: 2px; flex: none; }
+.bar.leo { background: var(--leo); }
+.bar.staff { background: var(--staff); }
 
 .tag {
-  flex: 1;
-  font-size: 1.25vh; font-weight: 700; letter-spacing: 1px;
-  color: #e7eef2;
+  font-size: 1.15vh; font-weight: 700; letter-spacing: 0.6px;
+  color: #eef3f6;
+  min-width: 3.4em;
 }
 
 .num {
-  font-size: 1.7vh; font-weight: 800;
+  margin-left: auto;
+  font-size: 1.35vh; font-weight: 800;
   color: #fff; font-variant-numeric: tabular-nums;
-  min-width: 1.4em; text-align: right;
+  min-width: 1.2em; text-align: right;
   transition: transform .15s ease, color .15s ease;
 }
-.num.bump { transform: scale(1.35); color: var(--accent); }
+.num.bump { transform: scale(1.3); color: var(--accent); }

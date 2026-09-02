@@ -35,6 +35,11 @@ FLRP_CHAT.Channels = {
   dc  = { ace = 'flrp.staff.direct',     label = 'DIRECTOR CHAT', color = FLRP_CHAT.NameColors.director },
   -- LEO CHAT: all law enforcement, plus staff (mod+) can see/use it too.
   leo = { ace = 'flrp.leo', bypass = 'flrp.staff.moderate', label = 'LEO CHAT', color = hex('#f1c40f') },
+
+  -- Individual department channels. Staff (mod+) can see/use them for oversight.
+  bso = { ace = 'flrp.dept.bso', bypass = 'flrp.staff.moderate', label = 'BSO CHAT', color = hex('#2e8b57') }, -- green
+  fhp = { ace = 'flrp.dept.fhp', bypass = 'flrp.staff.moderate', label = 'FHP CHAT', color = hex('#b8860b') }, -- tan
+  mpd = { ace = 'flrp.dept.mpd', bypass = 'flrp.staff.moderate', label = 'MPD CHAT', color = hex('#1f6feb') }, -- blue
 }
 
 -- Highest tier first — first ACE the player holds wins their name color.
