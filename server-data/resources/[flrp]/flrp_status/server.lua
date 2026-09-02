@@ -3,7 +3,7 @@
 -- ==========================================================================
 -- Posts one embed to the status webhook, then edits that same message every
 -- UpdateSeconds so it stays a single live message. AOP/priority come from
--- nex-hud exports; on-duty counts from nex-duty; players/staff/vehicles from
+-- nex-hud exports; on-duty units from nex-duty; players/staff/vehicles from
 -- server natives.
 -- ==========================================================================
 
@@ -28,14 +28,51 @@ local function safeCall(fn)
   return nil
 end
 
--- ---- data sources --------------------------------------------------------
-local function maxPlayers() return GetConvarInt('sv_maxclients', 64) end
-
-local function countUnits(entities)
-  if not entities or #entities == 0 then return 0 end
-  local u = safeCall(function() return exports['nex-duty']:getUnitsByEntities(entities) end)
-  return (type(u) == 'table') and #u or 0
+-- ---- unit helpers --------------------------------------------------------
+-- Pull a human-readable "callsign — Name" out of a nex-duty unit table,
+-- trying the common field names so it works regardless of exact shape.
+local function unitLabel(u)
+  if type(u) ~= 'table' then return tostring(u) end
+  local name = u.name or u.playerName or u.player_name or u.character
+            or u.charName or u.char_name or u.fullname or u.full_name or u.label
+  if not name then
+    local fn = u.firstname or u.first_name or u.firstName
+    local ln = u.lastname  or u.last_name  or u.lastName
+    if fn or ln then name = ((fn or '') .. ' ' .. (ln or '')):gsub('^%s+', ''):gsub('%s+$', '') end
+  end
+  local callsign = u.callsign or u.callSign or u.call_sign or u.badge
+                or u.badgeNumber or u.unit or u.unitId or u.unit_id
+  if callsign and name then return ('`%s` %s'):format(tostring(callsign), tostring(name)) end
+  return tostring(name or callsign or 'Unit')
 end
+
+local function unitsForEntity(id)
+  local u = safeCall(function() return exports['nex-duty']:getUnitsByEntities({ id }) end)
+  return (type(u) == 'table') and u or {}
+end
+
+-- Build the "Personnel On Duty" text, grouped by department, listing names.
+-- Returns (text, totalCount).
+local function personnelBlock(depts)
+  local sections, total = {}, 0
+  for _, d in ipairs(depts) do
+    local units = unitsForEntity(d.id)
+    total = total + #units
+    if #units > 0 then
+      local names = {}
+      for _, u in ipairs(units) do names[#names + 1] = '• ' .. unitLabel(u) end
+      sections[#sections + 1] = ('**%s (%d)**\n%s'):format(d.label, #units, table.concat(names, '\n'))
+    else
+      sections[#sections + 1] = ('**%s (0)**'):format(d.label)
+    end
+  end
+  local text = table.concat(sections, '\n')
+  if text == '' then text = '*None on duty*' end
+  return text, total
+end
+
+-- ---- other data sources --------------------------------------------------
+local function maxPlayers() return GetConvarInt('sv_maxclients', 64) end
 
 local function staffOnline()
   local lines, count = {}, 0
@@ -59,67 +96,82 @@ local function formatAop()
   local aop = safeCall(function() return exports['nex-hud']:getAop() end)
   if type(aop) == 'string' and aop ~= '' then return aop end
   if type(aop) == 'table' then
-    local parts = {}
-    for _, v in pairs(aop) do parts[#parts + 1] = tostring(v) end
-    if #parts > 0 then return table.concat(parts, ', ') end
+    -- common shapes: { aop = 'X' } / { label = 'X' } / { name = 'X' }
+    local s = aop.aop or aop.AOP or aop.label or aop.name or aop.text or aop.value or aop.current
+    if type(s) == 'string' and s ~= '' then return s end
   end
   return 'Statewide'
 end
 
+-- SSRP shows Priority Status as two lines: County: <status>  /  City: <status>.
+-- nex-hud getPriority shape is unknown at write time; try to pull county/city,
+-- else render whatever keys exist. Raw shape is dumped at boot (Debug).
+local function priorityOf(v)
+  if type(v) == 'table' then
+    return tostring(v.state or v.status or v.priority or v.name or v.label or v.value or 'Available')
+  end
+  if v == nil or v == false then return 'Available' end
+  return tostring(v)
+end
+
 local function formatPriority()
   local pr = safeCall(function() return exports['nex-hud']:getPriority() end)
-  if type(pr) == 'string' and pr ~= '' then return pr end
-  if type(pr) == 'table' then
-    local lines = {}
-    for k, v in pairs(pr) do
-      if type(v) == 'table' then
-        local state = v.state or v.priority or v.status or v.name or 'Available'
-        lines[#lines + 1] = ('%s: %s'):format(tostring(k), tostring(state))
-      else
-        lines[#lines + 1] = ('%s: %s'):format(tostring(k), tostring(v))
-      end
-    end
-    if #lines > 0 then return table.concat(lines, '\n') end
+  if type(pr) == 'string' and pr ~= '' then
+    return ('County: **%s**\nCity: **%s**'):format(pr, pr)
   end
-  return 'Available'
+  if type(pr) == 'table' then
+    local county = pr.county or pr.County or pr.co or pr[1]
+    local city   = pr.city   or pr.City   or pr.ci or pr[2]
+    if county ~= nil or city ~= nil then
+      return ('County: **%s**\nCity: **%s**'):format(priorityOf(county), priorityOf(city))
+    end
+    -- fall back: list whatever keys are present
+    local lines = {}
+    for k, v in pairs(pr) do lines[#lines + 1] = ('%s: **%s**'):format(tostring(k), priorityOf(v)) end
+    if #lines > 0 then table.sort(lines); return table.concat(lines, '\n') end
+  end
+  return 'County: **Available**\nCity: **Available**'
 end
 
 -- ---- embed ---------------------------------------------------------------
 local function buildEmbed()
   local nPlayers = #GetPlayers()
   local staffCount, roster = staffOnline()
-  local leo  = countUnits(FLRP_STATUS.LeoEntities)
-  local fire = countUnits(FLRP_STATUS.FireEntities)
-  local hasFire = #FLRP_STATUS.FireEntities > 0
-  local total = leo + (hasFire and fire or 0)
+  local duty, leoTotal = personnelBlock(FLRP_STATUS.LeoDepts)
+  local hasFire = #FLRP_STATUS.FireDepts > 0
+  local fireBlock, fireTotal = '', 0
+  if hasFire then fireBlock, fireTotal = personnelBlock(FLRP_STATUS.FireDepts) end
+  local grandTotal = leoTotal + fireTotal
 
-  local duty = ('LEO: **%d**'):format(leo)
-  if hasFire then duty = duty .. ('\nFire/EMS: **%d**'):format(fire) end
-  duty = duty .. ('\nTotal: **%d**'):format(total)
-
-  local fields = {
-    { name = 'Server Status',    value = '🟢 Online',                                   inline = true },
-    { name = 'Players Online',   value = ('`%d / %d`'):format(nPlayers, maxPlayers()),  inline = true },
-    { name = 'Staff In-Game',    value = ('`%d`'):format(staffCount),                   inline = true },
-    { name = 'Current AOP',      value = formatAop(),                                   inline = false },
-    { name = 'Priority Status',  value = formatPriority(),                              inline = false },
-    { name = 'Vehicles Spawned', value = ('`%d`'):format(vehicleCount()),               inline = true },
-    { name = 'Personnel On Duty', value = duty,                                         inline = true },
-  }
-  if JOIN_URL ~= '' then
-    fields[#fields + 1] = { name = 'Join Server', value = ('[%s](%s)'):format(FLRP_STATUS.JoinLabel, JOIN_URL), inline = false }
-  end
+  if #duty > 1000 then duty = duty:sub(1, 1000) .. '\n…' end
   local rosterText = (#roster > 0) and table.concat(roster, '\n') or '*None online*'
   if #rosterText > 1000 then rosterText = rosterText:sub(1, 1000) .. '\n…' end
-  fields[#fields + 1] = { name = ('Staff Personnel (%d)'):format(staffCount), value = rosterText, inline = false }
+
+  local fields = {
+    { name = 'Server Status',   value = '🟢 Online',                                    inline = true },
+    { name = 'Players Online',  value = ('`%d / %d`'):format(nPlayers, maxPlayers()),   inline = true },
+    { name = 'Staff In-Game',   value = ('`%d`'):format(staffCount),                    inline = true },
+    { name = 'Current AOP',     value = formatAop(),                                    inline = true },
+    { name = 'Priority Status', value = formatPriority(),                               inline = true },
+    { name = 'Vehicles',        value = ('`%d`'):format(vehicleCount()),                inline = true },
+    { name = ('Law Enforcement On Duty (%d)'):format(leoTotal), value = duty,           inline = false },
+  }
+  if hasFire then
+    fields[#fields + 1] = { name = ('Fire / EMS On Duty (%d)'):format(fireTotal), value = fireBlock, inline = false }
+  end
+  fields[#fields + 1] = { name = ('Staff Online (%d)'):format(staffCount), value = rosterText, inline = false }
+  if JOIN_URL ~= '' then
+    fields[#fields + 1] = { name = 'Join Server', value = ('**[%s](%s)**'):format(FLRP_STATUS.JoinLabel, JOIN_URL), inline = false }
+  end
 
   return {
-    title     = 'Server Information',
-    color     = FLRP_STATUS.Color,
-    thumbnail = (FLRP_STATUS.Thumbnail ~= '') and { url = FLRP_STATUS.Thumbnail } or nil,
-    fields    = fields,
-    footer    = { text = ('%s • auto-updates every %ds'):format(FLRP_STATUS.ServerName, FLRP_STATUS.UpdateSeconds) },
-    timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+    title       = 'Server Information',
+    description  = ('**%d** players online  •  **%d** total personnel on duty'):format(nPlayers, grandTotal),
+    color       = FLRP_STATUS.Color,
+    thumbnail   = (FLRP_STATUS.Thumbnail ~= '') and { url = FLRP_STATUS.Thumbnail } or nil,
+    fields      = fields,
+    footer      = { text = ('%s • auto-updates every %ds'):format(FLRP_STATUS.ServerName, FLRP_STATUS.UpdateSeconds) },
+    timestamp   = os.date('!%Y-%m-%dT%H:%M:%SZ'),
   }
 end
 
@@ -169,10 +221,14 @@ CreateThread(function()
 
   while true do
     refreshConvars()
-    if not debugged then -- log the raw AOP/priority shapes once, for tuning
+    if FLRP_STATUS.Debug and not debugged then -- dump raw shapes once, for mapping
       debugged = true
-      print('[flrp_status] getAop -> ' .. json.encode(safeCall(function() return exports['nex-hud']:getAop() end)))
+      print('[flrp_status] getAop -> '      .. json.encode(safeCall(function() return exports['nex-hud']:getAop() end)))
       print('[flrp_status] getPriority -> ' .. json.encode(safeCall(function() return exports['nex-hud']:getPriority() end)))
+      for _, d in ipairs(FLRP_STATUS.LeoDepts) do
+        print(('[flrp_status] units[%s] -> %s'):format(d.id,
+          json.encode(safeCall(function() return exports['nex-duty']:getUnitsByEntities({ d.id }) end))))
+      end
     end
     if msgId then editExisting() else postNew() end
     Wait(FLRP_STATUS.UpdateSeconds * 1000)
