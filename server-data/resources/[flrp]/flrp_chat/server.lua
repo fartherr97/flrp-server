@@ -34,6 +34,11 @@ AddEventHandler('chatMessage', function(src, name, msg)
 end)
 
 -- ---- 2. Gated channels ----------------------------------------------------
+-- May this player use / receive a channel? (its ACE, or an optional bypass ACE)
+local function canUse(pid, ch)
+  return IsPlayerAceAllowed(pid, ch.ace) or (ch.bypass and IsPlayerAceAllowed(pid, ch.bypass))
+end
+
 local function sendChannel(ch, src, message)
   local name = GetPlayerName(src) or ('Player ' .. src)
   local line = {
@@ -44,7 +49,7 @@ local function sendChannel(ch, src, message)
   -- Deliver to every online player who holds the channel ACE (incl. sender).
   for _, pid in ipairs(GetPlayers()) do
     pid = tonumber(pid)
-    if pid and IsPlayerAceAllowed(pid, ch.ace) then
+    if pid and canUse(pid, ch) then
       TriggerClientEvent('chat:addMessage', pid, line)
     end
   end
@@ -55,7 +60,7 @@ end
 for cmd, ch in pairs(FLRP_CHAT.Channels) do
   RegisterCommand(cmd, function(src, args)
     if type(src) ~= 'number' or src <= 0 then return end -- console can't be in a staff channel
-    if not IsPlayerAceAllowed(src, ch.ace) then
+    if not canUse(src, ch) then
       TriggerClientEvent('chat:addMessage', src, {
         color = { 200, 60, 60 },
         args = { 'SYSTEM', ('You do not have access to %s.'):format(ch.label) },

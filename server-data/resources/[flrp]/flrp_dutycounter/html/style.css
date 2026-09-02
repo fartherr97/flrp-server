@@ -15,11 +15,11 @@ html, body {
   user-select: none;
 }
 
-/* Bottom-left, sitting to the right of the minimap (nudge left/bottom to move). */
+/* Top-left, clear of nex-hud's bottom-left cluster (nudge top/left to move). */
 #counter {
   position: absolute;
-  left: 16.2vw;
-  bottom: 3.2vh;
+  left: 1.5vw;
+  top: 1.6vh;
   width: 8.9vw; min-width: 128px;
   background: var(--panel);
   border: 1px solid var(--line);
