@@ -40,13 +40,13 @@ consistency with everything around them.
   flrp_permissions  central permission engine + dynamic ACE/vMenu sync
   flrp_access       Discord-gated connection deferrals + role read
   flrp_economy      persistent money, ledger, role-based pay, anti-AFK
-  flrp_duty         server-authoritative BCSO/FHP/MPD duty state
+  flrp_duty         server-authoritative BSO/FHP/MPD duty state
   flrp_weapons      weapon registry + persistent ownership
   flrp_gunstores    secure purchase flow + NUI
   flrp_vehicles     vehicle registry + permission engine
   flrp_api          authenticated HTTP contract for FLRP Manager
 
-[departments] [bcso] [fhp] [mpd]   department-specific glue (minimal for now)
+[departments] [bso] [fhp] [mpd]   department-specific glue (minimal for now)
 [vehicles] [maps] [eup] [standalone]   asset drop zones (imported later)
 ```
 

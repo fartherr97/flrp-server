@@ -40,7 +40,7 @@ FLRPI.Router.Add('POST', '/sync/reapply', function()
   return 200, { ok = true, applied = FLRPI.Sync.ReapplyLive() }
 end)
 
--- ---- Permissions: matrix (Owner/Director/Admin/CivIII/BCSO/FHP/MPD ...) ---
+-- ---- Permissions: matrix (Owner/Director/Admin/CivIII/BSO/FHP/MPD ...) ---
 FLRPI.Router.Add('GET', '/permissions/matrix', function()
   if not exports.flrp_permissions then return 503, { error = 'permissions_unavailable' } end
   return 200, exports.flrp_permissions:GetPermissionMatrix()

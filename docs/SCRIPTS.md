@@ -34,8 +34,8 @@ instead of FLRP's own duty state:
 ```
 exports.flrp_duty:GetDuty(source)
   -> SELECT entity, rank FROM duty_members WHERE license = <player license>
-  -> map nex-duty `entity` id  ->  FLRP department (bcso/fhp/mpd)
-  -> { department = 'BCSO'|'FHP'|'MPD'|nil, onDuty = row exists }
+  -> map nex-duty `entity` id  ->  FLRP department (bso/fhp/mpd)
+  -> { department = 'BSO'|'FHP'|'MPD'|nil, onDuty = row exists }
 ```
 
 What this removes: FLRP's own duty state/persistence, the `/duty` command, and
@@ -47,12 +47,12 @@ What it keeps: department pay in `flrp_economy` (still calls `flrp_duty:GetDuty`
 an FLRP department, and reports `{ department, onDuty }`. It caches per player
 (15s) and no-ops safely (everyone civilian) until nex-duty's table exists.
 
-To finish once you set up nex-duty: name the BCSO/FHP/MPD entities, then set the
-map. Defaults assume entity IDs `bcso` / `fhp` / `mpd`; override per department
+To finish once you set up nex-duty: name the BSO/FHP/MPD entities, then set the
+map. Defaults assume entity IDs `bso` / `fhp` / `mpd`; override per department
 in `secrets.cfg` / server.cfg if you name them differently:
 
 ```
-set flrp_duty_entity_bcso "yourBcsoEntityId"
+set flrp_duty_entity_bso "yourBsoEntityId"
 set flrp_duty_entity_fhp  "yourFhpEntityId"
 set flrp_duty_entity_mpd  "yourMpdEntityId"
 ```

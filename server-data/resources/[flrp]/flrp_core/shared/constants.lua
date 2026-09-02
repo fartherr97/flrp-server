@@ -10,7 +10,7 @@ FLRP = FLRP or {}
 FLRP.Const = {}
 
 -- Authoritative departments. Do NOT add HCSO/TPD or legacy names.
-FLRP.Const.Departments = { 'BCSO', 'FHP', 'MPD' }
+FLRP.Const.Departments = { 'BSO', 'FHP', 'MPD' }
 
 -- Role keys (must match the `roles.key` column and permissions.cfg groups).
 FLRP.Const.Roles = {
@@ -22,7 +22,7 @@ FLRP.Const.Roles = {
   CERT_CIV_1    = 'cert_civ_1',
   CERT_CIV_2    = 'cert_civ_2',
   CERT_CIV_3    = 'cert_civ_3',
-  BCSO          = 'bcso',
+  BSO          = 'bso',
   FHP           = 'fhp',
   MPD           = 'mpd',
 }

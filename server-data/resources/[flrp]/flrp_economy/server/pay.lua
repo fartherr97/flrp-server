@@ -5,7 +5,7 @@
 -- one pay interval of ACTIVE time, pay them (hourly / (60/interval)).
 --
 -- Which rate applies is server-authoritative:
---   * If the player is ON DUTY in a department (BCSO/FHP/MPD), use that
+--   * If the player is ON DUTY in a department (BSO/FHP/MPD), use that
 --     department's rate (verified via flrp_duty, which itself verifies the
 --     player actually holds the department role).
 --   * Otherwise use the BEST civilian/certification rate among the roles the
@@ -33,7 +33,7 @@ function FLRPE.Pay.ResolveRate(source, playerId)
   end
   if duty and duty.onDuty and duty.department then
     local key = string.lower(duty.department)
-    if key == 'bcso' or key == 'fhp' or key == 'mpd' then
+    if key == 'bso' or key == 'fhp' or key == 'mpd' then
       return key, FLRPE.PayRates.HourlyCents(key)
     end
   end

@@ -45,7 +45,7 @@ proven.
 | ACE / vMenu weapon policy | **LIVE** — vMenu installed + enforcing; set `vmenu_use_permissions true` |
 | pCore FLRP config rebrand (integration/pcore/) | OBSOLETE (pCore dropped) — kept for reference only |
 | Content repos (scripts/vehicles/maps) | POPULATED — NEEDS ASSEMBLE + RUNTIME TESTING |
-| Vehicle registry seed (BCSO/FHP real spawns) | COMPLETE (migration 009) |
+| Vehicle registry seed (BSO/FHP real spawns) | COMPLETE (migration 009) |
 | MPD vehicles / departments / EUP content | NEEDS ASSETS (repos empty) |
 | Duty system | **KEEP nex-duty**; `flrp_duty` rebuilt as a read-only adapter over nex-duty `duty_members` (configurable entity→dept map). COMPLETE (static) — NEEDS nex-duty setup + RUNTIME TESTING |
 | nex suite (hud / loading / spawn / duty) | **KEEP** — owner is using the full nex suite (confirmed live). All ensured and running; sonoran-radar/SmartTaser/ulc/cd_doorlock also kept |
@@ -58,10 +58,10 @@ proven.
 | Anti-AFK / active playtime | COMPLETE (static) — NEEDS RUNTIME TESTING |
 | Weapon registry + ownership (flrp_weapons) | COMPLETE (static); catalog NEEDS ASSETS (DEV rows only) |
 | Gun stores (flrp_gunstores) | COMPLETE (static) — NEEDS RUNTIME TESTING |
-| Vehicle registry + permissions (flrp_vehicles) | **LIVE** — 36 BCSO/FHP spawns loaded; more NEEDS ASSETS |
+| Vehicle registry + permissions (flrp_vehicles) | **LIVE** — 36 BSO/FHP spawns loaded; more NEEDS ASSETS |
 | FLRP Manager API contract (flrp_api) | COMPLETE (static) — NEEDS CONFIGURATION (shared secret) |
 | Audit logging | COMPLETE (static) |
-| BCSO Vehicle Import | NEEDS ASSETS |
+| BSO Vehicle Import | NEEDS ASSETS |
 | FHP Vehicle Import | NEEDS ASSETS |
 | MPD Vehicle Import | NEEDS ASSETS |
 | Maps / MLOs | NEEDS ASSETS |
@@ -95,7 +95,7 @@ proven.
 ## What needs assets (blocked on third-party import)
 
 - Real weapon catalog (replace `[DEV]` rows).
-- Vehicle registry entries (BCSO/FHP/MPD/civilian) from imported packs.
+- Vehicle registry entries (BSO/FHP/MPD/civilian) from imported packs.
 - Maps/MLOs (and updating gun-store coordinates to match).
 - EUP.
 

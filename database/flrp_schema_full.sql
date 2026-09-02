@@ -103,13 +103,13 @@ ON DUPLICATE KEY UPDATE `version` = `version`;
 --
 -- Discord membership decides which roles a player holds at runtime;
 -- role_permissions decides what those roles may do. This exactly supports the
--- Owner/Director/Admin/CivIII/BCSO/FHP/MPD permission matrix in the FLRP
+-- Owner/Director/Admin/CivIII/BSO/FHP/MPD permission matrix in the FLRP
 -- Manager WITHOUT editing Lua. See docs/PERMISSIONS.md.
 -- ==========================================================================
 
 CREATE TABLE IF NOT EXISTS `roles` (
   `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `key`              VARCHAR(64)  NOT NULL,   -- stable handle: ownership, bcso, cert_civ_3
+  `key`              VARCHAR(64)  NOT NULL,   -- stable handle: ownership, bso, cert_civ_3
   `name`             VARCHAR(128) NOT NULL,   -- display name
   -- kind groups roles for UI + logic: base|staff|department|certification
   `kind`             VARCHAR(24)  NOT NULL DEFAULT 'base',
@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
 
 CREATE TABLE IF NOT EXISTS `permissions` (
   `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `key`            VARCHAR(128) NOT NULL,   -- e.g. weapon.vmenu.spawn, vehicle.bcso.patrol
+  `key`            VARCHAR(128) NOT NULL,   -- e.g. weapon.vmenu.spawn, vehicle.bso.patrol
   `description`    VARCHAR(255) NULL,
   `category`       VARCHAR(48)  NOT NULL DEFAULT 'general', -- weapon|vehicle|economy|staff|...
   -- default_effect applies when NO role grants/denies it to the player.
@@ -356,19 +356,19 @@ ON DUPLICATE KEY UPDATE `version` = `version`;
 
 CREATE TABLE IF NOT EXISTS `vehicles` (
   `id`                  INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  -- GTA/FiveM spawn name (model), e.g. bcso25tahoe. Unique.
+  -- GTA/FiveM spawn name (model), e.g. bso25tahoe. Unique.
   `spawn_name`          VARCHAR(64)  NOT NULL,
-  `display_name`        VARCHAR(128) NOT NULL,       -- e.g. "2025 BCSO Tahoe"
-  -- Owning resource (populated during asset import), e.g. flrp_bcso_pack.
+  `display_name`        VARCHAR(128) NOT NULL,       -- e.g. "2025 BSO Tahoe"
+  -- Owning resource (populated during asset import), e.g. flrp_bso_pack.
   `resource`            VARCHAR(128) NULL,
-  -- Department: BCSO|FHP|MPD|NULL (civilian).
+  -- Department: BSO|FHP|MPD|NULL (civilian).
   `department`          VARCHAR(16)  NULL,
   `category`            VARCHAR(48)  NULL,           -- Patrol|Supervisor|Command|Civilian|...
   -- Minimum department rank required (rank system TBD), e.g. "Deputy".
   `min_rank`            VARCHAR(48)  NULL,
   -- Civilian certification required (roles.key), e.g. cert_civ_2.
   `certification`       VARCHAR(64)  NULL,
-  -- Primary permission required to spawn (permissions.key), e.g. vehicle.bcso.patrol.
+  -- Primary permission required to spawn (permissions.key), e.g. vehicle.bso.patrol.
   `required_permission` VARCHAR(128) NULL,
   `enabled`             TINYINT(1)   NOT NULL DEFAULT 1,
   `notes`               VARCHAR(255) NULL,
@@ -418,7 +418,7 @@ ON DUPLICATE KEY UPDATE `version` = `version`;
 
 CREATE TABLE IF NOT EXISTS `player_duty_state` (
   `player_id`  BIGINT UNSIGNED NOT NULL,
-  `department` VARCHAR(16)     NULL,        -- BCSO|FHP|MPD|NULL(civilian)
+  `department` VARCHAR(16)     NULL,        -- BSO|FHP|MPD|NULL(civilian)
   `on_duty`    TINYINT(1)      NOT NULL DEFAULT 0,
   `changed_at` TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -517,7 +517,7 @@ ON DUPLICATE KEY UPDATE `version` = `version`;
 -- WHAT IS SEEDED:
 --   * roles (base / staff / certification / department)
 --   * permission strings (weapon / vehicle / staff / economy)
---   * role_permissions matrix (Owner/Director/Admin/CivIII/BCSO/FHP/MPD)
+--   * role_permissions matrix (Owner/Director/Admin/CivIII/BSO/FHP/MPD)
 --   * pay_rates (DEV DEFAULTS — subject to change)
 --   * configuration defaults
 --   * clearly-labelled DEV/TEST weapon entries (remove before production)
@@ -540,7 +540,7 @@ INSERT INTO `roles` (`key`, `name`, `kind`, `priority`, `is_department`) VALUES
   ('cert_civ_1',    'Certified Civilian I',    'certification', 5,  0),
   ('cert_civ_2',    'Certified Civilian II',   'certification', 6,  0),
   ('cert_civ_3',    'Certified Civilian III',  'certification', 7,  0),
-  ('bcso',          'BCSO',                    'department',    15, 1),
+  ('bso',          'BSO',                    'department',    15, 1),
   ('fhp',           'FHP',                     'department',    15, 1),
   ('mpd',           'MPD',                     'department',    15, 1)
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `kind` = VALUES(`kind`),
@@ -567,9 +567,9 @@ INSERT INTO `permissions` (`key`, `description`, `category`, `default_effect`) V
   ('weapon.vmenu.spawn',      'Spawn weapons directly via vMenu',        'weapon',  'deny'),
   ('weapon.gunstore.purchase','Purchase weapons at gun stores',          'weapon',  'deny'),
 
-  ('vehicle.bcso.patrol',     'Spawn BCSO patrol vehicles',              'vehicle', 'deny'),
-  ('vehicle.bcso.supervisor', 'Spawn BCSO supervisor vehicles',          'vehicle', 'deny'),
-  ('vehicle.bcso.command',    'Spawn BCSO command vehicles',             'vehicle', 'deny'),
+  ('vehicle.bso.patrol',     'Spawn BSO patrol vehicles',              'vehicle', 'deny'),
+  ('vehicle.bso.supervisor', 'Spawn BSO supervisor vehicles',          'vehicle', 'deny'),
+  ('vehicle.bso.command',    'Spawn BSO command vehicles',             'vehicle', 'deny'),
   ('vehicle.fhp.patrol',      'Spawn FHP patrol vehicles',               'vehicle', 'deny'),
   ('vehicle.fhp.supervisor',  'Spawn FHP supervisor vehicles',           'vehicle', 'deny'),
   ('vehicle.fhp.command',     'Spawn FHP command vehicles',              'vehicle', 'deny'),
@@ -618,7 +618,7 @@ WHERE p.`key` = 'weapon.gunstore.purchase' AND r.`key` = 'member';
 -- Department base patrol vehicles -> the department role itself.
 INSERT IGNORE INTO `role_permissions` (`role_id`, `permission_id`, `effect`)
 SELECT r.id, p.id, 'allow' FROM `roles` r JOIN `permissions` p
-WHERE (r.`key` = 'bcso' AND p.`key` = 'vehicle.bcso.patrol')
+WHERE (r.`key` = 'bso' AND p.`key` = 'vehicle.bso.patrol')
    OR (r.`key` = 'fhp'  AND p.`key` = 'vehicle.fhp.patrol')
    OR (r.`key` = 'mpd'  AND p.`key` = 'vehicle.mpd.patrol');
 
@@ -650,7 +650,7 @@ SELECT r.id, x.cents, 1 FROM `roles` r JOIN (
   SELECT 'cert_civ_1',      7500          UNION ALL
   SELECT 'cert_civ_2',      10000         UNION ALL
   SELECT 'cert_civ_3',      12500         UNION ALL
-  SELECT 'bcso',            15000         UNION ALL
+  SELECT 'bso',            15000         UNION ALL
   SELECT 'fhp',             15000         UNION ALL
   SELECT 'mpd',             15000
 ) x ON x.k = r.`key`
@@ -690,7 +690,7 @@ ON DUPLICATE KEY UPDATE `display_name` = VALUES(`display_name`),
 -- Do NOT invent Discord IDs. Once you have the real role IDs, insert like:
 --
 --   INSERT INTO discord_role_mappings (discord_role_id, role_id, note)
---   SELECT '<REAL_DISCORD_ROLE_ID>', id, 'BCSO'   FROM roles WHERE `key`='bcso';
+--   SELECT '<REAL_DISCORD_ROLE_ID>', id, 'BSO'   FROM roles WHERE `key`='bso';
 --
 -- Or drive mappings from the convars in secrets.cfg via flrp_permissions at
 -- boot (recommended). See docs/DISCORD_INTEGRATION.md.
@@ -708,7 +708,7 @@ ON DUPLICATE KEY UPDATE `version` = `version`;
 -- Populates the `vehicles` registry from the flrp-vehicles content repo
 -- (docs/ASSET_INVENTORY.md). These are the REAL spawn names extracted from the
 -- packs' vehicles.meta, not guesses:
---   BCSO: hcso1a..hcso1h   (repurposed HCSO pack; models spawn as `hcso*`)
+--   BSO: hcso1a..hcso1h   (repurposed HCSO pack; models spawn as `hcso*`)
 --   FHP : hp1a..hp1l, hp2a..hp2p
 --   MPD : none imported yet
 --
@@ -722,14 +722,14 @@ ON DUPLICATE KEY UPDATE `version` = `version`;
 INSERT INTO `vehicles`
   (`spawn_name`,`display_name`,`resource`,`department`,`category`,`required_permission`,`enabled`,`notes`)
 VALUES
-  ('hcso1a', 'BCSO Unit (hcso1a)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1b', 'BCSO Unit (hcso1b)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1c', 'BCSO Unit (hcso1c)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1d', 'BCSO Unit (hcso1d)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1e', 'BCSO Unit (hcso1e)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1f', 'BCSO Unit (hcso1f)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1g', 'BCSO Unit (hcso1g)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1h', 'BCSO Unit (hcso1h)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1a', 'BSO Unit (hcso1a)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1b', 'BSO Unit (hcso1b)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1c', 'BSO Unit (hcso1c)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1d', 'BSO Unit (hcso1d)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1e', 'BSO Unit (hcso1e)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1f', 'BSO Unit (hcso1f)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1g', 'BSO Unit (hcso1g)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1h', 'BSO Unit (hcso1h)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
   ('hp1a', 'FHP Charger (hp1a)', NULL, 'FHP', 'Patrol', 'vehicle.fhp.patrol', 1, 'Imported FHP Badger Charger livery'),
   ('hp1b', 'FHP Charger (hp1b)', NULL, 'FHP', 'Patrol', 'vehicle.fhp.patrol', 1, 'Imported FHP Badger Charger livery'),
   ('hp1c', 'FHP Charger (hp1c)', NULL, 'FHP', 'Patrol', 'vehicle.fhp.patrol', 1, 'Imported FHP Badger Charger livery'),
@@ -764,6 +764,6 @@ ON DUPLICATE KEY UPDATE `display_name`=VALUES(`display_name`),
   `enabled`=VALUES(`enabled`), `notes`=VALUES(`notes`);
 
 INSERT INTO `schema_migrations` (`version`, `description`)
-VALUES ('009', 'seed real imported BCSO/FHP vehicles')
+VALUES ('009', 'seed real imported BSO/FHP vehicles')
 ON DUPLICATE KEY UPDATE `version` = `version`;
 

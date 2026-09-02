@@ -15,9 +15,9 @@ player do X?”**. No resource does its own Discord role checks.
   - `base` — `member` (every verified community member)
   - `staff` — `moderator → administrator → director → ownership` (inheritance)
   - `certification` — `cert_civ_1`, `cert_civ_2`, `cert_civ_3`
-  - `department` — `bcso`, `fhp`, `mpd`
+  - `department` — `bso`, `fhp`, `mpd`
 - **Permissions** (`permissions` table) — dotted strings, e.g.
-  `weapon.vmenu.spawn`, `vehicle.bcso.patrol`, `staff.noclip`, `economy.manage`.
+  `weapon.vmenu.spawn`, `vehicle.bso.patrol`, `staff.noclip`, `economy.manage`.
   Each has a `default_effect` (`allow`/`deny`) used when no role decides.
 - **role_permissions** — grants/denies a permission to a role (`allow`/`deny`).
 - **discord_role_mappings** — maps a Discord role ID to an FLRP role. Also
@@ -44,9 +44,9 @@ player do X?”**. No resource does its own Discord role checks.
 
 ```lua
 if exports.flrp_permissions:HasPermission(source, 'weapon.gunstore.purchase') then ... end
-exports.flrp_permissions:HasAnyPermission(source, { 'vehicle.bcso.supervisor', 'vehicle.bcso.command' })
+exports.flrp_permissions:HasAnyPermission(source, { 'vehicle.bso.supervisor', 'vehicle.bso.command' })
 exports.flrp_permissions:IsInGroup(source, 'cert_civ_3')
-exports.flrp_permissions:GetRoles(source)                 -- { 'member', 'bcso', ... }
+exports.flrp_permissions:GetRoles(source)                 -- { 'member', 'bso', ... }
 exports.flrp_permissions:GetEffectivePermissions(source)  -- { key = bool }
 exports.flrp_permissions:GetPermissionMatrix()            -- for the FLRP Manager
 ```
@@ -57,9 +57,9 @@ exports.flrp_permissions:GetPermissionMatrix()            -- for the FLRP Manage
 (inheritance + deny-beats-allow), which is exactly what the FLRP Manager renders:
 
 ```
-                    Owner Director Admin CivIII BCSO FHP MPD
+                    Owner Director Admin CivIII BSO FHP MPD
 weapon.vmenu.spawn   YES    YES     NO    YES    NO  NO  NO
-vehicle.bcso.patrol  YES    YES      -     -    YES   -   -
+vehicle.bso.patrol  YES    YES      -     -    YES   -   -
 vehicle.fhp.patrol   YES    YES      -     -     -  YES   -
 vehicle.mpd.patrol   YES    YES      -     -     -   -  YES
 ```
@@ -71,7 +71,7 @@ This matrix is **data**, not code — editing it (via `flrp_api` →
 
 - `weapon.vmenu.spawn` → allowed for `director` (⇒ `ownership`) and
   `cert_civ_3`. Denied by default for everyone else, so `administrator`,
-  `moderator`, `bcso`, `fhp`, `mpd`, `cert_civ_1/2`, and normal civilians must
+  `moderator`, `bso`, `fhp`, `mpd`, `cert_civ_1/2`, and normal civilians must
   use gun stores. This is the authoritative weapon policy — see [WEAPONS.md](WEAPONS.md).
 - `weapon.gunstore.purchase` → `member` (everyone; still subject to per-weapon
   cert/permission checks).

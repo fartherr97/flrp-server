@@ -17,7 +17,7 @@ ships the new `dist/`.
 |------|---------|--------|
 | `configs/discord.ts` | bot token + guild id | placeholders (set via env; never commit real token) |
 | `configs/playerPerms.ts` | Discord role → FLRP group | **needs REAL Discord role IDs** (REPLACE_ME) |
-| `configs/vehiclePerms.ts` | group → vehicle spawn names | seeded with **real imported** BCSO/FHP spawns; MPD empty |
+| `configs/vehiclePerms.ts` | group → vehicle spawn names | seeded with **real imported** BSO/FHP spawns; MPD empty |
 | `configs/weaponPerms.ts` | group → weapons (vMenu spawn) | implements FLRP weapon policy |
 | `configs/queue.ts` | queue + branding | FLRP branding; invite/website REPLACE_ME |
 
@@ -29,7 +29,7 @@ pCore turns each group a player holds into an ACE principal
 exact group keys to `flrp.role.<key>`:
 
 ```
-group.ownership → ownership   certciv1 → cert_civ_1   bcso → bcso
+group.ownership → ownership   certciv1 → cert_civ_1   bso → bso
 group.director  → director    certciv2 → cert_civ_2   fhp  → fhp
 group.administrator → administrator  certciv3 → cert_civ_3   mpd → mpd
 group.moderator → moderator   group.member → member

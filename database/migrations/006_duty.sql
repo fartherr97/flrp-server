@@ -12,7 +12,7 @@
 
 CREATE TABLE IF NOT EXISTS `player_duty_state` (
   `player_id`  BIGINT UNSIGNED NOT NULL,
-  `department` VARCHAR(16)     NULL,        -- BCSO|FHP|MPD|NULL(civilian)
+  `department` VARCHAR(16)     NULL,        -- BSO|FHP|MPD|NULL(civilian)
   `on_duty`    TINYINT(1)      NOT NULL DEFAULT 0,
   `changed_at` TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP       NOT NULL DEFAULT CURRENT_TIMESTAMP

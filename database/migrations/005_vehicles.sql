@@ -12,19 +12,19 @@
 
 CREATE TABLE IF NOT EXISTS `vehicles` (
   `id`                  INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  -- GTA/FiveM spawn name (model), e.g. bcso25tahoe. Unique.
+  -- GTA/FiveM spawn name (model), e.g. bso25tahoe. Unique.
   `spawn_name`          VARCHAR(64)  NOT NULL,
-  `display_name`        VARCHAR(128) NOT NULL,       -- e.g. "2025 BCSO Tahoe"
-  -- Owning resource (populated during asset import), e.g. flrp_bcso_pack.
+  `display_name`        VARCHAR(128) NOT NULL,       -- e.g. "2025 BSO Tahoe"
+  -- Owning resource (populated during asset import), e.g. flrp_bso_pack.
   `resource`            VARCHAR(128) NULL,
-  -- Department: BCSO|FHP|MPD|NULL (civilian).
+  -- Department: BSO|FHP|MPD|NULL (civilian).
   `department`          VARCHAR(16)  NULL,
   `category`            VARCHAR(48)  NULL,           -- Patrol|Supervisor|Command|Civilian|...
   -- Minimum department rank required (rank system TBD), e.g. "Deputy".
   `min_rank`            VARCHAR(48)  NULL,
   -- Civilian certification required (roles.key), e.g. cert_civ_2.
   `certification`       VARCHAR(64)  NULL,
-  -- Primary permission required to spawn (permissions.key), e.g. vehicle.bcso.patrol.
+  -- Primary permission required to spawn (permissions.key), e.g. vehicle.bso.patrol.
   `required_permission` VARCHAR(128) NULL,
   `enabled`             TINYINT(1)   NOT NULL DEFAULT 1,
   `notes`               VARCHAR(255) NULL,

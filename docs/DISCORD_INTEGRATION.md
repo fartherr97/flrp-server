@@ -58,7 +58,7 @@ set flrp_role_moderator     "<id>"
 set flrp_role_cert_civ_1    "<id>"
 set flrp_role_cert_civ_2    "<id>"
 set flrp_role_cert_civ_3    "<id>"
-set flrp_role_bcso          "<id>"
+set flrp_role_bso          "<id>"
 set flrp_role_fhp           "<id>"
 set flrp_role_mpd           "<id>"
 ```

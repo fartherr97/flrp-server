@@ -27,7 +27,7 @@ end
 
 -- Build the role×permission matrix for the FLRP Manager UI. Resolves each
 -- role's effective permission (including inheritance + deny-beats-allow) so
--- the website can render Owner/Director/Admin/CivIII/BCSO/FHP/MPD exactly.
+-- the website can render Owner/Director/Admin/CivIII/BSO/FHP/MPD exactly.
 -- Returns { roles = {rowMeta}, permissions = {permMeta}, matrix = { [roleKey][permKey] = bool } }.
 function GetPermissionMatrix()
   local store = FLRPP.Store

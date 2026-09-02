@@ -22,7 +22,7 @@ FLRPP.Ace = {}
 local ACE_ROLE_KEYS = {
   member = true, moderator = true, administrator = true, director = true,
   ownership = true, cert_civ_1 = true, cert_civ_2 = true, cert_civ_3 = true,
-  bcso = true, fhp = true, mpd = true,
+  bso = true, fhp = true, mpd = true,
 }
 
 -- Track applied principals per license so we can cleanly remove them.

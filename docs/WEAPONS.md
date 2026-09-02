@@ -17,7 +17,7 @@ Only these groups may spawn weapons **directly through vMenu**:
 - **Director** (`director`)
 - **Ownership** (`ownership`)
 
-**Everyone else** — normal civilians, Cert Civ I/II, BCSO, FHP, MPD, Moderator,
+**Everyone else** — normal civilians, Cert Civ I/II, BSO, FHP, MPD, Moderator,
 Administrator — must **buy weapons through gun stores**, unless the same player
 also belongs to one of the three groups above.
 

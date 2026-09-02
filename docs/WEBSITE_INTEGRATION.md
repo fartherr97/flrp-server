@@ -53,10 +53,10 @@ curl -s -X POST http://HOST:30120/flrp_api/permissions/role_permission \
   -H "X-FLRP-Secret: $SECRET" -H "Content-Type: application/json" \
   -d '{"roleKey":"cert_civ_3","permissionKey":"weapon.vmenu.spawn","effect":"deny"}'
 
-# Set BCSO hourly pay to $200
+# Set BSO hourly pay to $200
 curl -s -X POST http://HOST:30120/flrp_api/economy/payrates \
   -H "X-FLRP-Secret: $SECRET" -H "Content-Type: application/json" \
-  -d '{"roleKey":"bcso","hourlyCents":20000}'
+  -d '{"roleKey":"bso","hourlyCents":20000}'
 ```
 
 ## What the Manager can control (backend ready now)
@@ -81,7 +81,7 @@ The `/permissions/matrix` response is shaped exactly for a matrix editor:
 { roles: [...], permissions: [...], matrix: { [roleKey]: { [permKey]: bool } } }
 ```
 
-The Manager renders Owner/Director/Admin/CivIII/BCSO/FHP/MPD columns from this
+The Manager renders Owner/Director/Admin/CivIII/BSO/FHP/MPD columns from this
 and POSTs changes to `/permissions/role_permission`. No Lua changes needed.
 
 ### Future economy UI
@@ -92,8 +92,8 @@ availability. All values are DB-backed and hot-reloaded.
 
 ### Future vehicle UI
 
-`/vehicles` upsert backs a form like *"2025 BCSO Tahoe → spawn `bcso25tahoe`,
-department BCSO, category Patrol, required permission `vehicle.bcso.patrol`,
+`/vehicles` upsert backs a form like *"2025 BSO Tahoe → spawn `bso25tahoe`,
+department BSO, category Patrol, required permission `vehicle.bso.patrol`,
 min rank Deputy, enabled"*. No invented fleet — populated from imported assets.
 
 ## Security

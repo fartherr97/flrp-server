@@ -2,7 +2,7 @@
 
 The authoritative FLRP law-enforcement departments are:
 
-- **BCSO** — Bay County Sheriff's Office
+- **BSO** — Bay County Sheriff's Office
 - **FHP** — Florida Highway Patrol
 - **MPD** — Municipal Police Department
 
@@ -10,9 +10,9 @@ The authoritative FLRP law-enforcement departments are:
 
 ## How departments are modeled
 
-A department is a **role** (`roles.key` = `bcso` / `fhp` / `mpd`, `kind =
+A department is a **role** (`roles.key` = `bso` / `fhp` / `mpd`, `kind =
 department`). Membership comes from the corresponding Discord role
-(`flrp_role_bcso` / `flrp_role_fhp` / `flrp_role_mpd`, or a DB mapping). Holding
+(`flrp_role_bso` / `flrp_role_fhp` / `flrp_role_mpd`, or a DB mapping). Holding
 the role means the player *may* work that department; it does not by itself put
 them on duty.
 
@@ -24,13 +24,13 @@ actually holds that department's role (verified via `flrp_permissions`). A
 client cannot spoof itself onto a department.
 
 ```lua
-exports.flrp_duty:GetDuty(source)            -- { department = 'BCSO'|nil, onDuty = bool }
+exports.flrp_duty:GetDuty(source)            -- { department = 'BSO'|nil, onDuty = bool }
 exports.flrp_duty:IsOnDuty(source, 'FHP')    -- bool
 exports.flrp_duty:SetDuty(source, 'MPD', true)   -- validated; ok, err
 exports.flrp_duty:GoOffDuty(source)
 ```
 
-In-game: `/duty <bcso|fhp|mpd>` to go on duty for a department you belong to, and
+In-game: `/duty <bso|fhp|mpd>` to go on duty for a department you belong to, and
 `/duty off` (or `/duty civ`) to go civilian. There is also a validated net event
 `flrp_duty:request(department, onDuty)` for a future NUI. State is persisted
 (`player_duty_state`) and every transition is logged (`player_duty_log`) and
@@ -54,7 +54,7 @@ department rate when on duty, otherwise the best civilian/cert rate. See
 
 ## Department resources
 
-`[departments]/[bcso]`, `[fhp]`, `[mpd]` hold department-specific glue
+`[departments]/[bso]`, `[fhp]`, `[mpd]` hold department-specific glue
 (loadouts, vehicle registration hooks, blips/zones). They are minimal for now —
 most behavior is centralized in the `[flrp]` services. Add a `fxmanifest.lua` +
 `ensure flrp_<dept>` only when a department needs its own runtime code.

@@ -52,7 +52,7 @@ Per FLRP role, in the `pay_rates` table (cents/hour). Seeded defaults
 | Certified Civ I | 75 |
 | Certified Civ II | 100 |
 | Certified Civ III | 125 |
-| BCSO / FHP / MPD | 150 (only while on that duty) |
+| BSO / FHP / MPD | 150 (only while on that duty) |
 
 Convar fallbacks in `config/economy.cfg` (`flrp_pay_hourly_*`, in **dollars**)
 are used only if a role has no `pay_rates` row.
@@ -73,7 +73,7 @@ are idempotent per pay-cycle bucket.
 
 ## Which rate applies (server-authoritative)
 
-1. If the player is **on duty** in BCSO/FHP/MPD (verified by `flrp_duty`, which
+1. If the player is **on duty** in BSO/FHP/MPD (verified by `flrp_duty`, which
    itself verifies they hold the department role), the **department** rate
    applies.
 2. Otherwise the **best civilian/certification** rate among the roles they hold

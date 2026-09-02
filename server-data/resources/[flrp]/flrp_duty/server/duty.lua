@@ -17,7 +17,7 @@ FLRPD.entityMap = nil
 function FLRPD.BuildEntityMap()
   local map = {}
   for entity, dept in pairs(FLRPD.Config.DefaultEntityMap) do
-    -- convar override, e.g. flrp_duty_entity_bcso
+    -- convar override, e.g. flrp_duty_entity_bso
     local convar = ('flrp_duty_entity_%s'):format(string.lower(dept))
     local override = GetConvar(convar, '')
     local id = (override ~= '' and override) or entity

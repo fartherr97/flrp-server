@@ -14,7 +14,7 @@ more assets land. See [ASSET_IMPORT.md](ASSET_IMPORT.md) for the process.
 | Repo | State | Highlights |
 |------|-------|-----------|
 | `flrp-scripts` | **populated** | 12 escrowed resources incl. **pCore** (the core) |
-| `flrp-vehicles` | **populated** | BCSO + FHP packs (Git LFS); **no MPD yet** |
+| `flrp-vehicles` | **populated** | BSO + FHP packs (Git LFS); **no MPD yet** |
 | `flrp-maps` | **populated** | 14 maps/MLOs (Git LFS) |
 | `flrp-departments` | empty (README only) | — |
 | `flrp-eup` | empty (README only) | — |
@@ -66,13 +66,13 @@ Git LFS. Layout is by department:
 
 | Dept | Resource(s) | Spawn names |
 |------|-------------|-------------|
-| **BCSO** | `HCSO21-24PPVSUVs` | `hcso1a`–`hcso1h` (8) |
+| **BSO** | `HCSO21-24PPVSUVs` | `hcso1a`–`hcso1h` (8) |
 | **FHP** | Badger Chargers (Full / Slick-Top+Subdued / Unmarked), Pursuit SUVs (Full / K9 / Slicktop+Subdued) | `hp1a`–`hp1l` (12), `hp2a`–`hp2p` (16) |
 | **MPD** | — | none yet |
 
-> Note: BCSO spawn names still carry the **`hcso`** prefix (a repurposed HCSO
+> Note: BSO spawn names still carry the **`hcso`** prefix (a repurposed HCSO
 > pack). Keep the spawn names as-is (renaming a model means re-streaming), but
-> register them under **BCSO** in the FLRP vehicle registry. MPD has no vehicles
+> register them under **BSO** in the FLRP vehicle registry. MPD has no vehicles
 > yet.
 
 These 44 spawn names seed the FLRP vehicle registry (migration

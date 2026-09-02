@@ -23,7 +23,7 @@ custom services we actually want:
 - Discord-role-driven permissions
 - Vehicle permissions
 - Active playtime tracking (anti-AFK)
-- Department duty states (BCSO / FHP / MPD)
+- Department duty states (BSO / FHP / MPD)
 - Website-controlled permissions (later, via the existing FLRP Manager)
 
 Everything above is built as **custom FLRP resources** (`flrp_*`) rather than by
@@ -33,7 +33,7 @@ installing a large roleplay framework.
 
 The authoritative departments are:
 
-- **BCSO**
+- **BSO**
 - **FHP**
 - **MPD**
 
@@ -66,7 +66,7 @@ server-data/
       flrp_gunstores/        # gun store purchase flow + NUI
       flrp_vehicles/         # vehicle registry + vehicle permissions
       flrp_api/              # HTTP contract for the FLRP Manager website
-    [departments]/[bcso] [fhp] [mpd]
+    [departments]/[bso] [fhp] [mpd]
     [vehicles]/ [maps]/ [eup]/ [standalone]/   # asset drop zones (later)
 
 database/
@@ -113,7 +113,7 @@ integration ever needs it. Rationale is in `docs/ARCHITECTURE.md`.
 | [ECONOMY.md](docs/ECONOMY.md) | Money, pay rates, intervals, anti-AFK |
 | [WEAPONS.md](docs/WEAPONS.md) | Weapon registry, vMenu-spawn policy |
 | [VEHICLES.md](docs/VEHICLES.md) | Vehicle registry + permissions |
-| [DEPARTMENTS.md](docs/DEPARTMENTS.md) | BCSO / FHP / MPD structure |
+| [DEPARTMENTS.md](docs/DEPARTMENTS.md) | BSO / FHP / MPD structure |
 | [DATABASE.md](docs/DATABASE.md) | Schema, migrations, race-condition safety |
 | [SECURITY.md](docs/SECURITY.md) | Threat model, server-side validation rules |
 | [WEBSITE_INTEGRATION.md](docs/WEBSITE_INTEGRATION.md) | FLRP Manager API contract |

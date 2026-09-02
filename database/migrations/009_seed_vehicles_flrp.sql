@@ -4,7 +4,7 @@
 -- Populates the `vehicles` registry from the flrp-vehicles content repo
 -- (docs/ASSET_INVENTORY.md). These are the REAL spawn names extracted from the
 -- packs' vehicles.meta, not guesses:
---   BCSO: hcso1a..hcso1h   (repurposed HCSO pack; models spawn as `hcso*`)
+--   BSO: hcso1a..hcso1h   (repurposed HCSO pack; models spawn as `hcso*`)
 --   FHP : hp1a..hp1l, hp2a..hp2p
 --   MPD : none imported yet
 --
@@ -18,14 +18,14 @@
 INSERT INTO `vehicles`
   (`spawn_name`,`display_name`,`resource`,`department`,`category`,`required_permission`,`enabled`,`notes`)
 VALUES
-  ('hcso1a', 'BCSO Unit (hcso1a)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1b', 'BCSO Unit (hcso1b)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1c', 'BCSO Unit (hcso1c)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1d', 'BCSO Unit (hcso1d)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1e', 'BCSO Unit (hcso1e)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1f', 'BCSO Unit (hcso1f)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1g', 'BCSO Unit (hcso1g)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
-  ('hcso1h', 'BCSO Unit (hcso1h)', 'HCSO21-24PPVSUVs', 'BCSO', 'Patrol', 'vehicle.bcso.patrol', 1, 'Imported BCSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1a', 'BSO Unit (hcso1a)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1b', 'BSO Unit (hcso1b)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1c', 'BSO Unit (hcso1c)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1d', 'BSO Unit (hcso1d)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1e', 'BSO Unit (hcso1e)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1f', 'BSO Unit (hcso1f)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1g', 'BSO Unit (hcso1g)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
+  ('hcso1h', 'BSO Unit (hcso1h)', 'HCSO21-24PPVSUVs', 'BSO', 'Patrol', 'vehicle.bso.patrol', 1, 'Imported BSO PPV SUV livery; spawn name retains hcso prefix'),
   ('hp1a', 'FHP Charger (hp1a)', NULL, 'FHP', 'Patrol', 'vehicle.fhp.patrol', 1, 'Imported FHP Badger Charger livery'),
   ('hp1b', 'FHP Charger (hp1b)', NULL, 'FHP', 'Patrol', 'vehicle.fhp.patrol', 1, 'Imported FHP Badger Charger livery'),
   ('hp1c', 'FHP Charger (hp1c)', NULL, 'FHP', 'Patrol', 'vehicle.fhp.patrol', 1, 'Imported FHP Badger Charger livery'),
@@ -60,5 +60,5 @@ ON DUPLICATE KEY UPDATE `display_name`=VALUES(`display_name`),
   `enabled`=VALUES(`enabled`), `notes`=VALUES(`notes`);
 
 INSERT INTO `schema_migrations` (`version`, `description`)
-VALUES ('009', 'seed real imported BCSO/FHP vehicles')
+VALUES ('009', 'seed real imported BSO/FHP vehicles')
 ON DUPLICATE KEY UPDATE `version` = `version`;

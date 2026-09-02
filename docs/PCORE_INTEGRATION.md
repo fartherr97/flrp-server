@@ -52,13 +52,13 @@ add_ace group.member         flrp.role.member         allow
 add_ace certciv1             flrp.role.cert_civ_1     allow
 add_ace certciv2             flrp.role.cert_civ_2     allow
 add_ace certciv3             flrp.role.cert_civ_3     allow
-add_ace bcso                 flrp.role.bcso           allow
+add_ace bso                 flrp.role.bso           allow
 add_ace fhp                  flrp.role.fhp            allow
 add_ace mpd                  flrp.role.mpd            allow
 ```
 
-Because a player is a child of (say) `bcso`, `IsPlayerAceAllowed(src,
-'flrp.role.bcso')` returns true. `flrp_permissions` builds the player's FLRP
+Because a player is a child of (say) `bso`, `IsPlayerAceAllowed(src,
+'flrp.role.bso')` returns true. `flrp_permissions` builds the player's FLRP
 role set from these checks, then resolves effective permissions against the DB
 `role_permissions` matrix exactly as before. So:
 
@@ -71,7 +71,7 @@ This keeps the website-controlled permission matrix (`GetPermissionMatrix`,
 `flrp_api`) working while pCore drives who is in which group.
 
 > The bridge depends on pCore's group names. After the pCore rebrand (below),
-> its groups are FLRP-aligned (`group.ownership`, `certciv3`, `bcso`, …). If a
+> its groups are FLRP-aligned (`group.ownership`, `certciv3`, `bso`, …). If a
 > group name changes, update the `add_ace` lines and the bridge map in
 > `flrp_permissions/server/pcore.lua` together.
 
@@ -102,7 +102,7 @@ owned weapons independent of vMenu). See [WEAPONS.md](WEAPONS.md).
 
 ## The pCore rebrand (proposed — `integration/pcore/`)
 
-pCore ships with SSRP config. FLRP needs BCSO/FHP/MPD, FLRP Discord IDs, the
+pCore ships with SSRP config. FLRP needs BSO/FHP/MPD, FLRP Discord IDs, the
 FLRP fleet, and FLRP branding. Because pCore is escrow-protected and owned by a
 third party, the FLRP configs are provided as a **proposed replacement set**
 under `integration/pcore/` for the pCore owner to review and build (`npm run

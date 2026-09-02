@@ -11,13 +11,13 @@
 --
 -- Discord membership decides which roles a player holds at runtime;
 -- role_permissions decides what those roles may do. This exactly supports the
--- Owner/Director/Admin/CivIII/BCSO/FHP/MPD permission matrix in the FLRP
+-- Owner/Director/Admin/CivIII/BSO/FHP/MPD permission matrix in the FLRP
 -- Manager WITHOUT editing Lua. See docs/PERMISSIONS.md.
 -- ==========================================================================
 
 CREATE TABLE IF NOT EXISTS `roles` (
   `id`               INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `key`              VARCHAR(64)  NOT NULL,   -- stable handle: ownership, bcso, cert_civ_3
+  `key`              VARCHAR(64)  NOT NULL,   -- stable handle: ownership, bso, cert_civ_3
   `name`             VARCHAR(128) NOT NULL,   -- display name
   -- kind groups roles for UI + logic: base|staff|department|certification
   `kind`             VARCHAR(24)  NOT NULL DEFAULT 'base',
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `roles` (
 
 CREATE TABLE IF NOT EXISTS `permissions` (
   `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `key`            VARCHAR(128) NOT NULL,   -- e.g. weapon.vmenu.spawn, vehicle.bcso.patrol
+  `key`            VARCHAR(128) NOT NULL,   -- e.g. weapon.vmenu.spawn, vehicle.bso.patrol
   `description`    VARCHAR(255) NULL,
   `category`       VARCHAR(48)  NOT NULL DEFAULT 'general', -- weapon|vehicle|economy|staff|...
   -- default_effect applies when NO role grants/denies it to the player.

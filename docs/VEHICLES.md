@@ -12,7 +12,7 @@ registry is intentionally **empty of real vehicles** and ready for import.
 Conceptual permission strings (seeded in migration 008):
 
 ```
-vehicle.bcso.patrol   vehicle.bcso.supervisor   vehicle.bcso.command
+vehicle.bso.patrol   vehicle.bso.supervisor   vehicle.bso.command
 vehicle.fhp.patrol    vehicle.fhp.supervisor    vehicle.fhp.command
 vehicle.mpd.patrol    vehicle.mpd.supervisor    vehicle.mpd.command
 vehicle.civilian.cert1  vehicle.civilian.cert2  vehicle.civilian.cert3
@@ -28,10 +28,10 @@ department rank system.
 
 | Field | Meaning |
 |-------|---------|
-| `spawn_name` | GTA/FiveM model name (e.g. `bcso25tahoe`) — unique |
-| `display_name` | e.g. "2025 BCSO Tahoe" |
+| `spawn_name` | GTA/FiveM model name (e.g. `bso25tahoe`) — unique |
+| `display_name` | e.g. "2025 BSO Tahoe" |
 | `resource` | owning resource (set at import) |
-| `department` | BCSO / FHP / MPD / NULL(civilian) |
+| `department` | BSO / FHP / MPD / NULL(civilian) |
 | `category` | Patrol / Supervisor / Command / Civilian / … |
 | `min_rank` | minimum department rank (rank system TBD) |
 | `certification` | civilian certification required (`roles.key`) |
@@ -45,11 +45,11 @@ permissions (e.g. supervisor OR command) beyond the primary one.
 Example row (illustrative — not seeded):
 
 ```
-display_name: 2025 BCSO Tahoe
-spawn_name:   bcso25tahoe
-department:   BCSO
+display_name: 2025 BSO Tahoe
+spawn_name:   bso25tahoe
+department:   BSO
 category:     Patrol
-required_permission: vehicle.bcso.patrol
+required_permission: vehicle.bso.patrol
 min_rank:     Deputy
 enabled:      yes
 ```
@@ -86,7 +86,7 @@ exports.flrp_vehicles:ReloadRegistry()
 
 ## Importing vehicles later
 
-When BCSO/FHP/MPD vehicle packs arrive:
+When BSO/FHP/MPD vehicle packs arrive:
 
 1. Place the resource in `[vehicles]`, `ensure` it in `config/resources.cfg`.
 2. Use `tools/inventory_assets.mjs` to extract spawn names from `vehicles.meta`.

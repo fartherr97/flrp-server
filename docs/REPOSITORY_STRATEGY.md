@@ -23,7 +23,7 @@ single repo (access is repository-level, never folder-level).
 | **flrp-vehicles** | vehicle resource packs | `[vehicles]/[flrp-vehicles]/` | vehicle team |
 | **flrp-eup** | EUP / uniforms | `[eup]/[flrp-eup]/` | uniform team |
 | **flrp-maps** | maps / MLOs | `[maps]/[flrp-maps]/` | mapping team |
-| **flrp-bcso / flrp-fhp / flrp-mpd** | department glue | `[departments]/[flrp-bcso]/` … | department leads |
+| **flrp-bso / flrp-fhp / flrp-mpd** | department glue | `[departments]/[flrp-bso]/` … | department leads |
 | **flrp-standalone** | misc standalone resources | `[standalone]/[flrp-standalone]/` | as needed |
 
 Split departments into three repos or keep one `flrp-departments` — your call;

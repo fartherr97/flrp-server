@@ -82,7 +82,7 @@ availability, cert, and permissions; remove the `[DEV]` seed rows. See
 ### 15. Update documentation + BUILD_STATUS
 
 Record what was imported and flip the relevant rows in
-[BUILD_STATUS.md](BUILD_STATUS.md) (e.g. *BCSO Vehicle Import → COMPLETE*).
+[BUILD_STATUS.md](BUILD_STATUS.md) (e.g. *BSO Vehicle Import → COMPLETE*).
 
 ## Handoff format
 

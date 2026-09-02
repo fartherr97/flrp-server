@@ -8,7 +8,7 @@
 -- WHAT IS SEEDED:
 --   * roles (base / staff / certification / department)
 --   * permission strings (weapon / vehicle / staff / economy)
---   * role_permissions matrix (Owner/Director/Admin/CivIII/BCSO/FHP/MPD)
+--   * role_permissions matrix (Owner/Director/Admin/CivIII/BSO/FHP/MPD)
 --   * pay_rates (DEV DEFAULTS — subject to change)
 --   * configuration defaults
 --   * clearly-labelled DEV/TEST weapon entries (remove before production)
@@ -31,7 +31,7 @@ INSERT INTO `roles` (`key`, `name`, `kind`, `priority`, `is_department`) VALUES
   ('cert_civ_1',    'Certified Civilian I',    'certification', 5,  0),
   ('cert_civ_2',    'Certified Civilian II',   'certification', 6,  0),
   ('cert_civ_3',    'Certified Civilian III',  'certification', 7,  0),
-  ('bcso',          'BCSO',                    'department',    15, 1),
+  ('bso',          'BSO',                    'department',    15, 1),
   ('fhp',           'FHP',                     'department',    15, 1),
   ('mpd',           'MPD',                     'department',    15, 1)
 ON DUPLICATE KEY UPDATE `name` = VALUES(`name`), `kind` = VALUES(`kind`),
@@ -58,9 +58,9 @@ INSERT INTO `permissions` (`key`, `description`, `category`, `default_effect`) V
   ('weapon.vmenu.spawn',      'Spawn weapons directly via vMenu',        'weapon',  'deny'),
   ('weapon.gunstore.purchase','Purchase weapons at gun stores',          'weapon',  'deny'),
 
-  ('vehicle.bcso.patrol',     'Spawn BCSO patrol vehicles',              'vehicle', 'deny'),
-  ('vehicle.bcso.supervisor', 'Spawn BCSO supervisor vehicles',          'vehicle', 'deny'),
-  ('vehicle.bcso.command',    'Spawn BCSO command vehicles',             'vehicle', 'deny'),
+  ('vehicle.bso.patrol',     'Spawn BSO patrol vehicles',              'vehicle', 'deny'),
+  ('vehicle.bso.supervisor', 'Spawn BSO supervisor vehicles',          'vehicle', 'deny'),
+  ('vehicle.bso.command',    'Spawn BSO command vehicles',             'vehicle', 'deny'),
   ('vehicle.fhp.patrol',      'Spawn FHP patrol vehicles',               'vehicle', 'deny'),
   ('vehicle.fhp.supervisor',  'Spawn FHP supervisor vehicles',           'vehicle', 'deny'),
   ('vehicle.fhp.command',     'Spawn FHP command vehicles',              'vehicle', 'deny'),
@@ -109,7 +109,7 @@ WHERE p.`key` = 'weapon.gunstore.purchase' AND r.`key` = 'member';
 -- Department base patrol vehicles -> the department role itself.
 INSERT IGNORE INTO `role_permissions` (`role_id`, `permission_id`, `effect`)
 SELECT r.id, p.id, 'allow' FROM `roles` r JOIN `permissions` p
-WHERE (r.`key` = 'bcso' AND p.`key` = 'vehicle.bcso.patrol')
+WHERE (r.`key` = 'bso' AND p.`key` = 'vehicle.bso.patrol')
    OR (r.`key` = 'fhp'  AND p.`key` = 'vehicle.fhp.patrol')
    OR (r.`key` = 'mpd'  AND p.`key` = 'vehicle.mpd.patrol');
 
@@ -141,7 +141,7 @@ SELECT r.id, x.cents, 1 FROM `roles` r JOIN (
   SELECT 'cert_civ_1',      7500          UNION ALL
   SELECT 'cert_civ_2',      10000         UNION ALL
   SELECT 'cert_civ_3',      12500         UNION ALL
-  SELECT 'bcso',            15000         UNION ALL
+  SELECT 'bso',            15000         UNION ALL
   SELECT 'fhp',             15000         UNION ALL
   SELECT 'mpd',             15000
 ) x ON x.k = r.`key`
@@ -181,7 +181,7 @@ ON DUPLICATE KEY UPDATE `display_name` = VALUES(`display_name`),
 -- Do NOT invent Discord IDs. Once you have the real role IDs, insert like:
 --
 --   INSERT INTO discord_role_mappings (discord_role_id, role_id, note)
---   SELECT '<REAL_DISCORD_ROLE_ID>', id, 'BCSO'   FROM roles WHERE `key`='bcso';
+--   SELECT '<REAL_DISCORD_ROLE_ID>', id, 'BSO'   FROM roles WHERE `key`='bso';
 --
 -- Or drive mappings from the convars in secrets.cfg via flrp_permissions at
 -- boot (recommended). See docs/DISCORD_INTEGRATION.md.

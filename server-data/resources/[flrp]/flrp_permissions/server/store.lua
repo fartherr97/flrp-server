@@ -46,7 +46,7 @@ local CONVAR_ROLE_MAP = {
   flrp_role_cert_civ_1       = 'cert_civ_1',
   flrp_role_cert_civ_2       = 'cert_civ_2',
   flrp_role_cert_civ_3       = 'cert_civ_3',
-  flrp_role_bcso             = 'bcso',
+  flrp_role_bso             = 'bso',
   flrp_role_fhp              = 'fhp',
   flrp_role_mpd              = 'mpd',
 }

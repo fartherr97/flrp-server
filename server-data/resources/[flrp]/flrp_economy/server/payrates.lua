@@ -15,7 +15,7 @@ local CONVAR_FALLBACK = {
   cert_civ_1 = 'flrp_pay_hourly_cert_civ_1',
   cert_civ_2 = 'flrp_pay_hourly_cert_civ_2',
   cert_civ_3 = 'flrp_pay_hourly_cert_civ_3',
-  bcso       = 'flrp_pay_hourly_bcso',
+  bso       = 'flrp_pay_hourly_bso',
   fhp        = 'flrp_pay_hourly_fhp',
   mpd        = 'flrp_pay_hourly_mpd',
 }
