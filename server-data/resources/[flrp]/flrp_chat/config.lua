@@ -30,9 +30,10 @@ FLRP_CHAT.NameColors = {
 -- The /sc /ac /dc channels: which ACE may use/see each, its on-screen label,
 -- and the tag/name color (defaults to the matching tier color above).
 FLRP_CHAT.Channels = {
-  sc = { ace = 'flrp.staff.moderate',   label = 'STAFF CHAT',    color = FLRP_CHAT.NameColors.staff },
-  ac = { ace = 'flrp.staff.administer', label = 'ADMIN CHAT',    color = FLRP_CHAT.NameColors.admin },
-  dc = { ace = 'flrp.staff.direct',     label = 'DIRECTOR CHAT', color = FLRP_CHAT.NameColors.director },
+  sc  = { ace = 'flrp.staff.moderate',   label = 'STAFF CHAT',    color = FLRP_CHAT.NameColors.staff },
+  ac  = { ace = 'flrp.staff.administer', label = 'ADMIN CHAT',    color = FLRP_CHAT.NameColors.admin },
+  dc  = { ace = 'flrp.staff.direct',     label = 'DIRECTOR CHAT', color = FLRP_CHAT.NameColors.director },
+  leo = { ace = 'flrp.leo',              label = 'LEO CHAT',      color = hex('#f1c40f') }, -- gold; all LE (BSO/FHP/MPD)
 }
 
 -- Highest tier first — first ACE the player holds wins their name color.
