@@ -105,3 +105,16 @@ yarn-error.log
 package-lock.json.bak
 dist/
 build/
+
+# --------------------------------------------------------------------------
+# Content drop-zones — populated on the HOST by separate content repos
+# (deploy/sync-content.sh clones flrp-scripts/vehicles/maps/etc. into these).
+# Ignore their contents so the host's cloned repos never conflict with this
+# repo's git — autodeploy's `git reset --hard` leaves untracked/ignored alone.
+# Brackets are escaped because they are glob character-classes in gitignore.
+# --------------------------------------------------------------------------
+/server-data/resources/\[scripts\]/
+/server-data/resources/\[vehicles\]/
+/server-data/resources/\[maps\]/
+/server-data/resources/\[departments\]/
+/server-data/resources/\[eup\]/

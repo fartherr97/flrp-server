@@ -2,46 +2,61 @@
 # ==========================================================================
 # FLRP :: deploy/autodeploy.sh — poll-based VPS auto-deploy
 # ==========================================================================
-# Runs on the VPS from cron every couple of minutes. Checks the tracked branch
-# on origin; if there is a new commit, it hard-resets the working tree to match
-# origin (the repo is the source of truth), pulls LFS content, and restarts the
-# FXServer so the change goes live. No inbound webhook / open port required.
+# Runs on the VPS from cron every couple of minutes. Two jobs:
+#   1. flrp-server code: if the tracked branch advanced on origin, hard-reset
+#      the working tree to match (the repo is the source of truth) + LFS pull.
+#   2. content repos: clone/pull flrp-scripts/vehicles/maps/etc. into the
+#      gitignored resources drop-zones (deploy/sync-content.sh).
+# Restart the FXServer only if either produced a change. No inbound webhook or
+# open port required.
 #
-# Untracked files (config/secrets.cfg, resources/[core]/vMenu,
-# resources/[deps]/oxmysql, cloned content repos) are NOT touched by the reset.
+# Untracked host files (config/secrets.cfg, resources/[core]/vMenu,
+# resources/[deps]/oxmysql, and the cloned content drop-zones) are never touched
+# by the reset.
 #
 # One-time setup on the VPS (see docs/VPS_SETUP.md "Phase 7"):
 #   chmod +x /opt/fivem/flrp-server/deploy/autodeploy.sh
+#   chmod +x /opt/fivem/flrp-server/deploy/sync-content.sh
 #   echo "ubuntu ALL=(ALL) NOPASSWD: /usr/bin/systemctl restart fivem" \
 #     | sudo tee /etc/sudoers.d/flrp-deploy
 #   (crontab -l 2>/dev/null; echo "*/2 * * * * /opt/fivem/flrp-server/deploy/autodeploy.sh >> /opt/fivem/autodeploy.log 2>&1") | crontab -
 # ==========================================================================
-set -euo pipefail
+set -uo pipefail
 
 REPO="${FLRP_REPO:-/opt/fivem/flrp-server}"
 BRANCH="${FLRP_BRANCH:-claude/flrp-server-foundation-5aywrh}"
 RESTART_CMD="${FLRP_RESTART_CMD:-sudo /usr/bin/systemctl restart fivem}"
 
-cd "$REPO"
+cd "$REPO" || exit 1
 
-# Fetch just the tracked branch; quiet on no-op so the cron log stays clean.
-git fetch origin "$BRANCH" --quiet
+changed=0
 
-LOCAL="$(git rev-parse HEAD)"
-REMOTE="$(git rev-parse "origin/$BRANCH")"
+# 1. flrp-server code -------------------------------------------------------
+if git fetch origin "$BRANCH" --quiet 2>/dev/null; then
+  LOCAL="$(git rev-parse HEAD)"
+  REMOTE="$(git rev-parse "origin/$BRANCH")"
+  if [ "$LOCAL" != "$REMOTE" ]; then
+    echo "$(date -u '+%F %T')Z deploy: flrp-server ${LOCAL:0:8} -> ${REMOTE:0:8}"
+    git reset --hard "origin/$BRANCH" --quiet
+    git lfs pull >/dev/null 2>&1 || true
+    changed=1
+  fi
+else
+  echo "$(date -u '+%F %T')Z deploy: fetch failed (network?), skipping this run"
+  exit 0
+fi
 
-# Up to date -> nothing to do (exit silently so cron doesn't spam the log).
-[ "$LOCAL" = "$REMOTE" ] && exit 0
+# 2. content repos ----------------------------------------------------------
+if [ -x "$REPO/deploy/sync-content.sh" ]; then
+  sc_out="$(FLRP_RESOURCES="$REPO/server-data/resources" "$REPO/deploy/sync-content.sh" 2>&1 || true)"
+  if [ -n "$sc_out" ]; then
+    echo "$sc_out"
+    if printf '%s\n' "$sc_out" | grep -q "content-changed"; then changed=1; fi
+  fi
+fi
 
-echo "$(date -u '+%Y-%m-%d %H:%M:%SZ') deploy: ${LOCAL:0:8} -> ${REMOTE:0:8}"
-
-# Repo is the source of truth: match origin exactly. Only tracked files change;
-# untracked host files (secrets, vMenu, oxmysql, content) are left alone.
-git reset --hard "origin/$BRANCH" --quiet
-git lfs pull >/dev/null 2>&1 || true
-
-# Bring the change live. (Full restart for now; players are briefly dropped.
-# Refine to per-resource hot-reload once there is a live playerbase.)
-$RESTART_CMD
-
-echo "$(date -u '+%Y-%m-%d %H:%M:%SZ') deploy: restarted, now at ${REMOTE:0:8}"
+# 3. restart only if something changed --------------------------------------
+if [ "$changed" -eq 1 ]; then
+  $RESTART_CMD
+  echo "$(date -u '+%F %T')Z deploy: restarted"
+fi
