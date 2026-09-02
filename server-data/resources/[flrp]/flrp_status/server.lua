@@ -7,7 +7,7 @@
 -- server natives.
 -- ==========================================================================
 
-local WEBHOOK, JOIN_URL = '', ''
+local WEBHOOK, JOIN_URL, THUMB = '', '', ''
 local msgId = nil
 local debugged = false
 local unitsDumped = false
@@ -15,6 +15,7 @@ local unitsDumped = false
 local function refreshConvars()
   WEBHOOK  = GetConvar(FLRP_STATUS.WebhookConvar, '')
   JOIN_URL = GetConvar(FLRP_STATUS.JoinUrlConvar, '')
+  THUMB    = GetConvar(FLRP_STATUS.LogoConvar, FLRP_STATUS.Thumbnail or '')
 end
 
 -- "https://discord.com/api/webhooks/{id}/{token}" (query stripped), or nil.
@@ -111,30 +112,32 @@ local function formatAop()
   return 'Statewide'
 end
 
--- getPriority() -> array of { area = 'bc', state = 'available', indefinite = false, ... }
-local function prettyState(p)
-  local state = tostring(p.state or 'available'):lower()
-  if state == 'available' or state == 'none' or state == '' then
-    return '🟢 Available'
-  end
-  local label = state:gsub('^%l', string.upper)  -- capitalise first letter
-  if p.indefinite then label = label .. ' (indefinite)' end
-  return '🔴 ' .. label
+-- Map a nex-hud priority `state` string to Available / In-Progress / On Cooldown.
+local function stateLabel(state)
+  state = tostring(state or 'available'):lower()
+  local mapped = FLRP_STATUS.PriorityStateLabels[state]
+  if mapped then return mapped end
+  if state == '' or state == 'none' then return 'Available' end
+  if state:find('cool') then return 'On Cooldown' end
+  return 'In-Progress'
 end
 
+-- getPriority() -> array of { area = 'bc', state = 'available', indefinite = false, ... }.
+-- Show only the configured zones (Broward County + Miami), in config order.
 local function formatPriority()
   local pr = safeCall(function() return exports['nex-hud']:getPriority() end)
-  if type(pr) == 'table' and #pr > 0 then
-    local lines = {}
+  local byArea = {}
+  if type(pr) == 'table' then
     for _, p in ipairs(pr) do
-      if type(p) == 'table' then
-        lines[#lines + 1] = ('**%s** — %s'):format(areaName(p.area), prettyState(p))
-      end
+      if type(p) == 'table' and p.area then byArea[tostring(p.area):lower()] = p end
     end
-    if #lines > 0 then return table.concat(lines, '\n') end
   end
-  if type(pr) == 'string' and pr ~= '' then return pr end
-  return '🟢 Available'
+  local lines = {}
+  for _, z in ipairs(FLRP_STATUS.PriorityZones) do
+    local p = byArea[z.code]
+    lines[#lines + 1] = ('**%s** — %s'):format(z.label, stateLabel(p and p.state))
+  end
+  return table.concat(lines, '\n')
 end
 
 -- ---- embed ---------------------------------------------------------------
@@ -172,7 +175,7 @@ local function buildEmbed()
     title       = 'Server Information',
     description  = ('**%d** players online  •  **%d** total personnel on duty'):format(nPlayers, grandTotal),
     color       = FLRP_STATUS.Color,
-    thumbnail   = (FLRP_STATUS.Thumbnail ~= '') and { url = FLRP_STATUS.Thumbnail } or nil,
+    thumbnail   = (THUMB ~= '') and { url = THUMB } or nil,
     fields      = fields,
     footer      = { text = ('%s • auto-updates every %ds'):format(FLRP_STATUS.ServerName, FLRP_STATUS.UpdateSeconds) },
     timestamp   = os.date('!%Y-%m-%dT%H:%M:%SZ'),

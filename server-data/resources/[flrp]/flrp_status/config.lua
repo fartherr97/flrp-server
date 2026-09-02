@@ -18,7 +18,12 @@ FLRP_STATUS.ServerName     = 'Florida Roleplay'
 FLRP_STATUS.Username       = 'FLRP Status'
 FLRP_STATUS.JoinLabel      = 'Click Here'
 FLRP_STATUS.Color          = 0x2ecc71     -- online = green
-FLRP_STATUS.Thumbnail      = 'https://www.flrp.us/images/0cf4f7264d435b3b.png' -- logo
+-- Embed thumbnail (top-right). Leave '' for none — the webhook's own avatar
+-- already shows the FLRP logo next to the name. Set to a direct FLRP-logo image
+-- URL (or the convar `flrp_status_logo` in secrets/server.cfg) to also show it
+-- on the right of the embed. Do NOT point this at the wide banner.
+FLRP_STATUS.LogoConvar     = 'flrp_status_logo'
+FLRP_STATUS.Thumbnail      = ''
 
 -- Which ACE marks a "staff" member (for Staff In-Game count + roster).
 FLRP_STATUS.StaffAce       = 'flrp.staff.moderate'
@@ -45,6 +50,28 @@ FLRP_STATUS.AreaNames = {
   banks = 'Banham / Banks',
   gs    = 'Grapeseed',
   ch    = 'Chumash',
+}
+
+-- Priority Status: which nex-hud priority zones to surface, and their display
+-- names. FLRP shows just two — the county and the city. nex-hud tracks more
+-- zones (fz, banks, ...) internally; they're intentionally hidden here.
+FLRP_STATUS.PriorityZones = {
+  { code = 'bc', label = 'Broward County' },
+  { code = 'ls', label = 'Miami' },
+}
+
+-- nex-hud priority `state` -> label shown in the embed. Anything not listed
+-- and not "available" is treated as In-Progress; any state containing "cool"
+-- becomes On Cooldown.
+FLRP_STATUS.PriorityStateLabels = {
+  available       = 'Available',
+  active          = 'In-Progress',
+  priority        = 'In-Progress',
+  inprogress      = 'In-Progress',
+  ['in-progress'] = 'In-Progress',
+  busy            = 'In-Progress',
+  cooldown        = 'On Cooldown',
+  cooling         = 'On Cooldown',
 }
 
 -- Set true to print the raw shapes of getAop/getPriority/getUnitsByEntities to
