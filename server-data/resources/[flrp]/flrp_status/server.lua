@@ -164,8 +164,8 @@ CreateThread(function()
     print('[flrp_status] flrp_status_webhook not set — status embed disabled.')
     return
   end
-  msgId = GetResourceKvp('flrp_status_msg')
-  if msgId == '' then msgId = nil end
+  msgId = GetResourceKvpString('flrp_status_msg')
+  if not msgId or msgId == '' then msgId = nil end
 
   while true do
     refreshConvars()
