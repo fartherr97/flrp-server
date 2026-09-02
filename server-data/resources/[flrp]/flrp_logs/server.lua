@@ -72,23 +72,17 @@ end
 exports('Send', Send)
 
 -- ---- Built-in wiring: joins / leaves ------------------------------------
+-- Descriptions deliberately omit the name — it already appears in the Player
+-- field below, so repeating it here just duplicated it in the embed.
 AddEventHandler('playerJoining', function()
-  local src = source
-  Send('join', { player = src, description = ('**%s** connected.'):format(GetPlayerName(src) or ('Player ' .. src)) })
+  Send('join', { player = source, description = 'Connected.' })
 end)
 
 AddEventHandler('playerDropped', function(reason)
   local src = source
-  Send('leave', { player = src, description = ('**%s** disconnected.\n%s'):format(
-    GetPlayerName(src) or ('Player ' .. src), reason or 'unknown') })
+  Send('leave', { player = src, description = reason and ('Disconnected — %s'):format(reason) or 'Disconnected.' })
 end)
 
 RegisterNetEvent('flrp_logs:death', function(kind)
-  local src = source
-  Send('death', {
-    player = src,
-    description = ('**%s** %s.'):format(
-      GetPlayerName(src) or ('Player ' .. src),
-      kind == 'killed' and 'was killed' or 'died'),
-  })
+  Send('death', { player = source, description = (kind == 'killed') and 'Was killed.' or 'Died.' })
 end)
