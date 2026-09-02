@@ -62,7 +62,12 @@ local function Send(category, opts)
     timestamp   = os.date('!%Y-%m-%dT%H:%M:%SZ'),
   }
 
-  PerformHttpRequest(url, function() end, 'POST', json.encode({
+  PerformHttpRequest(url, function(status, body)
+    if status ~= 200 and status ~= 204 then
+      print(('^1[flrp_logs] "%s" webhook failed: HTTP %s %s^0'):format(
+        category, tostring(status), tostring(body)))
+    end
+  end, 'POST', json.encode({
     username   = FLRP_LOGS.Username,
     avatar_url = (FLRP_LOGS.Avatar ~= '' and FLRP_LOGS.Avatar) or nil,
     embeds     = { embed },
@@ -70,6 +75,18 @@ local function Send(category, opts)
 end
 
 exports('Send', Send)
+
+-- On boot, print which categories actually have a webhook configured, so a
+-- missing/typo'd convar is obvious in the console.
+CreateThread(function()
+  Wait(1500)
+  local on = {}
+  for cat in pairs(FLRP_LOGS.Categories) do
+    if webhookFor(cat) then on[#on + 1] = cat end
+  end
+  table.sort(on)
+  print(('[flrp_logs] webhooks configured: %s'):format(#on > 0 and table.concat(on, ', ') or 'NONE'))
+end)
 
 -- ---- Built-in wiring: joins / leaves ------------------------------------
 -- Name goes in the description; no Player field (the FiveM name already carries
