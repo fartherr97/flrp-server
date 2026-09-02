@@ -88,6 +88,10 @@
 </style>
 </head>
 <body>
+  <!-- Background music. Drop a royalty-free track named bgm.ogg into this
+       resource folder (see fxmanifest.lua). Missing file = silent, no error. -->
+  <audio id="bgm" src="bgm.ogg" loop preload="auto"></audio>
+
   <canvas id="scene"></canvas>
 
   <!-- palm silhouettes (moderate paths, mirrored) -->
@@ -114,6 +118,18 @@
 
 <script>
 (() => {
+  // background music — fade in gently; stays silent + error-free if bgm.ogg is absent
+  const bgm = document.getElementById('bgm');
+  if (bgm) {
+    bgm.volume = 0;
+    const tryPlay = () => (bgm.play ? bgm.play().catch(() => {}) : null);
+    tryPlay();
+    bgm.addEventListener('canplay', () => {
+      tryPlay();
+      let v = 0; const fade = setInterval(() => { v = Math.min(0.35, v + 0.02); bgm.volume = v; if (v >= 0.35) clearInterval(fade); }, 120);
+    });
+  }
+
   const c = document.getElementById('scene'), x = c.getContext('2d');
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let W, H, DPR;

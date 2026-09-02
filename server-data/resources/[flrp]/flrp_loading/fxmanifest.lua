@@ -23,4 +23,8 @@ loadscreen 'index.html'
 
 files {
   'index.html',
+  'bgm.ogg',   -- background music. Drop a royalty-free .ogg here named bgm.ogg.
+               -- Until the file exists FiveM logs one harmless "file not found"
+               -- warning and the loader is silent. USE ROYALTY-FREE / LICENSED
+               -- audio only — copyrighted songs can get the server DMCA'd.
 }
