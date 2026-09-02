@@ -11,7 +11,11 @@ FLRP = FLRP or {}
 FLRP.Config = FLRP.Config or {}
 
 -- Log verbosity: 'debug' | 'info' | 'warn' | 'error'
-FLRP.Config.LogLevel = 'info'
+-- Read from a convar so it's tunable without a code change. Default 'warn'
+-- keeps the console quiet (hides the per-reconcile store-loaded / config-
+-- re-applied INFO lines). For verbose debugging: `setr flrp_log_level info`
+-- (or 'debug') in server.cfg, then restart flrp_core.
+FLRP.Config.LogLevel = GetConvar('flrp_log_level', 'warn')
 
 -- How often (ms) the player-cache housekeeping tick runs.
 FLRP.Config.CacheTickMs = 60000
