@@ -23,10 +23,11 @@ RegisterNetEvent('flrp_vehicles:spawnDecision', function(spawnName, ok, reason)
   if not pending[key] then return end
   pending[key] = nil
   if not ok then
-    -- Denied by server; surface a hint and do NOT spawn.
-    TriggerEvent('chat:addMessage', {
-      color = { 200, 60, 60 },
-      args = { 'FLRP Vehicles', ('You are not permitted to spawn %s (%s)'):format(spawnName, reason or 'denied') },
+    -- Denied by server; surface a transient hint (not a chat line, so it
+    -- doesn't linger in chat history) and do NOT spawn.
+    TriggerEvent('flrp_notify:toast', {
+      title = 'FLRP Vehicles', kind = 'error',
+      body  = ('You are not permitted to spawn %s (%s)'):format(spawnName, reason or 'denied'),
     })
     return
   end
