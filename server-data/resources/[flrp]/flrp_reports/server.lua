@@ -120,6 +120,17 @@ local function ensureTables()
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   ]])
   FLRP.DB.Query([[
+    CREATE TABLE IF NOT EXISTS `staff_self_claims` (
+      `id`         INT UNSIGNED NOT NULL AUTO_INCREMENT,
+      `license`    VARCHAR(64)  NOT NULL,
+      `name`       VARCHAR(100) NOT NULL,
+      `report_id`  INT UNSIGNED NOT NULL,
+      `created_at` INT UNSIGNED NOT NULL,
+      PRIMARY KEY (`id`),
+      KEY `idx_created` (`created_at`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  ]])
+  FLRP.DB.Query([[
     CREATE TABLE IF NOT EXISTS `report_messages` (
       `id`             INT UNSIGNED NOT NULL AUTO_INCREMENT,
       `report_id`      INT UNSIGNED NOT NULL,
@@ -195,6 +206,7 @@ local function view(r, viewerSrc)
     },
     claimedBy      = r.claimed_by_name,
     claimedByMe    = (r.claimed_by_license ~= nil and r.claimed_by_license == licenseOf(viewerSrc)),
+    own            = (r.reporter_license == licenseOf(viewerSrc)),
     createdAt      = r.created_at,
     claimedAt      = r.claimed_at,
     resolvedAt     = r.resolved_at,
@@ -291,6 +303,13 @@ function H.claim(src, p)
   local r = reports[tonumber(p.id or 0)]
   if not r then return { ok = false, error = 'Report not found.' } end
   if r.status ~= 'open' then return { ok = false, error = 'Already ' .. r.status .. (r.claimed_by_name and (' by ' .. r.claimed_by_name) or '') .. '.' } end
+  if r.reporter_license == licenseOf(src) then
+    pcall(function()
+      FLRP.DB.Insert('INSERT INTO `staff_self_claims` (`license`,`name`,`report_id`,`created_at`) VALUES (?,?,?,?)',
+        { licenseOf(src) or '', GetPlayerName(src) or 'Unknown', r.id, os.time() })
+    end)
+    return { ok = false, error = 'You can\'t claim your own report — another staff member has to take it.' }
+  end
   local t = os.time()
   r.status, r.claimed_by_license, r.claimed_by_name, r.claimed_at = 'claimed', licenseOf(src), GetPlayerName(src), t
   FLRP.DB.Update('UPDATE `reports` SET `status`=?,`claimed_by_license`=?,`claimed_by_name`=?,`claimed_at`=? WHERE `id`=?',
@@ -318,6 +337,9 @@ function H.resolve(src, p)
   if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
   local r = reports[tonumber(p.id or 0)]
   if not r or r.status == 'resolved' then return { ok = false, error = 'Report not found or already resolved.' } end
+  if r.status == 'open' and r.reporter_license == licenseOf(src) then
+    return { ok = false, error = 'You can\'t resolve your own unclaimed report — another staff member has to handle it.' }
+  end
   local t = os.time()
   if r.status == 'open' then -- resolving straight from open counts as a claim too
     r.claimed_by_license, r.claimed_by_name, r.claimed_at = licenseOf(src), GetPlayerName(src), t

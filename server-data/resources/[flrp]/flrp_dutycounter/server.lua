@@ -55,21 +55,8 @@ RegisterNetEvent('flrp_dutycounter:request', function()
   TriggerClientEvent('flrp_dutycounter:update', source, { leo = last.leo, staff = last.staff })
 end)
 
--- Interim staff on/off-duty toggle.
-RegisterCommand('sd', function(src)
-  if type(src) ~= 'number' or src <= 0 then return end
-  if not IsPlayerAceAllowed(src, 'flrp.staff.moderate') then
-    TriggerClientEvent('chat:addMessage', src, { color = { 200, 60, 60 }, args = { 'SYSTEM', 'Staff only.' } })
-    return
-  end
-  if staffOnDuty[src] then staffOnDuty[src] = nil else staffOnDuty[src] = true end
-  local on = staffOnDuty[src] == true
-  TriggerClientEvent('chat:addMessage', src, {
-    color = { 0, 191, 196 },
-    args = { 'STAFF DUTY', on and 'You are now ON staff duty.' or 'You are now OFF staff duty.' },
-  })
-  broadcast(true)
-end, false)
+-- Staff on/off state is owned by flrp_staffactivity (the /vest toggle) and
+-- pushed here through the SetStaffOnDuty export below.
 
 -- Public hook for the future EUP staff-vest system.
 exports('SetStaffOnDuty', function(src, on)
