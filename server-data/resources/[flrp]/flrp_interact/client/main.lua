@@ -62,11 +62,95 @@ end
 local function runAction(it)
   local a, arg = it.action, it.arg
   if a == 'emote' then playEmote(arg)
+  elseif a == 'scenario' then
+    local ped = PlayerPedId(); ClearPedTasks(ped); TaskStartScenarioInPlace(ped, arg, 0, true)
   elseif a == 'cancel' then ClearPedTasks(PlayerPedId())
   elseif a == 'command' then ExecuteCommand(arg)
   elseif a == 'client_event' then TriggerEvent(arg)
   elseif a == 'server_event' then TriggerServerEvent(arg)
   end
+end
+
+-- ---- vehicle controls ----------------------------------------------------
+-- The vehicle the player is in, or the closest one within 5m.
+local function targetVehicle()
+  local ped = PlayerPedId()
+  local veh = GetVehiclePedIsIn(ped, false)
+  if veh and veh ~= 0 then return veh end
+  local c = GetEntityCoords(ped)
+  veh = GetClosestVehicle(c.x, c.y, c.z, 5.0, 0, 71)
+  if veh and veh ~= 0 then return veh end
+  return nil
+end
+
+local function withVehicle(fn)
+  local veh = targetVehicle()
+  if not veh then return toast('No vehicle nearby.', 'error') end
+  if NetworkGetEntityIsNetworked(veh) then NetworkRequestControlOfEntity(veh) end
+  fn(veh)
+end
+
+local DOORS = { { 'Front Left', 0 }, { 'Front Right', 1 }, { 'Rear Left', 2 }, { 'Rear Right', 3 } }
+local hazardsOn = false
+
+local function vehicleControlsMenu()
+  local m = FLRPMenu.New(FLRP_INTERACT.Title, 'VEHICLE CONTROLS')
+
+  m:Item({ label = 'Engine', desc = 'Toggle the engine on or off.', onSelect = function()
+    withVehicle(function(v) SetVehicleEngineOn(v, not GetIsVehicleEngineRunning(v), false, true) end)
+  end })
+  m:Item({ label = 'Doors Lock', desc = 'Lock or unlock the vehicle.', onSelect = function()
+    withVehicle(function(v)
+      local locked = GetVehicleDoorLockStatus(v) == 2
+      SetVehicleDoorsLocked(v, locked and 1 or 2)
+      toast(locked and 'Doors unlocked.' or 'Doors locked.', 'ok')
+    end)
+  end })
+
+  -- Doors submenu (open/close each)
+  local doors = FLRPMenu.New(FLRP_INTERACT.Title, 'DOORS')
+  for _, d in ipairs(DOORS) do
+    doors:Item({ label = d[1], desc = 'Open or close this door.', onSelect = function()
+      withVehicle(function(v)
+        if GetVehicleDoorAngleRatio(v, d[2]) > 0.1 then SetVehicleDoorShut(v, d[2], false)
+        else SetVehicleDoorOpen(v, d[2], false, false) end
+      end)
+    end })
+  end
+  doors:Item({ label = 'Hood', desc = 'Open or close the hood.', onSelect = function()
+    withVehicle(function(v) if GetVehicleDoorAngleRatio(v, 4) > 0.1 then SetVehicleDoorShut(v, 4, false) else SetVehicleDoorOpen(v, 4, false, false) end end)
+  end })
+  doors:Item({ label = 'Trunk', desc = 'Open or close the trunk.', onSelect = function()
+    withVehicle(function(v) if GetVehicleDoorAngleRatio(v, 5) > 0.1 then SetVehicleDoorShut(v, 5, false) else SetVehicleDoorOpen(v, 5, false, false) end end)
+  end })
+  m:Item({ label = 'Doors', right = '›', desc = 'Open or close individual doors.', sub = doors })
+
+  -- Windows submenu
+  local windows = FLRPMenu.New(FLRP_INTERACT.Title, 'WINDOWS')
+  for _, d in ipairs(DOORS) do
+    windows:Item({ label = d[1], desc = 'Roll this window up or down.', onSelect = function()
+      withVehicle(function(v)
+        if IsVehicleWindowIntact(v, d[2]) then RollDownWindow(v, d[2]) else RollUpWindow(v, d[2]) end
+      end)
+    end })
+  end
+  m:Item({ label = 'Windows', right = '›', desc = 'Roll windows up or down.', sub = windows })
+
+  m:Item({ label = 'Headlights', desc = 'Toggle the headlights.', onSelect = function()
+    withVehicle(function(v)
+      local _, lightsOn = GetVehicleLightsState(v)
+      SetVehicleLights(v, lightsOn == 1 and 1 or 2) -- 1 = force off, 2 = force on
+    end)
+  end })
+  m:Item({ label = 'Hazards', desc = 'Toggle the hazard lights.', onSelect = function()
+    withVehicle(function(v)
+      hazardsOn = not hazardsOn
+      SetVehicleIndicatorLights(v, 0, hazardsOn); SetVehicleIndicatorLights(v, 1, hazardsOn)
+      toast(hazardsOn and 'Hazards on.' or 'Hazards off.', 'ok')
+    end)
+  end })
+
+  return m
 end
 
 -- ---- advert flow ---------------------------------------------------------
@@ -128,6 +212,10 @@ local function build(manifest)
     root:Item({ label = 'LEO Toolbox', right = '›', desc = 'Law-enforcement tools.',
                 sub = toolboxMenu('LEO TOOLBOX', FLRP_INTERACT.LeoToolbox) })
   end
+
+  -- Vehicle controls (everyone) — engine, locks, doors, windows, lights
+  root:Item({ label = 'Vehicle Controls', right = '›', desc = 'Engine, locks, doors, windows, lights.',
+              sub = vehicleControlsMenu() })
 
   -- Donator vehicle spawns
   if manifest.donator then

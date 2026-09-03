@@ -55,11 +55,16 @@ FLRP_INTERACT.Ads = {
 --   server_event -> TriggerServerEvent(arg, ...)
 -- `desc` shows in the description box. Add your own rows freely.
 
--- Civilian toolbox — visible to everyone.
+-- Civilian toolbox — visible to everyone. `emote` uses a built-in anim (see
+-- client Emotes table); `scenario` plays a GTA scenario in place.
 FLRP_INTERACT.CivilianToolbox = {
-  { label = 'Hands Up',       desc = 'Put your hands above your head.',     action = 'emote',   arg = 'handsup' },
-  { label = 'Surrender',      desc = 'Kneel with your hands behind you.',   action = 'emote',   arg = 'surrender' },
-  { label = 'Sit Down',       desc = 'Sit on the ground where you stand.',  action = 'emote',   arg = 'sit' },
+  { label = 'Hands Up',       desc = 'Put your hands above your head.',     action = 'emote',    arg = 'handsup' },
+  { label = 'Surrender',      desc = 'Kneel with your hands behind you.',   action = 'emote',    arg = 'surrender' },
+  { label = 'Sit Down',       desc = 'Sit on the ground where you stand.',  action = 'scenario', arg = 'PROP_HUMAN_SEAT_CHAIR_MP_PLAYER' },
+  { label = 'Lean',           desc = 'Lean back against a wall.',           action = 'scenario', arg = 'WORLD_HUMAN_LEANING' },
+  { label = 'Smoke',          desc = 'Smoke a cigarette.',                  action = 'scenario', arg = 'WORLD_HUMAN_SMOKING' },
+  { label = 'Clipboard',      desc = 'Hold a clipboard and take notes.',    action = 'scenario', arg = 'WORLD_HUMAN_CLIPBOARD' },
+  { label = 'Guard Stance',   desc = 'Stand with your arms crossed.',       action = 'scenario', arg = 'WORLD_HUMAN_GUARD_STAND' },
   { label = 'Stop Animation', desc = 'Cancel the current animation.',       action = 'cancel' },
   -- Wire your own /e emote menu here, e.g.
   -- { label = 'Emote Menu',  desc = 'Open the emote menu.',                action = 'command', arg = 'emotemenu' },
