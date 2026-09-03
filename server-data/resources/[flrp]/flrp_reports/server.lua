@@ -291,8 +291,8 @@ function H.submit(src, p)
     { name = 'Against',  value = target or '—', inline = true },
     { name = 'Staff online', value = tostring(#staffSrcs()), inline = true },
   }, {
-    -- plain text ABOVE the embed: pings the staff team + names the reporter
-    content      = (role and ('<@&' .. role .. '> ') or '') .. ('**%s** submitted a new report'):format(name),
+    -- plain text ABOVE the embed: just the staff-team ping (embed carries the rest)
+    content      = role and ('<@&' .. role .. '>') or nil,
     mentionRoles = role and { role } or nil,
   })
   return { ok = true, id = id }
