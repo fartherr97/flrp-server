@@ -243,6 +243,8 @@ local function openMenu()
   if building then return end
   if IsPauseMenuActive() then return end
   building = true
+  -- Never let a missed server reply jam the menu shut forever.
+  SetTimeout(3000, function() building = false end)
   request('open', {}, function(manifest)
     building = false
     if type(manifest) ~= 'table' then return end
@@ -250,8 +252,23 @@ local function openMenu()
   end)
 end
 
+-- Command + rebindable keymapping (appears in Settings > Key Bindings > FiveM).
 RegisterCommand('flrp_interact_toggle', function() openMenu() end, false)
+RegisterCommand('interact', function() openMenu() end, false)          -- friendly alias
 RegisterKeyMapping('flrp_interact_toggle', 'FLRP: Interaction menu', 'keyboard', FLRP_INTERACT.Key)
+
+-- Primary open path: poll the raw M control (INPUT_INTERACTION_MENU = 244)
+-- directly, like vMenu does. This works even if the keymapping default didn't
+-- bind because M was already claimed in a player's keybinds (vMenu moved to F1,
+-- so 244 is free). Rebindable keymapping above still works alongside it.
+CreateThread(function()
+  while true do
+    Wait(0)
+    if not IsPauseMenuActive() and IsControlJustPressed(0, 244) then
+      openMenu()  -- toggles: opens when closed, closes when open
+    end
+  end
+end)
 
 -- Close on resource stop so we never leave the draw loop / controls locked.
 AddEventHandler('onResourceStop', function(res)
