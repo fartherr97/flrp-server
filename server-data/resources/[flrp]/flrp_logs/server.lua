@@ -32,17 +32,11 @@ local function rankOf(src)
   return 'Civilian'
 end
 
--- "[<serverId>] <flrpId> | <rank> | <name>" — flrpId omitted if unavailable.
+-- "[<serverId>] <display name>" — the in-game name already carries the FLRP id
+-- and role (e.g. "100 | Owner | Mike"), so we show just the server id + name.
 local function playerLine(src)
   local name = GetPlayerName(src) or ('Player ' .. tostring(src))
-  local rank = rankOf(src)
-  local flrpId
-  local ok, rec = pcall(function() return exports.flrp_core:GetPlayer(src) end)
-  if ok and type(rec) == 'table' then flrpId = rec.playerId or rec.id end
-  if flrpId then
-    return ('`[%s] %s | %s | %s`'):format(src, flrpId, rank, name)
-  end
-  return ('`[%s] %s | %s`'):format(src, rank, name)
+  return ('`[%s] %s`'):format(src, name)
 end
 
 local function Send(category, opts)
