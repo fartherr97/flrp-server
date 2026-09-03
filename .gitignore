@@ -118,3 +118,7 @@ build/
 /server-data/resources/\[maps\]/
 /server-data/resources/\[departments\]/
 /server-data/resources/\[eup\]/
+
+# flrp_hotreload live-reload queue (written by autodeploy, applied in-server)
+deploy/.hotreload.queue
+deploy/.hotreload.queue.tmp
