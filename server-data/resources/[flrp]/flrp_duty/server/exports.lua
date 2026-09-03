@@ -4,8 +4,8 @@
 --   exports.flrp_duty:GetDuty(source)              -> { department, onDuty }
 --   exports.flrp_duty:IsOnDuty(source, department?) -> bool
 --
--- Backed by nex-duty (duty_members). nex-duty owns changing duty; there is no
--- SetDuty/GoOffDuty here anymore (use the nex-duty /duty menu).
+-- Backed by flrp_onduty (flrp_duty_members). flrp_onduty owns changing duty;
+-- there is no SetDuty/GoOffDuty here (use its /duty menu or its exports).
 -- ==========================================================================
 
 function GetDuty(source)
@@ -21,7 +21,7 @@ end
 
 --   exports.flrp_duty:GetOnDutyRoster() -> array of
 --     { src, online, name, license, entity, department, callsign }
--- Live roster read from nex-duty's duty_members (see FLRPD.GetRoster).
+-- Live roster read from flrp_onduty's flrp_duty_members (see FLRPD.GetRoster).
 function GetOnDutyRoster()
   return FLRPD.GetRoster()
 end

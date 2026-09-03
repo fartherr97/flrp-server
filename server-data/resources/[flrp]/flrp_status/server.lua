@@ -3,14 +3,13 @@
 -- ==========================================================================
 -- Posts one embed to the status webhook, then edits that same message every
 -- UpdateSeconds so it stays a single live message. AOP/priority come from
--- nex-hud exports; on-duty units from nex-duty; players/staff/vehicles from
+-- nex-hud exports; on-duty units from flrp_onduty (via flrp_duty); players/staff/vehicles from
 -- server natives.
 -- ==========================================================================
 
 local WEBHOOK, JOIN_URL, THUMB = '', '', ''
 local msgId = nil
 local debugged = false
-local unitsDumped = false
 
 local function refreshConvars()
   WEBHOOK  = GetConvar(FLRP_STATUS.WebhookConvar, '')
@@ -31,7 +30,7 @@ local function safeCall(fn)
 end
 
 -- ---- unit helpers --------------------------------------------------------
--- Pull a human-readable "callsign — Name" out of a nex-duty unit table,
+-- Pull a human-readable "callsign — Name" out of a duty roster entry,
 -- trying the common field names so it works regardless of exact shape.
 local function unitLabel(u)
   if type(u) ~= 'table' then return tostring(u) end
@@ -48,9 +47,9 @@ local function unitLabel(u)
   return tostring(name or callsign or 'Unit')
 end
 
--- Live roster from nex-duty's duty_members table (via flrp_duty), grouped by
+-- Live roster from flrp_onduty's flrp_duty_members table (via flrp_duty), grouped by
 -- entity id. Only CONNECTED players count — a stale row for someone who has
--- left never shows. No dependency on nex-duty's escrowed export API.
+-- left never shows.
 local function rosterByEntity()
   local ok, roster = pcall(function() return exports.flrp_duty:GetOnDutyRoster() end)
   local by = {}
@@ -245,16 +244,6 @@ CreateThread(function()
       debugged = true
       print('[flrp_status] getAop -> '      .. json.encode(safeCall(function() return exports['nex-hud']:getAop() end)))
       print('[flrp_status] getPriority -> ' .. json.encode(safeCall(function() return exports['nex-hud']:getPriority() end)))
-    end
-    -- re-dump unit shape the first time anyone is actually on duty
-    if FLRP_STATUS.Debug and not unitsDumped then
-      for _, d in ipairs(FLRP_STATUS.LeoDepts) do
-        local u = safeCall(function() return exports['nex-duty']:getUnitsByEntities({ d.id }) end)
-        if type(u) == 'table' and #u > 0 then
-          unitsDumped = true
-          print(('[flrp_status] units[%s] -> %s'):format(d.id, json.encode(u)))
-        end
-      end
     end
     if msgId then editExisting() else postNew() end
     Wait(FLRP_STATUS.UpdateSeconds * 1000)

@@ -4,7 +4,7 @@
 
 CreateThread(function()
   while not (exports.flrp_core and exports.flrp_core:IsReady()) do Wait(500) end
-  FLRP.Logger.Info('duty', 'flrp_duty ready (nex-duty adapter)', {
+  FLRP.Logger.Info('duty', 'flrp_duty ready (duty registry adapter)', {
     entityMap = FLRPD.BuildEntityMap() })
 end)
 

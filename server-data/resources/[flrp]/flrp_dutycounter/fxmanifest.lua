@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 
 author 'FLRP'
-description 'On-duty HUD counter (LEO from nex-duty via flrp_duty; Staff via /sd toggle or vest export)'
+description 'On-duty HUD counter (LEO from flrp_onduty via flrp_duty; Staff via /vest)'
 version '1.0.0'
 lua54 'yes'
 

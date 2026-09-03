@@ -2,7 +2,7 @@
 -- FLRP :: flrp_dutycounter/server.lua
 -- ==========================================================================
 -- Broadcasts live on-duty counts to the HUD counter:
---   LEO   — players on duty for a LEO department, read from nex-duty via
+--   LEO   — players on duty for a LEO department, read from flrp_onduty via
 --           exports.flrp_duty:IsOnDuty(src) (BSO / FHP / MPD).
 --   STAFF — interim: a `/sd` toggle (flrp.staff.moderate) marks a staffer
 --           on/off. The future EUP staff-vest system can drive the same state
@@ -11,9 +11,8 @@
 
 local staffOnDuty = {} -- [src] = true
 
--- LEO = connected players with a live duty_members row for an FLRP department
--- (BSO / FHP / MPD). Read straight from nex-duty's table via flrp_duty's
--- roster export — no dependency on nex-duty's escrowed export API.
+-- LEO = connected players with a live flrp_duty_members row for an FLRP
+-- department (BSO / FHP / MPD), read via flrp_duty's roster export.
 local function countLeo()
   local ok, roster = pcall(function() return exports.flrp_duty:GetOnDutyRoster() end)
   if not ok or type(roster) ~= 'table' then return 0 end
@@ -42,7 +41,7 @@ local function broadcast(force)
   end
 end
 
--- Poll (duty is read-only from nex-duty's table, so we re-count on a timer).
+-- Poll (duty is read from the registry table, so we re-count on a timer).
 CreateThread(function()
   while true do
     Wait(5000)

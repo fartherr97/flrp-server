@@ -1,11 +1,11 @@
 -- ==========================================================================
--- FLRP :: flrp_duty — duty adapter over nex-duty
+-- FLRP :: flrp_duty — duty adapter over flrp_onduty
 -- ==========================================================================
--- nex-duty (Nexeum) owns duty: its /duty menu, entities, ranks, loadouts, blips,
--- and it records the live on-duty roster in its MySQL table `duty_members`.
+-- flrp_onduty owns duty: its /duty menu, departments, ranks, loadouts — and it
+-- records the live on-duty roster in the MySQL table `flrp_duty_members`.
 -- This resource is now a THIN, READ-ONLY ADAPTER: it keeps the flrp_duty export
 -- surface (GetDuty/IsOnDuty) so flrp_economy department pay is unchanged, but
--- sources the answer from nex-duty instead of its own duty state. See
+-- sources the answer from flrp_onduty's registry instead of its own state. See
 -- docs/SCRIPTS.md and docs/DEPARTMENTS.md.
 -- ==========================================================================
 

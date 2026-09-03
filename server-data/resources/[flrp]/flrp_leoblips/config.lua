@@ -1,8 +1,8 @@
 -- ==========================================================================
 -- FLRP :: flrp_leoblips/config.lua — on-duty LEO map blips
 -- ==========================================================================
--- Every UpdateMs the server reads the live on-duty roster (nex-duty's
--- duty_members via flrp_duty) and pushes each on-duty officer's position to
+-- Every UpdateMs the server reads the live on-duty roster (flrp_onduty's
+-- flrp_duty_members via flrp_duty) and pushes each on-duty officer's position to
 -- the players allowed to see them. Clients draw one blip per officer, coloured
 -- by department, labelled "CALLSIGN | Name". Your own blip is never drawn.
 -- ==========================================================================
@@ -14,8 +14,8 @@ FLRP_BLIPS.UpdateMs = 2000          -- position refresh cadence (ms)
 -- Who may SEE the blips: any on-duty LEO, plus anyone holding this ace.
 FLRP_BLIPS.StaffAce = 'flrp.staff.moderate'
 
--- nex-duty entity id -> blip colour. These are GTA blip colour indices and
--- match the `colour` set on each entity in nex-duty's shared_config.lua so the
+-- department id -> blip colour. These are GTA blip colour indices and
+-- match the department colours in flrp_onduty/config.lua so the
 -- map matches the duty menu:  BSO gold, FHP dark orange / tan, MPD blue.
 FLRP_BLIPS.Colours = {
   bso = 46,

@@ -28,14 +28,14 @@ FLRP_STATUS.Thumbnail      = ''
 -- Which ACE marks a "staff" member (for Staff In-Game count + roster).
 FLRP_STATUS.StaffAce       = 'flrp.staff.moderate'
 
--- nex-duty entity ids that count as LEO (from flrp_duty's entity map), in the
+-- flrp_onduty department ids that count as LEO (from flrp_duty's entity map), in the
 -- order they should appear, each with the label shown in the embed.
 FLRP_STATUS.LeoDepts = {
   { id = 'bso', label = 'BSO' },
   { id = 'fhp', label = 'FHP' },
   { id = 'mpd', label = 'MPD' },
 }
--- Fire/EMS entity ids (none yet — fill when a fire dept is added to nex-duty).
+-- Fire/EMS department ids (none yet — fill when a fire dept is added to flrp_onduty).
 FLRP_STATUS.FireDepts = {}
 
 -- nex-hud area codes -> friendly names, used for both the AOP list and the
@@ -77,4 +77,4 @@ FLRP_STATUS.PriorityStateLabels = {
 -- Set true to print the raw shapes of getAop/getPriority/getUnitsByEntities to
 -- the server console once at boot (and once more the first time a unit is on
 -- duty, so the unit fields can be mapped). Flip to false when done.
-FLRP_STATUS.Debug = true
+FLRP_STATUS.Debug = false
