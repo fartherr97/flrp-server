@@ -109,10 +109,13 @@
     if (m.action === 'open') { S.state = m.state; S.open = true; S.sel = null; S.err = null; S.units = null; $('app').classList.remove('hidden');
       setView(m.view === 'units' ? 'units' : 'duty');
       if (S.tick) clearInterval(S.tick);
+      var beat = 0;
       S.tick = setInterval(function () {
         if (!S.open || document.activeElement.matches('input')) return;
-        if (S.view === 'units') { loadUnits(); } else if (S.state && S.state.onDuty) render();
-      }, S.view === 'units' ? 5000 : 1000); }
+        beat++;
+        if (S.view === 'units') { if (beat % 5 === 0) loadUnits(); else render(); }   // re-fetch every 5s, re-time every 1s
+        else if (S.state && S.state.onDuty) render();                               // live elapsed timer
+      }, 1000); }
     else if (m.action === 'state' && S.open) { S.state = m.state; render(); }
     else if (m.action === 'close') { S.open = false; $('app').classList.add('hidden'); if (S.tick) { clearInterval(S.tick); S.tick = null; } }
   });
