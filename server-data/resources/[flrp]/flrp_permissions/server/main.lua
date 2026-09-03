@@ -6,6 +6,17 @@ CreateThread(function()
   -- Wait for flrp_core DB readiness before loading the permission model.
   while not (exports.flrp_core and exports.flrp_core:IsReady()) do Wait(500) end
   FLRPP.Store.Load()
+
+  -- Re-apply the static ACE grants from permissions.cfg. cfg files are ONLY
+  -- exec'd at a full server start, so a resource-only restart (e.g. after a
+  -- content autodeploy) would leave the server running with STALE ace grants —
+  -- which is exactly what silently breaks /setaop, /sc, /editor and the vMenu
+  -- weapon policy after a deploy. Re-execing here makes the grants self-heal
+  -- whenever flrp_permissions (re)starts. Re-exec is idempotent.
+  Wait(2000)
+  ExecuteCommand('exec config/permissions.cfg')
+  FLRP.Logger.Info('permissions', 'Re-exec config/permissions.cfg (ACE grants refreshed)')
+
   FLRP.Logger.Info('permissions', 'flrp_permissions ready')
   TriggerEvent('flrp_permissions:ready')
 end)
@@ -60,6 +71,7 @@ RegisterCommand('flrp_reload_perms', function(source)
       return
     end
   end
+  ExecuteCommand('exec config/permissions.cfg')  -- refresh static ACE grants too
   local ok = FLRPP.Store.Load()
   if ok then FLRPP.ReapplyAll() end
   FLRP.Logger.Info('permissions', 'ReloadPermissions (command)', { ok = ok })
