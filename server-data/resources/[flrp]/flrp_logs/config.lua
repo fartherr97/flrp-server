@@ -35,6 +35,7 @@ FLRP_LOGS.Categories = {
   vest      = { convar = 'flrp_log_webhook_vest',      color = 0x3498db, title = 'STAFF VEST' },
   namechange= { convar = 'flrp_log_webhook_namechange',color = 0x95a5a6, title = 'NAME CHANGE' },
   aop       = { convar = 'flrp_log_webhook_aop',       color = 0x1abc9c, title = 'AOP CHANGE' },
+  report    = { convar = 'flrp_log_webhook_report',    color = 0x00bfc4, title = 'REPORT' },
 }
 
 -- Rank labels, highest first (used in the "[id] pid | rank | name" footer).

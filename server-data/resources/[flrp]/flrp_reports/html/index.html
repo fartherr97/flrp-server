@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="toasts"></div>
+
+  <div id="app" class="hidden">
+    <div class="win">
+      <header class="hd">
+        <img id="logo" class="logo" alt="" />
+        <div class="hd-title">
+          <div class="hd-name">FLRP Reports</div>
+          <div class="hd-sub" id="hd-sub">Player Support</div>
+        </div>
+        <div class="hd-right">
+          <span class="pill soft" id="staff-online">— staff online</span>
+          <button class="icon-btn" id="btn-close" title="Close (Esc)">✕</button>
+        </div>
+      </header>
+
+      <div class="body">
+        <nav class="nav" id="nav"></nav>
+        <main class="main">
+          <section class="list" id="list"></section>
+          <section class="detail" id="detail"></section>
+        </main>
+      </div>
+
+      <footer class="ft">
+        <span id="ft-hint">Press <kbd id="ft-key">J</kbd> to toggle · <kbd>Esc</kbd> to close</span>
+        <span class="ft-brand" id="ft-brand">Florida Roleplay</span>
+      </footer>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
