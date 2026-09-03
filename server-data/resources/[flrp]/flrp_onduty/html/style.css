@@ -66,3 +66,28 @@ kbd { display:inline-block; padding:1px 6px; border-radius:4px; background:var(-
 .empty b { color:var(--muted); display:block; margin-bottom:4px; }
 
 .ft { padding:9px 16px; border-top:1px solid var(--line); font-size:11.5px; color:var(--dim); background:var(--bg-2); }
+
+/* tabs */
+.tabs { display:flex; gap:6px; padding:10px 16px 0; }
+.tab { padding:7px 14px; border-radius:8px; font-weight:800; font-size:12.5px; color:var(--muted); background:var(--panel); }
+.tab:hover { color:var(--text); background:var(--panel-hi); }
+.tab.active { background:var(--accent-soft); color:var(--text); box-shadow:inset 0 -2px 0 var(--accent); }
+
+/* units board */
+.ugroup { border-radius:9px; background:var(--panel); border:1px solid var(--line); overflow:hidden; }
+.uhead { display:flex; align-items:center; gap:10px; padding:9px 12px; border-bottom:1px solid var(--line); }
+.uhead .bar { width:4px; height:20px; border-radius:3px; flex:none; }
+.uhead .nm { font-weight:800; }
+.uhead .sub { font-size:11.5px; color:var(--muted); margin-left:4px; }
+.uhead .cnt { margin-left:auto; font-size:11px; font-weight:800; padding:2px 8px; border-radius:999px; background:var(--panel-hi); color:var(--muted); font-variant-numeric:tabular-nums; }
+.uhead .cnt.on { background:var(--accent); color:#051719; }
+.urow { display:grid; grid-template-columns:78px 1fr auto auto; gap:10px; align-items:center; padding:7px 12px; font-size:13px; border-bottom:1px solid var(--line); }
+.urow:last-child { border-bottom:0; }
+.urow .cs { font-weight:800; letter-spacing:.5px; color:var(--text); font-variant-numeric:tabular-nums; }
+.urow .cs.none { color:var(--dim); font-weight:600; }
+.urow .who { font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.urow .rk { font-size:11px; color:var(--muted); }
+.urow .tm { font-size:11.5px; color:var(--dim); font-variant-numeric:tabular-nums; }
+.unone { padding:9px 12px; font-size:12px; color:var(--dim); font-style:italic; }
+.utotal { display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted); padding:0 2px; }
+.utotal b { color:var(--text); font-size:15px; }

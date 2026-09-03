@@ -201,6 +201,32 @@ function H.state(src)
            key = CFG.Key, callsignMax = CFG.CallsignMax, now = os.time() }
 end
 
+-- Units board: every department with who's on duty.
+local function canViewUnits(src)
+  for _, a in ipairs(CFG.UnitsAces or {}) do
+    if IsPlayerAceAllowed(src, a) then return true end
+  end
+  return false
+end
+
+function H.units(src)
+  if not canViewUnits(src) then return { ok = false, error = 'Units board is for on-duty personnel and staff.' } end
+  local byDept, total = {}, 0
+  for s, d in pairs(onDuty) do
+    byDept[d.entity] = byDept[d.entity] or {}
+    local dd = dept(d.entity); local r = dd and rankOf(dd, d.rank)
+    table.insert(byDept[d.entity], { src = s, name = d.name, callsign = d.callsign, rank = r and r.label or d.rank, since = d.since })
+    total = total + 1
+  end
+  local depts = {}
+  for _, d in ipairs(CFG.Departments) do
+    local list = byDept[d.id] or {}
+    table.sort(list, function(a, b) return (a.callsign or 'zzz') < (b.callsign or 'zzz') end)
+    depts[#depts + 1] = { id = d.id, label = d.label, short = d.short, colour = d.colour, count = #list, units = list }
+  end
+  return { ok = true, depts = depts, total = total, now = os.time() }
+end
+
 function H.goOn(src, p)
   local ok, err = goOn(src, tostring(p.entity or ''), tostring(p.rank or ''), p.callsign)
   if not ok then return { ok = false, error = err } end

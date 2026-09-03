@@ -18,6 +18,8 @@ FLRP_ONDUTY.Command      = 'duty'
 FLRP_ONDUTY.Key          = 'F6'        -- RegisterKeyMapping default; players can rebind
 FLRP_ONDUTY.OverrideAce  = 'flrp.staff.direct'
 FLRP_ONDUTY.ForceOffAce  = 'flrp.staff.administer'   -- /offduty <id>
+-- Who may see the Units board (/duty units): any of these aces. LEO + staff.
+FLRP_ONDUTY.UnitsAces    = { 'flrp.leo', 'flrp.staff.moderate' }
 FLRP_ONDUTY.Logo         = 'https://www.flrp.us/images/c8452f76261f8e9c.png'
 FLRP_ONDUTY.ServerName   = 'Florida Roleplay'
 

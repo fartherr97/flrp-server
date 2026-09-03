@@ -2,7 +2,7 @@
 (function () {
   'use strict';
   var RES = (typeof GetParentResourceName === 'function') ? GetParentResourceName() : 'flrp_onduty';
-  var S = { open: false, state: null, sel: null, rank: null, callsign: '', err: null, busy: false, tick: null };
+  var S = { open: false, state: null, sel: null, rank: null, callsign: '', err: null, busy: false, tick: null, view: 'duty', units: null };
   var $ = function (id) { return document.getElementById(id); };
   var esc = function (s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]; }); };
   function dur(sec) { sec = Math.max(0, Math.floor(sec)); var h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60; return (h ? h + 'h ' : '') + (m < 10 && h ? '0' : '') + m + 'm ' + (s < 10 ? '0' : '') + s + 's'; }
@@ -13,9 +13,43 @@
   }
   function closeMenu() { fetch('https://' + RES + '/close', { method: 'POST', body: '{}' }); }
 
+  function setView(v) {
+    S.view = v;
+    $('tab-duty').classList.toggle('active', v === 'duty');
+    $('tab-units').classList.toggle('active', v === 'units');
+    if (v === 'units') loadUnits();
+    render();
+  }
+  function loadUnits() {
+    post('units').then(function (res) { S.units = res || { ok: false, error: 'No response.' }; if (S.view === 'units') render(); });
+  }
+
   function render() {
     var st = S.state; if (!st) return;
     $('logo').src = st.logo || ''; $('hd-sub').textContent = st.serverName || ''; $('ft-key').textContent = st.key || 'F6';
+    if (S.view === 'units') return renderUnits();
+    renderDuty();
+  }
+
+  function renderUnits() {
+    var b = $('body'), u = S.units, html = '';
+    if (!u) { b.innerHTML = '<div class="empty"><b>Loading units…</b></div>'; return; }
+    if (!u.ok) { b.innerHTML = '<div class="empty"><b>Units unavailable</b>' + esc(u.error || '') + '</div>'; return; }
+    var now = Math.floor(Date.now() / 1000);
+    html += '<div class="utotal"><b>' + u.total + '</b> unit' + (u.total === 1 ? '' : 's') + ' on duty across ' + u.depts.length + ' departments</div>';
+    u.depts.forEach(function (d) {
+      html += '<div class="ugroup"><div class="uhead"><span class="bar" style="background:' + esc(d.colour) + '"></span><span class="nm">' + esc(d.short) + '</span><span class="sub">' + esc(d.label) + '</span><span class="cnt' + (d.count ? ' on' : '') + '">' + d.count + ' on duty</span></div>';
+      if (!d.units.length) html += '<div class="unone">No units on duty.</div>';
+      d.units.forEach(function (x) {
+        html += '<div class="urow"><span class="cs' + (x.callsign ? '' : ' none') + '">' + esc(x.callsign || '—') + '</span><span class="who">' + esc(x.name) + '</span><span class="rk">' + esc(x.rank) + '</span><span class="tm">' + dur(now - x.since) + '</span></div>';
+      });
+      html += '</div>';
+    });
+    b.innerHTML = html;
+  }
+
+  function renderDuty() {
+    var st = S.state;
     var b = $('body'), html = '';
 
     if (st.onDuty) {
@@ -72,11 +106,18 @@
 
   window.addEventListener('message', function (e) {
     var m = e.data || {};
-    if (m.action === 'open') { S.state = m.state; S.open = true; S.sel = null; S.err = null; $('app').classList.remove('hidden'); render();
-      if (S.tick) clearInterval(S.tick); S.tick = setInterval(function () { if (S.open && S.state && S.state.onDuty && !document.activeElement.matches('input')) render(); }, 1000); }
+    if (m.action === 'open') { S.state = m.state; S.open = true; S.sel = null; S.err = null; S.units = null; $('app').classList.remove('hidden');
+      setView(m.view === 'units' ? 'units' : 'duty');
+      if (S.tick) clearInterval(S.tick);
+      S.tick = setInterval(function () {
+        if (!S.open || document.activeElement.matches('input')) return;
+        if (S.view === 'units') { loadUnits(); } else if (S.state && S.state.onDuty) render();
+      }, S.view === 'units' ? 5000 : 1000); }
     else if (m.action === 'state' && S.open) { S.state = m.state; render(); }
     else if (m.action === 'close') { S.open = false; $('app').classList.add('hidden'); if (S.tick) { clearInterval(S.tick); S.tick = null; } }
   });
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && S.open) closeMenu(); });
   $('btn-close').onclick = closeMenu;
+  $('tab-duty').onclick = function () { setView('duty'); };
+  $('tab-units').onclick = function () { setView('units'); };
 })();

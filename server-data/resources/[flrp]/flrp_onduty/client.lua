@@ -19,18 +19,27 @@ local function close()
   SendNUIMessage({ action = 'close' })
 end
 
-local function open()
+local function open(view)
   request('state', {}, function(state)
     if not state or not state.ok then return end
     isOpen = true
     SetNuiFocus(true, true)
-    SendNUIMessage({ action = 'open', state = state })
+    SendNUIMessage({ action = 'open', state = state, view = view })
   end)
 end
 
-RegisterCommand(FLRP_ONDUTY.Command, function() if isOpen then close() else open() end end, false)
+RegisterCommand(FLRP_ONDUTY.Command, function(_, args)
+  local a = (args and args[1] or ''):lower()
+  if a == 'units' or a == 'list' then
+    if isOpen then close() end
+    return open('units')
+  end
+  if isOpen then close() else open() end
+end, false)
 RegisterKeyMapping(FLRP_ONDUTY.Command, 'FLRP: Duty menu', 'keyboard', FLRP_ONDUTY.Key)
-TriggerEvent('chat:addSuggestion', '/' .. FLRP_ONDUTY.Command, 'Open the department duty menu')
+TriggerEvent('chat:addSuggestion', '/' .. FLRP_ONDUTY.Command, 'Open the department duty menu', {
+  { name = 'units', help = "'units' — see who's on duty in every department" },
+})
 
 RegisterNUICallback('close', function(_, cb) close(); cb({}) end)
 RegisterNUICallback('req', function(data, cb)
