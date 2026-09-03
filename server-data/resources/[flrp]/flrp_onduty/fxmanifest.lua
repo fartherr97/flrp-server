@@ -21,9 +21,7 @@ server_scripts {
 }
 
 files {
-  'html/index.html',
-  'html/style.css',
-  'html/app.js',
+  'html/index.html',   -- built by the nui/ workspace (React+Vite); run `npm run build:onduty`
 }
 
 server_exports {

@@ -1,0 +1,32 @@
+/* ==========================================================================
+   FLRP NUI design tokens — the single source of truth for every FLRP
+   interface. Change branding here and it propagates everywhere.
+   ========================================================================== */
+:root {
+  /* surfaces (dark neutral slate) */
+  --flrp-bg:            215 28% 7%;    /* app background */
+  --flrp-panel:        215 25% 10%;    /* panels / cards */
+  --flrp-panel-hover:  215 22% 13%;
+  --flrp-elevated:     215 22% 15%;    /* popovers, dropdowns */
+  --flrp-border:       215 20% 22%;    /* ~white/10 */
+  --flrp-border-soft:  215 20% 18%;    /* ~white/6 */
+
+  /* text */
+  --flrp-text:         210 30% 96%;    /* primary off-white */
+  --flrp-text-muted:   215 14% 62%;    /* secondary */
+  --flrp-text-faint:   215 12% 45%;    /* tertiary */
+
+  /* brand + semantic */
+  --flrp-primary:      190 95% 42%;    /* FLRP cyan/blue */
+  --flrp-primary-fg:   200 100% 8%;
+  --flrp-success:      152 60% 48%;
+  --flrp-warning:       38 92% 55%;
+  --flrp-danger:         0 80% 63%;
+  --flrp-info:         210 90% 60%;
+
+  /* radii / motion */
+  --flrp-radius:        8px;
+  --flrp-radius-sm:     6px;
+  --flrp-radius-lg:     12px;
+  --flrp-speed:        140ms;
+}

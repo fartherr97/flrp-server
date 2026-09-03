@@ -122,3 +122,8 @@ build/
 # flrp_hotreload live-reload queue (written by autodeploy, applied in-server)
 deploy/.hotreload.queue
 deploy/.hotreload.queue.tmp
+
+# FLRP NUI workspace — commit source + built html/, ignore deps/cache
+nui/node_modules/
+nui/.vite/
+nui/apps/*/.vite/
