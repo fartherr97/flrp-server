@@ -25,3 +25,10 @@ end
 function GetOnDutyRoster()
   return FLRPD.GetRoster()
 end
+
+--   exports.flrp_duty:Invalidate(source?) -> drop the cached duty for one player
+--   (or everyone) so the next lookup re-reads the registry. flrp_onduty calls
+--   this the moment someone goes on/off duty so counters update instantly.
+function Invalidate(source)
+  FLRPD.Invalidate(source)
+end

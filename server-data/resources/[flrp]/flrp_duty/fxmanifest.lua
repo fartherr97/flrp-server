@@ -14,7 +14,7 @@ game 'gta5'
 
 name 'flrp_duty'
 author 'Florida Roleplay (FLRP)'
-description 'FLRP duty adapter — reads department duty from nex-duty (duty_members)'
+description 'FLRP duty adapter — reads department duty from flrp_onduty (flrp_duty_members)'
 version '0.2.0'
 
 dependency 'flrp_core'
@@ -39,4 +39,5 @@ server_exports {
   'GetDuty',
   'IsOnDuty',
   'GetOnDutyRoster',
+  'Invalidate',
 }

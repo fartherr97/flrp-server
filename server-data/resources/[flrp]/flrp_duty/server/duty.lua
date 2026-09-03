@@ -1,8 +1,8 @@
 -- ==========================================================================
 -- FLRP :: flrp_duty/server/duty.lua — nex-duty adapter
 -- ==========================================================================
--- Reads the live on-duty roster from nex-duty's `duty_members` table and maps
--- the nex-duty entity -> FLRP department. Read-only: nex-duty owns toggling
+-- Reads the live on-duty roster from flrp_onduty's `flrp_duty_members` table
+-- and maps the entity -> FLRP department. Read-only: flrp_onduty owns toggling
 -- duty (its /duty menu). We only report which FLRP department (if any) a player
 -- is currently on duty for, so flrp_economy can pay department wages.
 -- ==========================================================================
@@ -33,7 +33,7 @@ local function entityToDepartment(entity)
   return map[string.lower(entity)]
 end
 
--- Whether nex-duty's table exists yet (before nex-duty is installed/migrated).
+-- Whether the duty registry table exists yet (flrp_onduty creates it on boot).
 -- Only a TRUE result is cached: if the table is missing we re-check on the
 -- next call, so creating it later (importing nex-duty's database.sql) is picked
 -- up live instead of being stuck at "missing" until a resource restart.
@@ -45,7 +45,7 @@ local function dutyTableExists()
   local ok, row = pcall(function()
     return FLRP.DB.Scalar([[
       SELECT COUNT(*) FROM information_schema.tables
-      WHERE table_schema = DATABASE() AND table_name = 'duty_members'
+      WHERE table_schema = DATABASE() AND table_name = 'flrp_duty_members'
     ]])
   end)
   local exists = ok and (tonumber(row) or 0) > 0
@@ -53,7 +53,7 @@ local function dutyTableExists()
     dutyTableReady = true
   elseif not warnedMissing then
     warnedMissing = true
-    FLRP.Logger.Warn('duty', 'nex-duty `duty_members` table not found yet; duty = civilian until nex-duty is installed')
+    FLRP.Logger.Warn('duty', '`flrp_duty_members` not found yet; duty = civilian until flrp_onduty has started')
   end
   return exists
 end
@@ -68,7 +68,7 @@ local function fetchDuty(source)
   -- a player may have multiple duty rows (dual duty). Fetch all their rows and
   -- pick the first that maps to a FLRP department.
   local rows = FLRP.DB.Query([[
-    SELECT `entity` FROM `duty_members`
+    SELECT `entity` FROM `flrp_duty_members`
     WHERE `license` = ? OR `license` = CONCAT('license:', ?) OR `discord` = ? OR `discord` = CONCAT('discord:', ?)
   ]], { rec.license, rec.license, rec.discordId or '', rec.discordId or '' }) or {}
 
@@ -105,8 +105,8 @@ function FLRPD.Invalidate(source)
   else FLRPD.State.cache = {} end
 end
 
--- Full live on-duty roster straight from nex-duty's `duty_members` table —
--- the source of truth nex-duty itself writes to. Used by the HUD counter, the
+-- Full live on-duty roster straight from flrp_onduty's `flrp_duty_members`
+-- table — the source of truth flrp_onduty writes to. Used by the HUD counter, the
 -- Discord status embed and the LEO blips, so none of them have to guess at
 -- nex-duty's (escrowed) export API.
 --
@@ -119,7 +119,7 @@ end
 -- (e.g. nex-duty's "staff" dual-duty entity).
 function FLRPD.GetRoster()
   if not FLRP.DB.IsReady() or not dutyTableExists() then return {} end
-  local rows = FLRP.DB.Query('SELECT * FROM `duty_members`') or {}
+  local rows = FLRP.DB.Query('SELECT * FROM `flrp_duty_members`') or {}
   if #rows == 0 then return {} end
 
   -- bare license hex -> connected server id
