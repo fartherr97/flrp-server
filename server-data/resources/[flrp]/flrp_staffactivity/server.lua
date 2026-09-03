@@ -55,6 +55,13 @@ local function webhookBase()
   return url
 end
 
+-- transient on-screen toast (never enters chat history)
+local function notify(src, title, body, kind)
+  if type(src) == 'number' and src > 0 then
+    TriggerClientEvent('flrp_notify:toast', src, { title = title, body = body, kind = kind or 'info' })
+  end
+end
+
 local function upsertMember(lic, name, rank, discordId)
   if not lic or not rank then return end
   pcall(function()
@@ -117,17 +124,14 @@ exports('IsOnVest', function(src) return vest[tonumber(src)] ~= nil end)
 local function toggleVest(src)
   local on = vest[tonumber(src)] == nil
   setVest(src, on)
-  TriggerClientEvent('chat:addMessage', src, {
-    color = on and { 0, 191, 196 } or { 150, 160, 170 },
-    args  = { 'STAFF VEST', on and 'You are now ON the clock (vest on).' or 'You are now OFF the clock (vest off).' },
-  })
+  notify(src, 'STAFF VEST', on and 'You are now ON the clock (vest on).' or 'You are now OFF the clock (vest off).', on and 'ok' or 'info')
 end
 
 for _, cmd in ipairs({ 'vest', 'sd' }) do
   RegisterCommand(cmd, function(src)
     if type(src) ~= 'number' or src <= 0 then return end
     if not IsPlayerAceAllowed(src, FLRP_STAFF.VestAce) then
-      TriggerClientEvent('chat:addMessage', src, { color = { 200, 60, 60 }, args = { 'SYSTEM', 'Staff only.' } })
+      notify(src, 'STAFF VEST', 'Staff only.', 'error')
       return
     end
     toggleVest(src)
@@ -474,14 +478,11 @@ end
 
 RegisterCommand('staffactivity', function(src, args)
   if type(src) == 'number' and src > 0 and not IsPlayerAceAllowed(src, FLRP_STAFF.ManageAce) then
-    TriggerClientEvent('chat:addMessage', src, { color = { 200, 60, 60 }, args = { 'SYSTEM', 'Directors only.' } })
+    notify(src, 'STAFF ACTIVITY', 'Directors only.', 'error')
     return
   end
   local function reply(good, msg, info)
-    if type(src) == 'number' and src > 0 then
-      TriggerClientEvent('chat:addMessage', src, { color = good and { 0, 191, 196 } or { 200, 60, 60 },
-        args = { 'STAFF ACTIVITY', good and msg or ('Failed: ' .. reason(info)) } })
-    end
+    notify(src, 'STAFF ACTIVITY', good and msg or ('Failed: ' .. reason(info)), good and 'ok' or 'error')
     print(('[flrp_staffactivity] %s -> %s%s'):format(msg, tostring(good), good and '' or (' (' .. tostring(info) .. ')')))
   end
 
