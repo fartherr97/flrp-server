@@ -5,12 +5,11 @@
   "description": "FLRP shared NUI workspace — React + Vite + Tailwind design system for all custom FLRP in-game interfaces",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "node build.mjs",
-    "build:onduty": "vite build --config apps/onduty/vite.config.ts",
-    "build:reports": "vite build --config apps/reports/vite.config.ts",
-    "build:gunstores": "vite build --config apps/gunstores/vite.config.ts",
-    "build:spawn": "vite build --config apps/spawn/vite.config.ts"
+    "build:onduty": "node build.mjs onduty",
+    "build:reports": "node build.mjs reports",
+    "build:gunstores": "node build.mjs gunstores",
+    "build:spawn": "node build.mjs spawn"
   },
   "dependencies": {
     "clsx": "^2.1.1",

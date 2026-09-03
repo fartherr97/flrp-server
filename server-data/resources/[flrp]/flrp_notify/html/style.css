@@ -1,67 +1,28 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
+/* FLRP notify toasts — follows FLRP_NUI_STYLE_GUIDE.md (slate, Inter, subtle). */
 :root {
-  --panel: rgba(17, 20, 26, 0.72);   /* matches nex-hud panels (a touch more opaque) */
-  --line:  rgba(255, 255, 255, 0.06);
-  --text:  #eef3f6;
-  --muted: #aeb9c2;
+  --bg: 215 22% 15%; --border: 215 20% 24%; --text: 210 30% 96%; --muted: 215 14% 66%;
 }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { width: 100%; height: 100%; background: transparent; overflow: hidden;
+  font-family: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif; user-select: none; -webkit-font-smoothing: antialiased; }
 
-html, body {
-  width: 100%; height: 100%;
-  background: transparent; overflow: hidden;
-  font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
-  user-select: none;
-}
-
-/* Toast stack — top-centre, sits a little higher than the chat box.
-   Nudge `top` to move up/down, `left` to move sideways. */
-#toasts {
-  position: absolute;
-  top: 6vh;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  pointer-events: none;
-}
+#toasts { position: absolute; top: 6vh; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none; }
 
 .toast {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  background: var(--panel);
-  border-radius: 4px;
-  padding: 5px 12px 5px 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  display: flex; align-items: center; gap: 10px;
+  min-width: 220px; padding: 8px 14px 8px 10px;
+  background: hsl(var(--bg) / 0.96);
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.35);
   white-space: nowrap;
-  /* enter animation */
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity .22s ease, transform .22s ease;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity .14s ease, transform .14s ease;
 }
-.toast.in   { opacity: 1; transform: translateY(0); }
-.toast.out  { opacity: 0; transform: translateY(-10px); }
+.toast.in  { opacity: 1; transform: translateY(0); }
+.toast.out { opacity: 0; transform: translateY(-6px); }
 
-.tbar {
-  width: 3px;
-  height: 1.7vh;
-  border-radius: 2px;
-  flex: none;
-  background: #35d07f;
-}
-
-.tname {
-  font-size: 1.25vh;
-  font-weight: 800;
-  letter-spacing: 0.3px;
-  color: var(--text);
-}
-
-.tmsg {
-  font-size: 1.15vh;
-  font-weight: 600;
-  color: var(--muted);
-}
+.tbar  { width: 3px; align-self: stretch; border-radius: 3px; flex: none; background: hsl(190 95% 42%); }
+.tname { font-size: 13px; font-weight: 700; letter-spacing: .1px; color: hsl(var(--text)); }
+.tmsg  { font-size: 12.5px; font-weight: 500; color: hsl(var(--muted)); }
