@@ -78,6 +78,7 @@ FLRP_INTERACT.LeoToolbox = {
   { label = 'Escort (Drag)',      desc = 'Grab/release a cuffed person to walk them.',     action = 'client_event', arg = 'flrp_leotools:doDrag' },
   { label = 'Put in Vehicle',     desc = 'Seat the nearest person in a nearby vehicle.',   action = 'client_event', arg = 'flrp_leotools:doSeat' },
   { label = 'Remove from Vehicle',desc = 'Pull the nearest person out of a vehicle.',      action = 'client_event', arg = 'flrp_leotools:doUnseat' },
+  { label = 'Search (ID)',        desc = 'Search the nearest person; shows ID, wallet and weapons in chat.', action = 'client_event', arg = 'flrp_leotools:doSearch' },
   { label = 'Duty Menu',          desc = 'Open the on-duty menu (callsign, loadout).',     action = 'command',      arg = 'duty' },
   { label = 'Stop Animation',     desc = 'Cancel the current animation.',                  action = 'cancel' },
   -- Add more department utilities here as their scripts are installed, e.g.

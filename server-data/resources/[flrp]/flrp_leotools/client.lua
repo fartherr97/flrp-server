@@ -69,17 +69,57 @@ local function doUnseat()
   TriggerServerEvent('flrp_leotools:unseat', t)
 end
 
+local function doSearch()
+  local t = nearestPlayerServerId()
+  if not t then return toast('No one within reach.', 'error') end
+  TriggerServerEvent('flrp_leotools:search', t)
+end
+
 -- flrp_interact LEO Toolbox hooks (client_event actions)
 AddEventHandler('flrp_leotools:doCuff',   doCuff)
 AddEventHandler('flrp_leotools:doDrag',   doDrag)
 AddEventHandler('flrp_leotools:doSeat',   doSeat)
 AddEventHandler('flrp_leotools:doUnseat', doUnseat)
+AddEventHandler('flrp_leotools:doSearch', doSearch)
 
 -- Commands (server re-checks the ACE)
 RegisterCommand('cuff',   doCuff,   false)
 RegisterCommand('drag',   doDrag,   false)
 RegisterCommand('seat',   doSeat,   false)
 RegisterCommand('unseat', doUnseat, false)
+RegisterCommand('search', doSearch, false)
+
+-- ---- TARGET: report carried weapons when searched -----------------------
+-- HasPedGotWeapon only reads reliably on the ped's own client, so the searched
+-- player enumerates their own weapons. (Names via GetHashKey — no backtick
+-- literals, so this stays standard-Lua parseable.)
+local SEARCH_WEAPONS = {
+  { 'WEAPON_PISTOL', 'Pistol' }, { 'WEAPON_PISTOL_MK2', 'Pistol Mk II' }, { 'WEAPON_COMBATPISTOL', 'Combat Pistol' },
+  { 'WEAPON_APPISTOL', 'AP Pistol' }, { 'WEAPON_PISTOL50', 'Pistol .50' }, { 'WEAPON_SNSPISTOL', 'SNS Pistol' },
+  { 'WEAPON_HEAVYPISTOL', 'Heavy Pistol' }, { 'WEAPON_VINTAGEPISTOL', 'Vintage Pistol' }, { 'WEAPON_REVOLVER', 'Revolver' },
+  { 'WEAPON_CERAMICPISTOL', 'Ceramic Pistol' }, { 'WEAPON_MACHINEPISTOL', 'Machine Pistol' },
+  { 'WEAPON_MICROSMG', 'Micro SMG' }, { 'WEAPON_SMG', 'SMG' }, { 'WEAPON_ASSAULTSMG', 'Assault SMG' },
+  { 'WEAPON_COMBATPDW', 'Combat PDW' }, { 'WEAPON_MINISMG', 'Mini SMG' },
+  { 'WEAPON_ASSAULTRIFLE', 'Assault Rifle' }, { 'WEAPON_CARBINERIFLE', 'Carbine Rifle' }, { 'WEAPON_ADVANCEDRIFLE', 'Advanced Rifle' },
+  { 'WEAPON_SPECIALCARBINE', 'Special Carbine' }, { 'WEAPON_BULLPUPRIFLE', 'Bullpup Rifle' }, { 'WEAPON_COMPACTRIFLE', 'Compact Rifle' },
+  { 'WEAPON_MILITARYRIFLE', 'Military Rifle' }, { 'WEAPON_HEAVYRIFLE', 'Heavy Rifle' },
+  { 'WEAPON_PUMPSHOTGUN', 'Pump Shotgun' }, { 'WEAPON_SAWNOFFSHOTGUN', 'Sawn-off Shotgun' }, { 'WEAPON_ASSAULTSHOTGUN', 'Assault Shotgun' },
+  { 'WEAPON_HEAVYSHOTGUN', 'Heavy Shotgun' }, { 'WEAPON_DBSHOTGUN', 'Double Barrel Shotgun' }, { 'WEAPON_COMBATSHOTGUN', 'Combat Shotgun' },
+  { 'WEAPON_SNIPERRIFLE', 'Sniper Rifle' }, { 'WEAPON_HEAVYSNIPER', 'Heavy Sniper' }, { 'WEAPON_MARKSMANRIFLE', 'Marksman Rifle' },
+  { 'WEAPON_KNIFE', 'Knife' }, { 'WEAPON_NIGHTSTICK', 'Nightstick' }, { 'WEAPON_HAMMER', 'Hammer' }, { 'WEAPON_BAT', 'Bat' },
+  { 'WEAPON_CROWBAR', 'Crowbar' }, { 'WEAPON_MACHETE', 'Machete' }, { 'WEAPON_SWITCHBLADE', 'Switchblade' }, { 'WEAPON_BOTTLE', 'Broken Bottle' },
+  { 'WEAPON_STUNGUN', 'Stun Gun' }, { 'WEAPON_FLASHLIGHT', 'Flashlight' }, { 'WEAPON_BATON', 'Baton' },
+  { 'WEAPON_GRENADE', 'Grenade' }, { 'WEAPON_STICKYBOMB', 'Sticky Bomb' }, { 'WEAPON_MOLOTOV', 'Molotov' }, { 'WEAPON_PIPEBOMB', 'Pipe Bomb' },
+}
+
+RegisterNetEvent('flrp_leotools:collect', function(officerSrv)
+  local ped = PlayerPedId()
+  local found = {}
+  for _, w in ipairs(SEARCH_WEAPONS) do
+    if HasPedGotWeapon(ped, GetHashKey(w[1]), false) then found[#found + 1] = w[2] end
+  end
+  TriggerServerEvent('flrp_leotools:collected', officerSrv, found)
+end)
 
 -- ---- TARGET: apply restraint --------------------------------------------
 local function loadAnimDict(dict)

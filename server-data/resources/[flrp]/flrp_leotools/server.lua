@@ -95,10 +95,58 @@ RegisterNetEvent('flrp_leotools:unseat', function(target)
   TriggerClientEvent('flrp_leotools:unseat', target)
 end)
 
+-- ---- search (ID + what's on their person) --------------------------------
+local pendingSearch = {}  -- [targetSrc] = { officer = src, expires = os.time()+N }
+
+local function money(cents)
+  local d = math.floor((tonumber(cents) or 0) / 100)
+  local s = tostring(d)
+  local out = s:reverse():gsub('(%d%d%d)', '%1,'):reverse():gsub('^,', '')
+  return '$' .. out
+end
+
+local BLUE = { 90, 160, 255 }
+local function line(dst, tag, val)
+  TriggerClientEvent('chat:addMessage', dst, { color = BLUE, multiline = true, args = { tag, val } })
+end
+
+RegisterNetEvent('flrp_leotools:search', function(target)
+  local src = source
+  target = tonumber(target)
+  if not isLeo(src) or not target or not GetPlayerName(target) then return end
+  if not within(src, target, FLRP_LEO.Reach) then
+    return TriggerClientEvent('flrp_notify:toast', src, { title = 'LEO', kind = 'error', body = 'No one in reach to search.' })
+  end
+  pendingSearch[target] = { officer = src, expires = os.time() + 10 }
+  TriggerClientEvent('flrp_leotools:collect', target, src)   -- ask target for carried weapons
+end)
+
+RegisterNetEvent('flrp_leotools:collected', function(officer, weapons)
+  local target = source
+  officer = tonumber(officer)
+  local p = pendingSearch[target]
+  if not p or p.officer ~= officer or os.time() > p.expires then return end -- must be a real pending search
+  pendingSearch[target] = nil
+  if not isLeo(officer) or not GetPlayerName(officer) then return end
+
+  local bal = 0; pcall(function() bal = exports.flrp_economy:GetBalance(target) or 0 end)
+  local pidNum; pcall(function() pidNum = exports.flrp_core:GetPlayerId(target) end)
+  weapons = type(weapons) == 'table' and weapons or {}
+
+  line(officer, 'SEARCH', ('%s  (ID %s)'):format(name(target), tostring(pidNum or target)))
+  line(officer, '  Wallet', money(bal))
+  line(officer, '  Cuffed', cuffed[target] and 'Yes' or 'No')
+  line(officer, '  Weapons', #weapons > 0 and table.concat(weapons, ', ') or 'None')
+
+  TriggerClientEvent('flrp_notify:toast', target, { title = 'LEO', kind = 'info', body = name(officer) .. ' searched you.' })
+  log(officer, target, 'searched')
+end)
+
 AddEventHandler('playerDropped', function()
   local src = source
   cuffed[src] = nil
   dragged[src] = nil
+  pendingSearch[src] = nil
   for t, officer in pairs(dragged) do
     if officer == src then dragged[t] = nil; TriggerClientEvent('flrp_leotools:drag', t, nil, false) end
   end
