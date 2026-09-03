@@ -24,6 +24,12 @@ local function isStaff(src)
   return (src and src > 0 and IsPlayerAceAllowed(src, ACE)) and true or false
 end
 
+-- Director+ (ownership inherits) may claim / resolve their own reports.
+local function canSelfClaim(src)
+  src = tonumber(src)
+  return (src and src > 0 and IsPlayerAceAllowed(src, FLRP_REPORTS.SelfClaimAce)) and true or false
+end
+
 local function licenseOf(src)
   for _, id in ipairs(GetPlayerIdentifiers(src) or {}) do
     if id:sub(1, 8) == 'license:' then return id:sub(9) end
@@ -228,6 +234,7 @@ local function stateFor(src)
   return {
     ok           = true,
     isStaff      = staff,
+    canSelfClaim = staff and canSelfClaim(src),
     me           = { src = src, name = GetPlayerName(src) },
     staffOnline  = #staffSrcs(),
     reports      = list,
@@ -304,7 +311,7 @@ function H.claim(src, p)
   local r = reports[tonumber(p.id or 0)]
   if not r then return { ok = false, error = 'Report not found.' } end
   if r.status ~= 'open' then return { ok = false, error = 'Already ' .. r.status .. (r.claimed_by_name and (' by ' .. r.claimed_by_name) or '') .. '.' } end
-  if r.reporter_license == licenseOf(src) then
+  if r.reporter_license == licenseOf(src) and not canSelfClaim(src) then
     pcall(function()
       FLRP.DB.Insert('INSERT INTO `staff_self_claims` (`license`,`name`,`report_id`,`created_at`) VALUES (?,?,?,?)',
         { licenseOf(src) or '', GetPlayerName(src) or 'Unknown', r.id, os.time() })
@@ -338,7 +345,7 @@ function H.resolve(src, p)
   if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
   local r = reports[tonumber(p.id or 0)]
   if not r or r.status == 'resolved' then return { ok = false, error = 'Report not found or already resolved.' } end
-  if r.status == 'open' and r.reporter_license == licenseOf(src) then
+  if r.status == 'open' and r.reporter_license == licenseOf(src) and not canSelfClaim(src) then
     return { ok = false, error = 'You can\'t resolve your own unclaimed report — another staff member has to handle it.' }
   end
   local t = os.time()

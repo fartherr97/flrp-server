@@ -170,14 +170,14 @@
     // actions
     var acts = '';
     if (staff) {
-      if (r.status === 'open') acts += r.own
+      if (r.status === 'open') acts += (r.own && !st.canSelfClaim)
         ? '<span class="pill soft" style="align-self:center">Your report — another staffer must claim it</span>'
         : '<button class="btn primary" data-act="claim">✋ Claim</button>';
       if (r.status === 'claimed' && r.claimedByMe) acts += '<button class="btn ghost" data-act="unclaim">Release</button>';
       if (r.status !== 'resolved') {
         acts += '<button class="btn" data-act="goto"' + (r.reporter.online ? '' : ' disabled') + '>➜ Go to</button>';
         acts += '<button class="btn" data-act="bring"' + (r.reporter.online ? '' : ' disabled') + '>⤵ Bring</button>';
-        if (!(r.status === 'open' && r.own)) acts += '<button class="btn good" data-act="resolve-open">✓ Resolve</button>';
+        if (!(r.status === 'open' && r.own && !st.canSelfClaim)) acts += '<button class="btn good" data-act="resolve-open">✓ Resolve</button>';
       }
     }
     html += '<div class="d-actions">' + acts + '</div></div>';

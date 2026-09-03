@@ -13,6 +13,7 @@ FLRP_REPORTS = {}
 
 FLRP_REPORTS.Key            = 'J'                       -- RegisterKeyMapping default (players can rebind)
 FLRP_REPORTS.StaffAce       = 'flrp.staff.moderate'     -- who gets the staff console
+FLRP_REPORTS.SelfClaimAce   = 'flrp.staff.direct'       -- may claim/resolve their OWN reports (director+; ownership inherits)
 FLRP_REPORTS.Commands       = { 'report', 'calladmin' } -- both open the player form
 
 -- Logo shown in the menu header (convar `flrp_reports_logo` overrides).
