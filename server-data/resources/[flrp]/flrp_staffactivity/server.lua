@@ -12,6 +12,13 @@ local function licenseOf(src)
   return nil
 end
 
+local function discordOf(src)
+  for _, id in ipairs(GetPlayerIdentifiers(src) or {}) do
+    if id:sub(1, 8) == 'discord:' then return id:sub(9) end
+  end
+  return nil
+end
+
 local function rankOf(src)
   for _, r in ipairs(FLRP_STAFF.Ranks) do
     if IsPlayerAceAllowed(src, r.ace) then return r.label end
@@ -48,15 +55,37 @@ local function webhookBase()
   return url
 end
 
-local function upsertMember(lic, name, rank)
+local function upsertMember(lic, name, rank, discordId)
   if not lic or not rank then return end
   pcall(function()
     FLRP.DB.Query([[
-      INSERT INTO `staff_members` (`license`,`name`,`rank`,`last_seen`) VALUES (?,?,?,?)
-      ON DUPLICATE KEY UPDATE `name`=VALUES(`name`), `rank`=VALUES(`rank`), `last_seen`=VALUES(`last_seen`)
-    ]], { lic, name or 'Unknown', rank, os.time() })
+      INSERT INTO `staff_members` (`license`,`name`,`rank`,`discord_id`,`last_seen`) VALUES (?,?,?,?,?)
+      ON DUPLICATE KEY UPDATE `name`=VALUES(`name`), `rank`=VALUES(`rank`),
+        `discord_id`=COALESCE(VALUES(`discord_id`), `discord_id`), `last_seen`=VALUES(`last_seen`)
+    ]], { lic, name or 'Unknown', rank, discordId, os.time() })
   end)
 end
+
+-- Keep the staff ROSTER current: every staff member is recorded (with rank +
+-- Discord id) when they connect, and dropped if they no longer hold a staff
+-- rank. This is what lets the tracker list the whole team, 0 claims included.
+local function syncMember(src)
+  local lic = licenseOf(src); if not lic then return end
+  local rank = rankOf(src)
+  if rank then
+    upsertMember(lic, GetPlayerName(src), rank, discordOf(src))
+  else
+    pcall(function() FLRP.DB.Update('DELETE FROM `staff_members` WHERE `license` = ?', { lic }) end)
+  end
+end
+
+AddEventHandler('playerJoining', function()
+  local src = source
+  CreateThread(function()
+    Wait(2000)                              -- principals are attached during the gate; give it a beat
+    if GetPlayerName(src) then syncMember(src) end
+  end)
+end)
 
 -- ---- vest state ----------------------------------------------------------
 local function setVest(src, on)
@@ -67,7 +96,7 @@ local function setVest(src, on)
     if vest[src] then return true end
     local t = os.time()
     local rank = rankOf(src) or FLRP_STAFF.UnknownGroup
-    upsertMember(lic, GetPlayerName(src), rank)
+    upsertMember(lic, GetPlayerName(src), rank, discordOf(src))
     local id = FLRP.DB.Insert('INSERT INTO `staff_vest_sessions` (`license`,`name`,`rank`,`started_at`) VALUES (?,?,?,?)',
       { lic, GetPlayerName(src), rank, t })
     vest[src] = { id = id, startedAt = t }
@@ -132,13 +161,16 @@ local function ensureTables()
   ]])
   FLRP.DB.Query([[
     CREATE TABLE IF NOT EXISTS `staff_members` (
-      `license`   VARCHAR(64)  NOT NULL,
-      `name`      VARCHAR(100) NOT NULL,
-      `rank`      VARCHAR(32)  NOT NULL,
-      `last_seen` INT UNSIGNED NOT NULL,
+      `license`    VARCHAR(64)  NOT NULL,
+      `name`       VARCHAR(100) NOT NULL,
+      `rank`       VARCHAR(32)  NOT NULL,
+      `discord_id` VARCHAR(32)  NULL,
+      `last_seen`  INT UNSIGNED NOT NULL,
       PRIMARY KEY (`license`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   ]])
+  -- tables created before discord_id existed: add the column (MariaDB IF NOT EXISTS)
+  pcall(function() FLRP.DB.Query('ALTER TABLE `staff_members` ADD COLUMN IF NOT EXISTS `discord_id` VARCHAR(32) NULL AFTER `rank`') end)
   -- flrp_reports owns these, but create defensively so a query never errors if
   -- this resource boots first.
   FLRP.DB.Query([[
@@ -164,6 +196,12 @@ local function gather(from, to)
     return s
   end
 
+  -- 1) the whole roster first, so every staff member is listed even at 0
+  for _, m in ipairs(FLRP.DB.Query('SELECT `license`, `name`, `rank`, `discord_id` FROM `staff_members`') or {}) do
+    local st = slot(m.license, m.name)
+    st.rank, st.discord = m.rank, m.discord_id
+  end
+
   for _, r in ipairs(FLRP.DB.Query(
     'SELECT `claimed_by_license` lic, `claimed_by_name` name, COUNT(*) claims FROM `reports` WHERE `claimed_at` BETWEEN ? AND ? AND `claimed_by_license` IS NOT NULL GROUP BY `claimed_by_license`, `claimed_by_name`',
     { from, to }) or {}) do
@@ -176,16 +214,15 @@ local function gather(from, to)
     slot(r.lic, r.name).vest = tonumber(r.secs) or 0
   end
 
-  -- rank: current ace if online, else captured rank in staff_members
-  local members = {}
-  for _, m in ipairs(FLRP.DB.Query('SELECT `license`, `rank` FROM `staff_members`') or {}) do members[m.license] = m.rank end
-  local onlineRank = {}
+  -- rank / discord for anyone with activity but not (yet) on the roster
+  local onlineRank, onlineDiscord = {}, {}
   for _, pid in ipairs(GetPlayers()) do
     local s = tonumber(pid); local lic = s and licenseOf(s)
-    if lic then onlineRank[lic] = rankOf(s) end
+    if lic then onlineRank[lic] = rankOf(s); onlineDiscord[lic] = discordOf(s) end
   end
   for lic, s in pairs(staff) do
-    s.rank = onlineRank[lic] or members[lic] or FLRP_STAFF.UnknownGroup
+    s.rank    = s.rank    or onlineRank[lic]    or FLRP_STAFF.UnknownGroup
+    s.discord = s.discord or onlineDiscord[lic]
   end
   return staff
 end
@@ -221,7 +258,8 @@ local function buildEmbed(from, to)
   for _, s in ipairs(names) do
     local g = groupForRank(s.rank)
     byGroup[g] = byGroup[g] or {}
-    table.insert(byGroup[g], ('**%s**: %d claim%s (%s)'):format(s.name or 'Unknown', s.claims, s.claims == 1 and '' or 's', human(s.vest)))
+    local who = (s.discord and s.discord ~= '') and ('<@' .. s.discord .. '>') or ('**' .. (s.name or 'Unknown') .. '**')
+    table.insert(byGroup[g], ('%s: %d claim%s (%s)'):format(who, s.claims, s.claims == 1 and '' or 's', human(s.vest)))
   end
 
   local desc = ('**Overall Statistics**\n'
@@ -306,6 +344,12 @@ CreateThread(function()
   while not (exports.flrp_core and exports.flrp_core:IsReady()) do Wait(500) end
   local ok, err = pcall(ensureTables)
   if not ok then print('[flrp_staffactivity] table setup failed: ' .. tostring(err)) end
+
+  -- roster: pick up staff who are ALREADY online (no reconnect needed)
+  for _, pid in ipairs(GetPlayers()) do
+    local src = tonumber(pid)
+    if src then pcall(syncMember, src) end
+  end
 
   if not GetResourceKvpString(KVP) then SetResourceKvp(KVP, tostring(os.time())) end
   print('[flrp_staffactivity] ready (auto-post ' .. (FLRP_STAFF.AutoPost and (FLRP_STAFF.PeriodDays .. 'd') or 'off') .. ')')
