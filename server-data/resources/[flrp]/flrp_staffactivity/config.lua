@@ -26,11 +26,14 @@ FLRP_STAFF.Colour        = 0x00bfc4
 FLRP_STAFF.VestAce   = 'flrp.staff.moderate'   -- /vest, /sd
 FLRP_STAFF.ManageAce = 'flrp.staff.direct'     -- /staffactivity [days]
 
--- Auto-post cadence. AutoPost=true posts the tracker automatically every
--- PeriodDays (like SSRP's fortnightly report). The manual command can post any
--- range at any time without affecting the auto schedule.
-FLRP_STAFF.AutoPost   = true
-FLRP_STAFF.PeriodDays = 14
+-- Cycle. Fixed 14-day windows anchored at CycleStart (UTC midnight). ONE live
+-- embed per cycle is posted and then EDITED in place every RefreshMinutes so
+-- it always shows the current window (e.g. "September 03 - September 17").
+-- When a cycle ends it's stamped "Final" (archived) and a fresh embed begins
+-- the next cycle. /staffactivity last re-posts the previous, completed cycle.
+FLRP_STAFF.CycleStart     = { year = 2026, month = 9, day = 3 }
+FLRP_STAFF.CycleDays      = 14
+FLRP_STAFF.RefreshMinutes = 15
 
 -- Staff ranks, highest first: ACE that identifies the rank, the label used in
 -- the roster, and the group heading it appears under in the embed. Grouping +
@@ -42,3 +45,15 @@ FLRP_STAFF.Ranks = {
   { ace = 'flrp.staff.moderate',   label = 'Moderator',     group = 'Moderators' },
 }
 FLRP_STAFF.UnknownGroup = 'Staff'   -- claimers we have no captured rank for
+
+-- Discord roster (authoritative). The tracker lists EVERY member of the guild
+-- holding one of these roles, whether or not they've ever joined the server.
+-- Role ids come from the same secrets.cfg convars the connection gate uses.
+-- Highest first. Needs the bot's "Server Members Intent" (the gate needs it too).
+-- If Discord can't be reached, it falls back to staff who have connected.
+FLRP_STAFF.RankRoles = {
+  { convar = 'flrp_role_ownership',     label = 'Ownership' },
+  { convar = 'flrp_role_director',      label = 'Director' },
+  { convar = 'flrp_role_administrator', label = 'Administrator' },
+  { convar = 'flrp_role_moderator',     label = 'Moderator' },
+}

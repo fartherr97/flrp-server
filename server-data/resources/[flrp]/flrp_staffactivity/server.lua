@@ -184,22 +184,111 @@ local function ensureTables()
   FLRP.DB.Query('UPDATE `staff_vest_sessions` SET `ended_at`=`started_at`, `seconds`=0 WHERE `ended_at` IS NULL')
 end
 
+-- ---- Discord staff roster (authoritative) --------------------------------
+local discordRoster, discordRosterAt = nil, 0   -- { [discordId] = { name, rank } }
+local rosterWarned = false
+
+local function staffRoles()   -- ordered highest-first: { {id, label}, ... }
+  local out = {}
+  for _, rr in ipairs(FLRP_STAFF.RankRoles) do
+    local id = GetConvar(rr.convar, '')
+    if id ~= '' and id ~= 'REPLACE_ME' then out[#out + 1] = { id = id, label = rr.label } end
+  end
+  return out
+end
+
+-- Pages through /guilds/{id}/members (1000/page) and keeps members holding a
+-- staff role. cb(rosterTable) on success, cb(nil, err) on failure.
+local function fetchDiscordRoster(cb)
+  local token = GetConvar('flrp_discord_token', '')
+  local guild = GetConvar('flrp_discord_guild_id', '')
+  if token == '' or token == 'REPLACE_ME' or guild == '' or guild == 'REPLACE_ME' then
+    return cb(nil, 'flrp_discord_token / flrp_discord_guild_id not set')
+  end
+  local roles = staffRoles()
+  if #roles == 0 then return cb(nil, 'no flrp_role_* ids set') end
+
+  local result, after, pages = {}, nil, 0
+  local function page()
+    pages = pages + 1
+    if pages > 25 then return cb(result) end   -- safety cap (25k members)
+    local url = ('https://discord.com/api/v10/guilds/%s/members?limit=1000%s'):format(guild, after and ('&after=' .. after) or '')
+    PerformHttpRequest(url, function(st, body)
+      if st ~= 200 then return cb(nil, 'HTTP ' .. tostring(st) .. (st == 403 and ' (enable the bot\'s Server Members Intent)' or '')) end
+      local ok, list = pcall(json.decode, body or '')
+      if not ok or type(list) ~= 'table' then return cb(nil, 'bad response') end
+      for _, m in ipairs(list) do
+        local u = m.user or {}
+        local rank
+        for _, r in ipairs(roles) do
+          for _, rid in ipairs(m.roles or {}) do
+            if tostring(rid) == r.id then rank = r.label; break end
+          end
+          if rank then break end
+        end
+        if rank and u.id then
+          result[tostring(u.id)] = { name = m.nick or u.global_name or u.username or ('User ' .. tostring(u.id)), rank = rank }
+        end
+        if u.id then after = tostring(u.id) end
+      end
+      if #list >= 1000 and after then page() else cb(result) end
+    end, 'GET', '', { ['Authorization'] = 'Bot ' .. token })
+  end
+  page()
+end
+
+-- Make sure the roster cache is fresh (<= RefreshMinutes old), then continue.
+local function withRoster(cb)
+  if discordRoster and (os.time() - discordRosterAt) < (FLRP_STAFF.RefreshMinutes * 60) then return cb() end
+  fetchDiscordRoster(function(r, err)
+    if r then
+      discordRoster, discordRosterAt = r, os.time()
+      local n = 0; for _ in pairs(r) do n = n + 1 end
+      print(('[flrp_staffactivity] Discord roster: %d staff'):format(n))
+    elseif not rosterWarned then
+      rosterWarned = true
+      print('[flrp_staffactivity] Discord roster unavailable (' .. tostring(err) .. ') — listing staff who have connected instead')
+    end
+    cb()
+  end)
+end
+
 -- ---- tracker build -------------------------------------------------------
--- Returns { license -> { name, rank, claims, vest } } for [from, to].
+-- Returns { key -> { name, rank, discord, claims, vest } } for [from, to].
+-- Every Discord staff member is present (0s if inactive); claims/vest are
+-- joined through staff_members (license <-> discord_id, captured on connect).
 local function gather(from, to)
   local now = os.time()
-  local staff = {}
-  local function slot(lic, name)
-    local s = staff[lic]
-    if not s then s = { name = name, claims = 0, vest = 0 }; staff[lic] = s
-    elseif name and name ~= '' then s.name = name end
-    return s
+  local staff, byLicense = {}, {}
+  local dbMembers = FLRP.DB.Query('SELECT `license`, `name`, `rank`, `discord_id` FROM `staff_members`') or {}
+  local licByDiscord = {}
+  for _, m in ipairs(dbMembers) do if m.discord_id and m.discord_id ~= '' then licByDiscord[tostring(m.discord_id)] = m.license end end
+
+  -- 1) the roster: Discord (everyone with a staff role) or, if unavailable, the DB
+  if discordRoster then
+    for did, info in pairs(discordRoster) do
+      local e = { name = info.name, rank = info.rank, discord = did, claims = 0, vest = 0 }
+      staff[did] = e
+      local lic = licByDiscord[did]; if lic then byLicense[lic] = e end
+    end
+  else
+    for _, m in ipairs(dbMembers) do
+      local e = { name = m.name, rank = m.rank, discord = m.discord_id, claims = 0, vest = 0 }
+      staff[(m.discord_id and m.discord_id ~= '') and tostring(m.discord_id) or ('lic:' .. m.license)] = e
+      byLicense[m.license] = e
+    end
   end
 
-  -- 1) the whole roster first, so every staff member is listed even at 0
-  for _, m in ipairs(FLRP.DB.Query('SELECT `license`, `name`, `rank`, `discord_id` FROM `staff_members`') or {}) do
-    local st = slot(m.license, m.name)
-    st.rank, st.discord = m.rank, m.discord_id
+  -- activity rows keyed by license -> roster entry (create one if it's someone off-roster)
+  local function slot(lic, name)
+    local e = byLicense[lic]
+    if e then return e end
+    e = { name = name, claims = 0, vest = 0 }
+    for _, m in ipairs(dbMembers) do
+      if m.license == lic then e.rank, e.discord = m.rank, m.discord_id; break end
+    end
+    staff['lic:' .. tostring(lic)] = e; byLicense[lic] = e
+    return e
   end
 
   for _, r in ipairs(FLRP.DB.Query(
@@ -239,35 +328,34 @@ end
 
 local function fmtDate(ts) return os.date('!%B %d, %Y', ts) end
 
-local function buildEmbed(from, to)
+-- o = { titleFrom, titleTo, final }  (stats always cover [from, to])
+local function buildEmbed(from, to, o)
+  o = o or {}
   local staff = gather(from, to)
-  local o = overall(from, to)
+  local ov = overall(from, to)
 
   local totalStaff = 0
-  local byGroup = {}   -- group -> { lines }
-  local names = {}
-  for _, s in pairs(staff) do totalStaff = totalStaff + 1; names[#names + 1] = s end
+  local byGroup, names = {}, {}
+  for _, st in pairs(staff) do totalStaff = totalStaff + 1; names[#names + 1] = st end
 
-  -- order staff by rank then claims desc then name
   table.sort(names, function(a, b)
     local ra, rb = rankOrder(a.rank), rankOrder(b.rank)
     if ra ~= rb then return ra < rb end
     if a.claims ~= b.claims then return a.claims > b.claims end
     return (a.name or '') < (b.name or '')
   end)
-  for _, s in ipairs(names) do
-    local g = groupForRank(s.rank)
+  for _, st in ipairs(names) do
+    local g = groupForRank(st.rank)
     byGroup[g] = byGroup[g] or {}
-    local who = (s.discord and s.discord ~= '') and ('<@' .. s.discord .. '>') or ('**' .. (s.name or 'Unknown') .. '**')
-    table.insert(byGroup[g], ('%s: %d claim%s (%s)'):format(who, s.claims, s.claims == 1 and '' or 's', human(s.vest)))
+    local who = (st.discord and st.discord ~= '') and ('<@' .. st.discord .. '>') or ('**' .. (st.name or 'Unknown') .. '**')
+    table.insert(byGroup[g], ('%s: %d claim%s (%s)'):format(who, st.claims, st.claims == 1 and '' or 's', human(st.vest)))
   end
 
   local desc = ('**Overall Statistics**\n'
     .. 'Total Staff: **%d**\nTotal Reports: **%d**\nTotal Claims: **%d**\n'
     .. 'Attempted Self-Claims: **%d**\nTotal Vest Time: **%s**')
-    :format(totalStaff, o.reports, o.claims, o.selfClaims, human(o.vest))
+    :format(totalStaff, ov.reports, ov.claims, ov.selfClaims, human(ov.vest))
 
-  -- ordered group headings: config groups first, then Staff
   local order, seen = {}, {}
   for _, r in ipairs(FLRP_STAFF.Ranks) do if not seen[r.group] then seen[r.group] = true; order[#order + 1] = r.group end end
   if not seen[FLRP_STAFF.UnknownGroup] then order[#order + 1] = FLRP_STAFF.UnknownGroup end
@@ -276,16 +364,14 @@ local function buildEmbed(from, to)
   for _, g in ipairs(order) do
     local lines = byGroup[g]
     if lines and #lines > 0 then
-      -- split a group across fields if it would exceed Discord's 1024 limit
-      local chunk, first = {}, true
+      local chunk, first, len = {}, true, 0
       local function flush()
         if #chunk == 0 then return end
         fields[#fields + 1] = { name = first and g or (g .. ' (cont.)'), value = table.concat(chunk, '\n'), inline = false }
-        chunk = {}; first = false
+        chunk = {}; first = false; len = 0
       end
-      local len = 0
       for _, line in ipairs(lines) do
-        if len + #line + 1 > 1000 then flush(); len = 0 end
+        if len + #line + 1 > 1000 then flush() end
         chunk[#chunk + 1] = line; len = len + #line + 1
       end
       flush()
@@ -296,54 +382,138 @@ local function buildEmbed(from, to)
   end
 
   return {
-    title       = ('Staff Activity Tracker (%s - %s)'):format(fmtDate(from), fmtDate(to)),
+    title       = ('Staff Activity Tracker (%s - %s)'):format(fmtDate(o.titleFrom or from), fmtDate(o.titleTo or to)),
     description = desc,
     color       = FLRP_STAFF.Colour,
     thumbnail   = { url = GetConvar('flrp_reports_logo', FLRP_STAFF.Logo) },
     fields      = fields,
-    footer      = { text = FLRP_STAFF.ServerName .. ' • Staff Activity' },
+    footer      = { text = FLRP_STAFF.ServerName .. ' • Staff Activity • ' .. (o.final and 'Final' or 'Live') },
     timestamp   = os.date('!%Y-%m-%dT%H:%M:%SZ'),
   }
 end
 
-local function post(from, to, cb)
-  local url = webhookBase()
-  if not url then if cb then cb(false, 'no webhook') end; return end
-  local ok, embed = pcall(buildEmbed, from, to)
-  if not ok then print('[flrp_staffactivity] build failed: ' .. tostring(embed)); if cb then cb(false, 'build') end; return end
-  PerformHttpRequest(url, function(status, body)
-    local good = status == 200 or status == 204
-    if not good then print(('[flrp_staffactivity] post failed: HTTP %s %s'):format(tostring(status), tostring(body))) end
-    if cb then cb(good, status) end
-  end, 'POST', json.encode({ username = FLRP_STAFF.Username, embeds = { embed } }), { ['Content-Type'] = 'application/json' })
+-- ---- cycles --------------------------------------------------------------
+local ANCHOR, CYCLE = 0, FLRP_STAFF.CycleDays * 86400
+
+-- UTC-midnight epoch for the configured date regardless of server timezone.
+local function initAnchor()
+  local c = FLRP_STAFF.CycleStart
+  local utcOffset = os.time() - os.time(os.date('!*t'))
+  ANCHOR = os.time({ year = c.year, month = c.month, day = c.day, hour = 0, min = 0, sec = 0 }) + utcOffset
+end
+local function cycleIndex(ts) return math.floor((ts - ANCHOR) / CYCLE) end
+local function cycleBounds(idx) local st = ANCHOR + idx * CYCLE; return st, st + CYCLE end
+
+-- ---- webhook (post once, then edit in place) ------------------------------
+local function webhookBase()
+  local url = GetConvar(FLRP_STAFF.WebhookConvar, '')
+  if url == '' or not url:find('discord') then return nil end
+  return (url:gsub('%?.*$', ''))
 end
 
--- ---- commands ------------------------------------------------------------
+local HDR = { ['Content-Type'] = 'application/json' }
+
+-- cb(ok, infoOrMsgId). msgId=nil -> POST (returns new id); msgId -> PATCH.
+local function send(embed, msgId, cb)
+  local base = webhookBase()
+  if not base then return cb(false, 'no webhook') end
+  local payload = json.encode({ username = FLRP_STAFF.Username, embeds = { embed } })
+  if msgId then
+    PerformHttpRequest(base .. '/messages/' .. msgId, function(st, body)
+      if st == 404 then cb(false, 'gone')
+      elseif st == 200 or st == 204 then cb(true, msgId)
+      else print(('[flrp_staffactivity] edit failed: HTTP %s %s'):format(tostring(st), tostring(body))); cb(false, st) end
+    end, 'PATCH', payload, HDR)
+  else
+    PerformHttpRequest(base .. '?wait=true', function(st, body)
+      if st == 200 or st == 204 then
+        local ok, d = pcall(json.decode, body or '')
+        cb(true, (ok and type(d) == 'table' and d.id) or nil)
+      else print(('[flrp_staffactivity] post failed: HTTP %s %s'):format(tostring(st), tostring(body))); cb(false, st) end
+    end, 'POST', payload, HDR)
+  end
+end
+
+-- Render cycle `idx` into ITS live message (create if missing, else edit).
+-- A cycle whose end has passed renders as Final (archived).
+local function renderCycle(idx, cb, _retried)
+  if not _retried then return withRoster(function() renderCycle(idx, cb, 'rostered') end) end
+  if _retried == 'rostered' then _retried = false end
+  local now = os.time()
+  local st, en = cycleBounds(idx)
+  local kv = 'flrp_staffactivity_msg_' .. tostring(idx)
+  local msgId = GetResourceKvpString(kv); if msgId == '' then msgId = nil end
+  local ok, embed = pcall(buildEmbed, st, math.min(now, en), { titleFrom = st, titleTo = en, final = now >= en })
+  if not ok then print('[flrp_staffactivity] build failed: ' .. tostring(embed)); return cb(false, 'build') end
+  send(embed, msgId, function(good, info)
+    if good then
+      if info and not msgId then SetResourceKvp(kv, tostring(info)) end
+      cb(true, idx)
+    elseif info == 'gone' and not _retried then
+      DeleteResourceKvp(kv)              -- message was deleted in Discord; repost it
+      renderCycle(idx, cb, true)
+    else cb(false, info) end
+  end)
+end
+
+-- One-off post (never edited): used by /staffactivity last and ad-hoc ranges.
+local function postOnce(from, to, o, cb)
+  return withRoster(function()
+  local ok, embed = pcall(buildEmbed, from, to, o)
+  if not ok then print('[flrp_staffactivity] build failed: ' .. tostring(embed)); return cb(false, 'build') end
+  send(embed, nil, cb)
+  end)
+end
+
+-- ---- command -------------------------------------------------------------
+local function reason(info)
+  return ({ ['no webhook'] = 'no webhook set (full server restart after editing secrets.cfg?)',
+            ['build'] = 'internal build error (check console)' })[info] or ('Discord HTTP ' .. tostring(info))
+end
+
 RegisterCommand('staffactivity', function(src, args)
   if type(src) == 'number' and src > 0 and not IsPlayerAceAllowed(src, FLRP_STAFF.ManageAce) then
     TriggerClientEvent('chat:addMessage', src, { color = { 200, 60, 60 }, args = { 'SYSTEM', 'Directors only.' } })
     return
   end
-  local days = tonumber(args and args[1]) or FLRP_STAFF.PeriodDays
-  days = math.max(1, math.min(days, 365))
-  local to = os.time(); local from = to - (days * 86400)
-  post(from, to, function(good, info)
-    local reason = ({ ['no webhook'] = 'no webhook set (full server restart after editing secrets.cfg?)',
-                      ['build'] = 'internal build error (check console)' })[info] or ('Discord HTTP ' .. tostring(info))
+  local function reply(good, msg, info)
     if type(src) == 'number' and src > 0 then
       TriggerClientEvent('chat:addMessage', src, { color = good and { 0, 191, 196 } or { 200, 60, 60 },
-        args = { 'STAFF ACTIVITY', good and ('Posted the %d-day tracker to Discord.'):format(days) or ('Failed: ' .. reason) } })
+        args = { 'STAFF ACTIVITY', good and msg or ('Failed: ' .. reason(info)) } })
     end
-    print(('[flrp_staffactivity] manual post %d days -> %s%s'):format(days, tostring(good), good and '' or (' (' .. tostring(info) .. ')')))
-  end)
+    print(('[flrp_staffactivity] %s -> %s%s'):format(msg, tostring(good), good and '' or (' (' .. tostring(info) .. ')')))
+  end
+
+  local a = (args and args[1] or ''):lower()
+  local now = os.time()
+  if a == 'last' or a == 'previous' or a == 'prev' then
+    local idx = cycleIndex(now) - 1
+    local st, en = cycleBounds(idx)
+    postOnce(st, en, { titleFrom = st, titleTo = en, final = true }, function(good, info)
+      reply(good, ('Posted last cycle (%s - %s).'):format(fmtDate(st), fmtDate(en)), info)
+    end)
+  elseif a == '' or a == 'current' or a == 'now' then
+    renderCycle(cycleIndex(now), function(good, info)
+      local st, en = cycleBounds(cycleIndex(now))
+      reply(good, ('Refreshed the live cycle embed (%s - %s).'):format(fmtDate(st), fmtDate(en)), info)
+    end)
+  else
+    local days = tonumber(a)
+    if not days then return reply(false, 'usage: /staffactivity [last|current|<days>]', 'usage') end
+    days = math.max(1, math.min(days, 365))
+    postOnce(now - days * 86400, now, { final = true }, function(good, info)
+      reply(good, ('Posted a one-off %d-day tracker.'):format(days), info)
+    end)
+  end
 end, false)
 
--- ---- auto-post + boot ----------------------------------------------------
-local KVP = 'flrp_staffactivity_lastpost'
+-- ---- boot + live refresh loop ------------------------------------------------
+local KV_CYCLE = 'flrp_staffactivity_cycle'
 CreateThread(function()
   while not (exports.flrp_core and exports.flrp_core:IsReady()) do Wait(500) end
   local ok, err = pcall(ensureTables)
   if not ok then print('[flrp_staffactivity] table setup failed: ' .. tostring(err)) end
+  initAnchor()
 
   -- roster: pick up staff who are ALREADY online (no reconnect needed)
   for _, pid in ipairs(GetPlayers()) do
@@ -351,19 +521,25 @@ CreateThread(function()
     if src then pcall(syncMember, src) end
   end
 
-  if not GetResourceKvpString(KVP) then SetResourceKvp(KVP, tostring(os.time())) end
-  print('[flrp_staffactivity] ready (auto-post ' .. (FLRP_STAFF.AutoPost and (FLRP_STAFF.PeriodDays .. 'd') or 'off') .. ')')
+  local st0, en0 = cycleBounds(cycleIndex(os.time()))
+  print(('[flrp_staffactivity] ready — cycle %s - %s, live refresh every %dm'):format(fmtDate(st0), fmtDate(en0), FLRP_STAFF.RefreshMinutes))
 
+  local lastIdx = tonumber(GetResourceKvpString(KV_CYCLE) or '')
   while true do
-    Wait(3600 * 1000)   -- check hourly
-    if FLRP_STAFF.AutoPost and webhookBase() then
-      local last = tonumber(GetResourceKvpString(KVP) or '') or os.time()
-      local now = os.time()
-      if (now - last) >= (FLRP_STAFF.PeriodDays * 86400) then
-        post(last, now, function(good)
-          if good then SetResourceKvp(KVP, tostring(now)); print('[flrp_staffactivity] auto-posted tracker') end
-        end)
+    if webhookBase() then
+      local idx = cycleIndex(os.time())
+      if lastIdx and idx > lastIdx then
+        -- cycle rolled over: stamp the previous one Final (archive), then start the new one
+        renderCycle(lastIdx, function(good) if good then print('[flrp_staffactivity] archived cycle ' .. lastIdx) end end)
+        Wait(1500)
       end
+      renderCycle(idx, function(good)
+        if good and idx ~= lastIdx then
+          SetResourceKvp(KV_CYCLE, tostring(idx)); lastIdx = idx
+          print('[flrp_staffactivity] live cycle embed up (cycle ' .. idx .. ')')
+        end
+      end)
     end
+    Wait(FLRP_STAFF.RefreshMinutes * 60 * 1000)
   end
 end)
