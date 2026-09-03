@@ -64,10 +64,23 @@ local function trim(s, max)
   return s
 end
 
-local function discord(title, description, src, fields)
+-- Staff-team Discord role to ping on NEW reports. Read from the convar so the
+-- real id lives in secrets.cfg, never in git. Empty / REPLACE_ME = no ping.
+local function pingRole()
+  local id = GetConvar(FLRP_REPORTS.PingRoleConvar, '')
+  if id == '' or id == 'REPLACE_ME' or not id:match('^%d+$') then return nil end
+  return id
+end
+
+-- extra = { content = 'text above the embed', mentionRoles = { roleId } } (both optional)
+local function discord(title, description, src, fields, extra)
   if not FLRP_REPORTS.DiscordLog then return end
+  extra = extra or {}
   pcall(function()
-    exports.flrp_logs:Send('report', { player = src, title = title, description = description, fields = fields })
+    exports.flrp_logs:Send('report', {
+      player = src, title = title, description = description, fields = fields,
+      content = extra.content, mentionRoles = extra.mentionRoles,
+    })
   end)
 end
 
@@ -260,10 +273,15 @@ function H.submit(src, p)
                reportId = id, seconds = FLRP_REPORTS.ToastSeconds })
     refresh(s)
   end
+  local role = pingRole()
   discord(('NEW REPORT #%d'):format(id), desc, src, {
     { name = 'Category', value = label, inline = true },
     { name = 'Against',  value = target or '—', inline = true },
     { name = 'Staff online', value = tostring(#staffSrcs()), inline = true },
+  }, {
+    -- plain text ABOVE the embed: pings the staff team + names the reporter
+    content      = (role and ('<@&' .. role .. '> ') or '') .. ('**%s** submitted a new report'):format(name),
+    mentionRoles = role and { role } or nil,
   })
   return { ok = true, id = id }
 end
@@ -280,7 +298,9 @@ function H.claim(src, p)
   local rs = srcByLicense(r.reporter_license)
   toast(rs, { kind = 'info', title = ('Report #%d claimed'):format(r.id), body = r.claimed_by_name .. ' is handling your report.', reportId = r.id, seconds = 8 })
   refresh(rs); refreshStaff()
-  discord(('REPORT #%d CLAIMED'):format(r.id), ('%s claimed **%s**\'s report after **%s**.'):format(r.claimed_by_name, r.reporter_name, FLRP_REPORTS_fmtDur(t - r.created_at)), src)
+  discord(('REPORT #%d CLAIMED'):format(r.id),
+    ('**%s** claimed report **#%d** (from %s) after **%s**.'):format(r.claimed_by_name, r.id, r.reporter_name, FLRP_REPORTS_fmtDur(t - r.created_at)),
+    src)  -- no content line = no ping
   return { ok = true }
 end
 

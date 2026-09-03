@@ -8,6 +8,10 @@
 --     description = 'STRING',   -- the body
 --     color       = 0xRRGGBB,   -- overrides the category color
 --     fields      = { {name=, value=, inline=} },  -- optional extra fields
+--     content     = 'STRING',   -- optional plain text ABOVE the embed (where role
+--                               --   pings go, e.g. '<@&ROLEID> **Name** did X')
+--     mentionRoles= { 'ROLEID' } -- role ids allowed to actually ping (Discord
+--                               --   needs allowed_mentions or the ping is inert)
 --   })
 -- Categories + webhook convars live in config.lua. A category with no webhook
 -- configured is skipped silently.
@@ -68,9 +72,13 @@ local function Send(category, opts)
         category, tostring(status), tostring(body)))
     end
   end, 'POST', json.encode({
-    username   = FLRP_LOGS.Username,
-    avatar_url = (FLRP_LOGS.Avatar ~= '' and FLRP_LOGS.Avatar) or nil,
-    embeds     = { embed },
+    username         = FLRP_LOGS.Username,
+    avatar_url       = (FLRP_LOGS.Avatar ~= '' and FLRP_LOGS.Avatar) or nil,
+    content          = (opts.content and opts.content ~= '') and opts.content or nil,
+    embeds           = { embed },
+    -- Only roles listed here will actually ping; everything else stays inert.
+    allowed_mentions = (type(opts.mentionRoles) == 'table' and #opts.mentionRoles > 0)
+                         and { parse = {}, roles = opts.mentionRoles } or nil,
   }), { ['Content-Type'] = 'application/json' })
 end
 

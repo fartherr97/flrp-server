@@ -46,3 +46,8 @@ FLRP_REPORTS.ResolvedHistory  = 30
 -- Discord: sends via flrp_logs category `report` (set flrp_log_webhook_report
 -- in secrets.cfg). Silent if not configured.
 FLRP_REPORTS.DiscordLog       = true
+-- Discord role to PING (above the embed) on every NEW report. The real id is
+-- read from this convar — set it in secrets.cfg, e.g.
+--   set flrp_reports_ping_role "123456789012345678"   (your Staff Team role id)
+-- Leave unset / REPLACE_ME and the line is posted without a ping.
+FLRP_REPORTS.PingRoleConvar   = 'flrp_reports_ping_role'
