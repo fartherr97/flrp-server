@@ -18,7 +18,7 @@ description 'FLRP duty adapter — reads department duty from flrp_onduty (flrp_
 version '0.2.0'
 
 dependency 'flrp_core'
--- Runtime: reads nex-duty's `duty_members` table (same MySQL via oxmysql).
+-- Runtime: reads flrp_onduty's `flrp_duty_members` table (same MySQL via oxmysql).
 
 shared_scripts { 'shared/config.lua' }
 
