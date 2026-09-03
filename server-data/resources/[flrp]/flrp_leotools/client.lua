@@ -89,6 +89,14 @@ RegisterCommand('seat',   doSeat,   false)
 RegisterCommand('unseat', doUnseat, false)
 RegisterCommand('search', doSearch, false)
 
+-- Keybinds — each appears in Settings > Key Bindings > FiveM. Left UNBOUND by
+-- default (''), so every officer assigns their own key with no collisions.
+RegisterKeyMapping('cuff',   'LEO: Cuff / uncuff nearest',        'keyboard', '')
+RegisterKeyMapping('drag',   'LEO: Escort (drag) nearest',        'keyboard', '')
+RegisterKeyMapping('seat',   'LEO: Put nearest in vehicle',       'keyboard', '')
+RegisterKeyMapping('unseat', 'LEO: Remove nearest from vehicle',  'keyboard', '')
+RegisterKeyMapping('search', 'LEO: Search (ID) nearest',          'keyboard', '')
+
 -- ---- TARGET: report carried weapons when searched -----------------------
 -- HasPedGotWeapon only reads reliably on the ped's own client, so the searched
 -- player enumerates their own weapons. (Names via GetHashKey — no backtick
