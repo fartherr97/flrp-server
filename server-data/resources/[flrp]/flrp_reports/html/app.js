@@ -265,7 +265,7 @@
       }).join('') + '</div></div>' +
       '<div><label>Player involved <span style="color:var(--dim);font-weight:600;letter-spacing:0;text-transform:none">(optional — name or ID)</span></label><input id="f-target" maxlength="100" placeholder="e.g. 42 or John Doe" value="' + esc(f.target) + '" /></div>' +
       '<div><label>What happened?</label><textarea id="f-desc" maxlength="' + (st.maxDesc || 600) + '" placeholder="Be specific: what, where, when. Include IDs if you can.">' + esc(f.description) + '</textarea><div class="cnt"><span id="f-cnt">' + (f.description || '').length + '</span> / ' + (st.maxDesc || 600) + '</div></div>' +
-      '<div style="display:flex;gap:10px;align-items:center"><button class="btn primary" id="f-submit">Submit report</button><span class="hint">One open report at a time. Abuse of the report system is punishable.</span></div>' +
+      '<div style="display:flex;gap:10px;align-items:center"><button class="btn primary" id="f-submit">Submit report</button><span class="hint">Up to ' + (st.maxOpen || 1) + ' open report' + ((st.maxOpen || 1) === 1 ? '' : 's') + ' at a time. Abuse of the report system is punishable.</span></div>' +
       '</div>';
     d.innerHTML = html;
     Array.prototype.forEach.call(d.querySelectorAll('.cat'), function (b) { b.onclick = function () { f.category = b.getAttribute('data-cat'); render(); }; });

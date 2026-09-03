@@ -30,7 +30,7 @@ FLRP_REPORTS.Categories = {
 
 -- Anti-spam
 FLRP_REPORTS.CooldownSeconds  = 60     -- between submissions per player
-FLRP_REPORTS.MaxOpenPerPlayer = 1      -- open/claimed reports a player may have at once
+FLRP_REPORTS.MaxOpenPerPlayer = 3      -- open/claimed reports a player may have at once
 FLRP_REPORTS.MaxDescription   = 600
 FLRP_REPORTS.MaxMessage       = 400
 

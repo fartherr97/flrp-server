@@ -238,6 +238,7 @@ local function stateFor(src)
     toastSeconds = FLRP_REPORTS.ToastSeconds,
     maxDesc      = FLRP_REPORTS.MaxDescription,
     maxMsg       = FLRP_REPORTS.MaxMessage,
+    maxOpen      = FLRP_REPORTS.MaxOpenPerPlayer,
     now          = os.time(),
   }
 end
@@ -260,7 +261,7 @@ function H.submit(src, p)
     if r.reporter_license == lic and r.status ~= 'resolved' then openCount = openCount + 1 end
   end
   if openCount >= FLRP_REPORTS.MaxOpenPerPlayer then
-    return { ok = false, error = 'You already have an open report — staff will get to it. You can add details from "My Reports".' }
+    return { ok = false, error = ('You already have %d open report%s — staff will get to them. You can add details from "My Reports".'):format(openCount, openCount == 1 and '' or 's') }
   end
   local desc = trim(p.description, FLRP_REPORTS.MaxDescription)
   if #desc < 10 then return { ok = false, error = 'Please describe the issue (at least 10 characters).' } end
