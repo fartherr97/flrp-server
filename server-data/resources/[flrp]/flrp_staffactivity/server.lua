@@ -267,13 +267,13 @@ local function gather(from, to)
   -- 1) the roster: Discord (everyone with a staff role) or, if unavailable, the DB
   if discordRoster then
     for did, info in pairs(discordRoster) do
-      local e = { name = info.name, rank = info.rank, discord = did, claims = 0, vest = 0 }
+      local e = { name = info.name, rank = info.rank, discord = did, claims = 0, vest = 0, license = licByDiscord[did] }
       staff[did] = e
-      local lic = licByDiscord[did]; if lic then byLicense[lic] = e end
+      if e.license then byLicense[e.license] = e end
     end
   else
     for _, m in ipairs(dbMembers) do
-      local e = { name = m.name, rank = m.rank, discord = m.discord_id, claims = 0, vest = 0 }
+      local e = { name = m.name, rank = m.rank, discord = m.discord_id, claims = 0, vest = 0, license = m.license }
       staff[(m.discord_id and m.discord_id ~= '') and tostring(m.discord_id) or ('lic:' .. m.license)] = e
       byLicense[m.license] = e
     end
@@ -283,7 +283,7 @@ local function gather(from, to)
   local function slot(lic, name)
     local e = byLicense[lic]
     if e then return e end
-    e = { name = name, claims = 0, vest = 0 }
+    e = { name = name, claims = 0, vest = 0, license = lic }
     for _, m in ipairs(dbMembers) do
       if m.license == lic then e.rank, e.discord = m.rank, m.discord_id; break end
     end
@@ -309,9 +309,10 @@ local function gather(from, to)
     local s = tonumber(pid); local lic = s and licenseOf(s)
     if lic then onlineRank[lic] = rankOf(s); onlineDiscord[lic] = discordOf(s) end
   end
-  for lic, s in pairs(staff) do
-    s.rank    = s.rank    or onlineRank[lic]    or FLRP_STAFF.UnknownGroup
-    s.discord = s.discord or onlineDiscord[lic]
+  for _, st in pairs(staff) do
+    local L = st.license
+    st.rank    = st.rank    or (L and onlineRank[L])    or FLRP_STAFF.UnknownGroup
+    st.discord = st.discord or (L and onlineDiscord[L])
   end
   return staff
 end
