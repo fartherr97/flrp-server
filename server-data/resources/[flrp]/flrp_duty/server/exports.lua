@@ -18,3 +18,10 @@ function IsOnDuty(source, department)
   if department == nil then return true end
   return string.upper(tostring(department)) == string.upper(tostring(d.department or ''))
 end
+
+--   exports.flrp_duty:GetOnDutyRoster() -> array of
+--     { src, online, name, license, entity, department, callsign }
+-- Live roster read from nex-duty's duty_members (see FLRPD.GetRoster).
+function GetOnDutyRoster()
+  return FLRPD.GetRoster()
+end

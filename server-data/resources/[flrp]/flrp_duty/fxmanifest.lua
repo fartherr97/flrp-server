@@ -38,4 +38,5 @@ server_scripts {
 server_exports {
   'GetDuty',
   'IsOnDuty',
+  'GetOnDutyRoster',
 }

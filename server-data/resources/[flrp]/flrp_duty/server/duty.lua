@@ -34,9 +34,13 @@ local function entityToDepartment(entity)
 end
 
 -- Whether nex-duty's table exists yet (before nex-duty is installed/migrated).
-local dutyTableReady = nil
+-- Only a TRUE result is cached: if the table is missing we re-check on the
+-- next call, so creating it later (importing nex-duty's database.sql) is picked
+-- up live instead of being stuck at "missing" until a resource restart.
+local dutyTableReady = false
+local warnedMissing = false
 local function dutyTableExists()
-  if dutyTableReady ~= nil then return dutyTableReady end
+  if dutyTableReady then return true end
   if not FLRP.DB.IsReady() then return false end
   local ok, row = pcall(function()
     return FLRP.DB.Scalar([[
@@ -44,11 +48,14 @@ local function dutyTableExists()
       WHERE table_schema = DATABASE() AND table_name = 'duty_members'
     ]])
   end)
-  dutyTableReady = ok and (tonumber(row) or 0) > 0
-  if not dutyTableReady then
+  local exists = ok and (tonumber(row) or 0) > 0
+  if exists then
+    dutyTableReady = true
+  elseif not warnedMissing then
+    warnedMissing = true
     FLRP.Logger.Warn('duty', 'nex-duty `duty_members` table not found yet; duty = civilian until nex-duty is installed')
   end
-  return dutyTableReady
+  return exists
 end
 
 -- Fetch the player's current department from nex-duty. Returns { department, onDuty }.
@@ -96,4 +103,49 @@ end
 function FLRPD.Invalidate(source)
   if source then FLRPD.State.cache[tonumber(source)] = nil
   else FLRPD.State.cache = {} end
+end
+
+-- Full live on-duty roster straight from nex-duty's `duty_members` table —
+-- the source of truth nex-duty itself writes to. Used by the HUD counter, the
+-- Discord status embed and the LEO blips, so none of them have to guess at
+-- nex-duty's (escrowed) export API.
+--
+-- Rows are joined to CONNECTED players by license so each entry carries the
+-- live server id + in-game name. nex-duty stores the license as
+-- "license:<hex>"; we normalise both sides to the bare hex before matching.
+-- Returns an array of:
+--   { src, online, name, license, entity, department, callsign }
+-- `department` is the FLRP dept (BSO/FHP/MPD) or nil for a non-FLRP entity
+-- (e.g. nex-duty's "staff" dual-duty entity).
+function FLRPD.GetRoster()
+  if not FLRP.DB.IsReady() or not dutyTableExists() then return {} end
+  local rows = FLRP.DB.Query('SELECT * FROM `duty_members`') or {}
+  if #rows == 0 then return {} end
+
+  -- bare license hex -> connected server id
+  local srcByLicense = {}
+  for _, pid in ipairs(GetPlayers()) do
+    local src = tonumber(pid)
+    if src then
+      for _, id in ipairs(GetPlayerIdentifiers(src)) do
+        if id:sub(1, 8) == 'license:' then srcByLicense[id:sub(9)] = src end
+      end
+    end
+  end
+
+  local roster = {}
+  for _, row in ipairs(rows) do
+    local lic = (tostring(row.license or ''):gsub('^license:', ''))
+    local src = srcByLicense[lic]
+    roster[#roster + 1] = {
+      src        = src,
+      online     = src ~= nil,
+      name       = src and GetPlayerName(src) or nil,
+      license    = lic,
+      entity     = row.entity and string.lower(tostring(row.entity)) or nil,
+      department = entityToDepartment(row.entity),
+      callsign   = row.callsign,   -- present when nex-duty require_callsign is on
+    }
+  end
+  return roster
 end

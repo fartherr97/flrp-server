@@ -48,21 +48,34 @@ local function unitLabel(u)
   return tostring(name or callsign or 'Unit')
 end
 
-local function unitsForEntity(id)
-  local u = safeCall(function() return exports['nex-duty']:getUnitsByEntities({ id }) end)
-  return (type(u) == 'table') and u or {}
+-- Live roster from nex-duty's duty_members table (via flrp_duty), grouped by
+-- entity id. Only CONNECTED players count — a stale row for someone who has
+-- left never shows. No dependency on nex-duty's escrowed export API.
+local function rosterByEntity()
+  local ok, roster = pcall(function() return exports.flrp_duty:GetOnDutyRoster() end)
+  local by = {}
+  if not ok or type(roster) ~= 'table' then return by end
+  for _, u in ipairs(roster) do
+    if u.online and u.entity then
+      by[u.entity] = by[u.entity] or {}
+      by[u.entity][#by[u.entity] + 1] = u
+    end
+  end
+  return by
 end
 
 -- Build the "Personnel On Duty" text, grouped by department, listing names.
 -- Returns (text, totalCount).
 local function personnelBlock(depts)
+  local by = rosterByEntity()
   local sections, total = {}, 0
   for _, d in ipairs(depts) do
-    local units = unitsForEntity(d.id)
+    local units = by[d.id] or {}
     total = total + #units
     if #units > 0 then
       local names = {}
       for _, u in ipairs(units) do names[#names + 1] = '• ' .. unitLabel(u) end
+      table.sort(names)
       sections[#sections + 1] = ('**%s (%d)**\n%s'):format(d.label, #units, table.concat(names, '\n'))
     else
       sections[#sections + 1] = ('**%s (0)**'):format(d.label)

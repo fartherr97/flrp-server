@@ -11,12 +11,15 @@
 
 local staffOnDuty = {} -- [src] = true
 
+-- LEO = connected players with a live duty_members row for an FLRP department
+-- (BSO / FHP / MPD). Read straight from nex-duty's table via flrp_duty's
+-- roster export — no dependency on nex-duty's escrowed export API.
 local function countLeo()
+  local ok, roster = pcall(function() return exports.flrp_duty:GetOnDutyRoster() end)
+  if not ok or type(roster) ~= 'table' then return 0 end
   local n = 0
-  for _, pid in ipairs(GetPlayers()) do
-    pid = tonumber(pid)
-    local ok, on = pcall(function() return exports.flrp_duty:IsOnDuty(pid) end)
-    if ok and on then n = n + 1 end
+  for _, u in ipairs(roster) do
+    if u.online and u.department then n = n + 1 end
   end
   return n
 end
