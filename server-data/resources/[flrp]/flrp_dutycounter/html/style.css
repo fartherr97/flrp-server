@@ -15,11 +15,11 @@ html, body {
   user-select: none;
 }
 
-/* Hugs the minimap's RIGHT edge, above the nex-hud info panels (nudge to move). */
+/* Above the nex-hud Username info panel, right of the minimap (nudge to move). */
 #counter {
   position: absolute;
-  left: 43vw;
-  bottom: 34vh;
+  left: 22.4vw;
+  bottom: 15.3vh;
   width: fit-content;
   background: var(--panel);
   border-radius: 4px;
