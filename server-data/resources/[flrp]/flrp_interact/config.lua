@@ -71,13 +71,17 @@ FLRP_INTERACT.CivilianToolbox = {
 }
 
 -- LEO toolbox — visible to on-duty / sworn law enforcement (flrp.leo).
+-- Cuff/Drag/Seat are provided by flrp_leotools (server-authoritative, gated by
+-- flrp.leo); they act on the nearest player / vehicle.
 FLRP_INTERACT.LeoToolbox = {
-  { label = 'Duty Menu',      desc = 'Open the on-duty menu (callsign, loadout).', action = 'command', arg = 'duty' },
-  { label = 'Hands Up',       desc = 'Put your hands above your head.',            action = 'emote',   arg = 'handsup' },
-  { label = 'Stop Animation', desc = 'Cancel the current animation.',              action = 'cancel' },
-  -- Add department utilities here as their scripts are installed, e.g.
-  -- { label = 'Grab Suspect', desc = 'Grab a nearby suspect.',   action = 'client_event', arg = 'flrp_cuffs:grab' },
-  -- { label = 'Spike Strip',  desc = 'Deploy a spike strip.',    action = 'client_event', arg = 'flrp_spikes:deploy' },
+  { label = 'Cuff / Uncuff',      desc = 'Cuff or uncuff the nearest person.',            action = 'client_event', arg = 'flrp_leotools:doCuff' },
+  { label = 'Escort (Drag)',      desc = 'Grab/release a cuffed person to walk them.',     action = 'client_event', arg = 'flrp_leotools:doDrag' },
+  { label = 'Put in Vehicle',     desc = 'Seat the nearest person in a nearby vehicle.',   action = 'client_event', arg = 'flrp_leotools:doSeat' },
+  { label = 'Remove from Vehicle',desc = 'Pull the nearest person out of a vehicle.',      action = 'client_event', arg = 'flrp_leotools:doUnseat' },
+  { label = 'Duty Menu',          desc = 'Open the on-duty menu (callsign, loadout).',     action = 'command',      arg = 'duty' },
+  { label = 'Stop Animation',     desc = 'Cancel the current animation.',                  action = 'cancel' },
+  -- Add more department utilities here as their scripts are installed, e.g.
+  -- { label = 'Spike Strip',  desc = 'Deploy a spike strip.', action = 'client_event', arg = 'flrp_spikes:deploy' },
 }
 
 -- ---- Donator vehicles ----------------------------------------------------
