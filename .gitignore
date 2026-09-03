@@ -127,3 +127,6 @@ deploy/.hotreload.queue.tmp
 nui/node_modules/
 nui/.vite/
 nui/apps/*/.vite/
+
+# Dev-editable, untracked server overrides (see config/local.example.cfg)
+server-data/config/local.cfg
