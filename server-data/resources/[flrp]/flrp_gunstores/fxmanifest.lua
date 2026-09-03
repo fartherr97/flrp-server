@@ -36,9 +36,7 @@ server_scripts {
   'server/main.lua',
 }
 
-ui_page 'nui/index.html'
+ui_page 'html/index.html'
 files {
-  'nui/index.html',
-  'nui/style.css',
-  'nui/app.js',
+  'html/index.html',   -- built by the nui/ workspace (React+Vite); run `npm run build:gunstores`
 }
