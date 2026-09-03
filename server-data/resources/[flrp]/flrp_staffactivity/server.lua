@@ -289,12 +289,14 @@ RegisterCommand('staffactivity', function(src, args)
   local days = tonumber(args and args[1]) or FLRP_STAFF.PeriodDays
   days = math.max(1, math.min(days, 365))
   local to = os.time(); local from = to - (days * 86400)
-  post(from, to, function(good)
+  post(from, to, function(good, info)
+    local reason = ({ ['no webhook'] = 'no webhook set (full server restart after editing secrets.cfg?)',
+                      ['build'] = 'internal build error (check console)' })[info] or ('Discord HTTP ' .. tostring(info))
     if type(src) == 'number' and src > 0 then
       TriggerClientEvent('chat:addMessage', src, { color = good and { 0, 191, 196 } or { 200, 60, 60 },
-        args = { 'STAFF ACTIVITY', good and ('Posted the %d-day tracker to Discord.'):format(days) or 'Failed to post (webhook set?).' } })
+        args = { 'STAFF ACTIVITY', good and ('Posted the %d-day tracker to Discord.'):format(days) or ('Failed: ' .. reason) } })
     end
-    print(('[flrp_staffactivity] manual post %d days -> %s'):format(days, tostring(good)))
+    print(('[flrp_staffactivity] manual post %d days -> %s%s'):format(days, tostring(good), good and '' or (' (' .. tostring(info) .. ')')))
   end)
 end, false)
 
