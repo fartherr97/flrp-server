@@ -26,18 +26,15 @@ local function rankOf(src)
   return nil
 end
 
+-- Tier label IS the group heading. Order/grouping come from FLRP_STAFF.RankTiers.
 local function groupForRank(label)
-  for _, r in ipairs(FLRP_STAFF.Ranks) do
-    if r.label == label then return r.group end
-  end
+  for _, t in ipairs(FLRP_STAFF.RankTiers) do if t.label == label then return label end end
   return FLRP_STAFF.UnknownGroup
 end
 
 local function rankOrder(label)
-  for i, r in ipairs(FLRP_STAFF.Ranks) do
-    if r.label == label then return i end
-  end
-  return #FLRP_STAFF.Ranks + 1
+  for i, t in ipairs(FLRP_STAFF.RankTiers) do if t.label == label then return i end end
+  return #FLRP_STAFF.RankTiers + 1
 end
 
 -- "25 minutes", "1 hour", "14 hours", "2 days" — SSRP-style natural duration.
@@ -192,11 +189,12 @@ end
 local discordRoster, discordRosterAt = nil, 0   -- { [discordId] = { name, rank } }
 local rosterWarned = false
 
-local function staffRoles()   -- ordered highest-first: { {id, label}, ... }
+local function staffRoles()   -- flat, highest-first: { {id, label}, ... } (first match wins)
   local out = {}
-  for _, rr in ipairs(FLRP_STAFF.RankRoles) do
-    local id = GetConvar(rr.convar, '')
-    if id ~= '' and id ~= 'REPLACE_ME' then out[#out + 1] = { id = id, label = rr.label } end
+  for _, t in ipairs(FLRP_STAFF.RankTiers) do
+    for _, id in ipairs(t.ids or {}) do
+      if id and id ~= '' then out[#out + 1] = { id = tostring(id), label = t.label } end
+    end
   end
   return out
 end
@@ -210,7 +208,7 @@ local function fetchDiscordRoster(cb)
     return cb(nil, 'flrp_discord_token / flrp_discord_guild_id not set')
   end
   local roles = staffRoles()
-  if #roles == 0 then return cb(nil, 'no flrp_role_* ids set') end
+  if #roles == 0 then return cb(nil, 'no RankTiers role ids configured') end
 
   local result, after, pages = {}, nil, 0
   local function page()
@@ -287,6 +285,9 @@ local function gather(from, to)
   local function slot(lic, name)
     local e = byLicense[lic]
     if e then return e end
+    -- Discord roster is authoritative: activity from anyone NOT holding a listed
+    -- staff role is ignored in the per-person list (still counted in totals).
+    if discordRoster then return { claims = 0, vest = 0 } end
     e = { name = name, claims = 0, vest = 0, license = lic }
     for _, m in ipairs(dbMembers) do
       if m.license == lic then e.rank, e.discord = m.rank, m.discord_id; break end
@@ -362,7 +363,7 @@ local function buildEmbed(from, to, o)
     :format(totalStaff, ov.reports, ov.claims, ov.selfClaims, human(ov.vest))
 
   local order, seen = {}, {}
-  for _, r in ipairs(FLRP_STAFF.Ranks) do if not seen[r.group] then seen[r.group] = true; order[#order + 1] = r.group end end
+  for _, t in ipairs(FLRP_STAFF.RankTiers) do if not seen[t.label] then seen[t.label] = true; order[#order + 1] = t.label end end
   if not seen[FLRP_STAFF.UnknownGroup] then order[#order + 1] = FLRP_STAFF.UnknownGroup end
 
   local fields = {}

@@ -46,14 +46,23 @@ FLRP_STAFF.Ranks = {
 }
 FLRP_STAFF.UnknownGroup = 'Staff'   -- claimers we have no captured rank for
 
--- Discord roster (authoritative). The tracker lists EVERY member of the guild
--- holding one of these roles, whether or not they've ever joined the server.
--- Role ids come from the same secrets.cfg convars the connection gate uses.
--- Highest first. Needs the bot's "Server Members Intent" (the gate needs it too).
--- If Discord can't be reached, it falls back to staff who have connected.
-FLRP_STAFF.RankRoles = {
-  { convar = 'flrp_role_ownership',     label = 'Ownership' },
-  { convar = 'flrp_role_director',      label = 'Director' },
-  { convar = 'flrp_role_administrator', label = 'Administrator' },
-  { convar = 'flrp_role_moderator',     label = 'Moderator' },
+-- Discord roster (authoritative). The tracker lists EVERY guild member holding
+-- one of these roles, whether or not they've ever joined the server — and ONLY
+-- these roles. Ordered highest -> lowest; a member is placed in the FIRST tier
+-- whose role they hold (so a Dept Head who is also an Admin shows under
+-- Administrators, and a pure Dept Head shows under Auxiliary Staff at the
+-- bottom). Needs the bot's "Server Members Intent" (the connection gate needs
+-- it too). If Discord can't be reached it falls back to staff who have
+-- connected (grouped by their ACE rank under FLRP_STAFF.Ranks).
+FLRP_STAFF.RankTiers = {
+  { label = 'Staff Directors',       ids = { '1535994200808497162', '1542221076216676422' } }, -- Staff Director + Asst. Staff Director
+  { label = 'Lead Administrators',   ids = { '1534709718797258882' } },
+  { label = 'Senior Administrators', ids = { '1534709852272857270' } },
+  { label = 'Administrators',        ids = { '1534709892420599930' } },
+  { label = 'Junior Administrators', ids = { '1535994725797199972' } },
+  { label = 'Senior Moderators',     ids = { '1535994898283495434' } },
+  { label = 'Moderators',            ids = { '1534910970009354261' } },
+  { label = 'Trial Moderators',      ids = { '1534911043426451466' } },
+  -- Dept Head -> listed below Trial Moderators as Auxiliary Staff (lowest tier)
+  { label = 'Auxiliary Staff',       ids = { '1534380750173110282' } },
 }
