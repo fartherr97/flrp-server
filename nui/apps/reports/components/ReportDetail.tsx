@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Hand, LogIn, ArrowDownToLine, Check, Send, MessageSquare } from 'lucide-react';
+import { Hand, LogIn, ArrowDownToLine, Undo2, Check, Send, MessageSquare, History, MapPin } from 'lucide-react';
 import { Panel, Button, Badge, StatusIndicator, Input } from '@flrp/components';
 import { req, dur, ago, clock, statusTone } from '../lib';
 import type { State, Report } from '../types';
@@ -8,6 +8,7 @@ export function ReportDetail({ state, report, onChange }:
   { state: State; report: Report | null; onChange: () => void }) {
   const [draft, setDraft] = useState('');
   const [resolving, setResolving] = useState(false);
+  const [returning, setReturning] = useState(false);
   const [resNote, setResNote] = useState('');
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -30,6 +31,7 @@ export function ReportDetail({ state, report, onChange }:
   };
   const send = () => { const v = draft.trim(); if (!v) return; setDraft(''); act('message', { body: v }); };
   const resolve = () => { act('resolve', { resolution: resNote.trim() }); setResolving(false); setResNote(''); };
+  const returnTo = (dest: string) => { act('returnPlayer', { dest }); setReturning(false); };
   const canSelfBlock = report.own && !state.canSelfClaim;
 
   return (
@@ -55,11 +57,28 @@ export function ReportDetail({ state, report, onChange }:
             {report.status !== 'resolved' && <>
               <Button size="sm" disabled={!report.reporter.online} onClick={() => act('goto')}><LogIn />Go to</Button>
               <Button size="sm" disabled={!report.reporter.online} onClick={() => act('bring')}><ArrowDownToLine />Bring</Button>
+              <Button size="sm" disabled={!report.reporter.online} onClick={() => setReturning(v => !v)}><Undo2 />Return</Button>
               {!canSelfBlock && <Button variant="success" size="sm" onClick={() => setResolving(true)}><Check />Resolve</Button>}
             </>}
           </div>
         )}
       </div>
+
+      {returning && staff && report.status !== 'resolved' && (
+        <Panel className="p-3">
+          <div className="mb-2 flex items-center justify-between">
+            <div className="text-2xs font-bold uppercase tracking-wider text-fg-faint">Return {report.reporter.name} to…</div>
+            <Button variant="ghost" size="sm" onClick={() => setReturning(false)}>Cancel</Button>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button size="sm" disabled={!report.canReturn} title={report.canReturn ? '' : 'Bring them first to save a spot'}
+              onClick={() => returnTo('previous')}><History />Previous spot</Button>
+            {(state.returnLocations ?? []).map((loc) => (
+              <Button key={loc.id} variant="ghost" size="sm" onClick={() => returnTo(loc.id)}><MapPin />{loc.label}</Button>
+            ))}
+          </div>
+        </Panel>
+      )}
 
       {resolving && staff && report.status !== 'resolved' && (
         <Panel className="p-3">

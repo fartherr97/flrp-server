@@ -44,6 +44,18 @@ FLRP_REPORTS.MinClaimsToRank  = 3
 -- How many resolved reports to keep showing in the staff "Resolved" tab.
 FLRP_REPORTS.ResolvedHistory  = 30
 
+-- Return destinations for a summoned player after a sit. `previous` is always
+-- offered first (the exact spot they were Brought from). The rest are presets
+-- staff can pick from the Return selector; coords are standard GTA V map spots.
+FLRP_REPORTS.ReturnLocations = {
+  { id = 'legion', label = 'Legion Square', x = 195.0,  y = -933.6,  z = 30.7, h = 144.0 },
+  { id = 'mrpd',   label = 'MRPD',          x = 441.0,  y = -982.0,  z = 30.7, h = 90.0  },
+  { id = 'pillbox',label = 'Pillbox Hospital', x = 298.6, y = -584.4, z = 43.3, h = 70.0 },
+  { id = 'airport',label = 'LSIA',          x = -1037.7,y = -2737.6, z = 20.2, h = 330.0 },
+  { id = 'paleto', label = 'Paleto Bay',    x = -448.0, y = 6012.0,  z = 31.7, h = 45.0  },
+  { id = 'sandy',  label = 'Sandy Shores',  x = 1853.2, y = 3689.5,  z = 34.3, h = 210.0 },
+}
+
 -- Discord: sends via flrp_logs category `report` (set flrp_log_webhook_report
 -- in secrets.cfg). Silent if not configured.
 FLRP_REPORTS.DiscordLog       = true

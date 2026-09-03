@@ -218,6 +218,7 @@ local function view(r, viewerSrc)
     resolvedAt     = r.resolved_at,
     resolution     = r.resolution,
     messages       = r.messages,
+    canReturn      = (staff and r.broughtFrom ~= nil) or nil, -- a previous spot is saved
   }
 end
 
@@ -239,6 +240,7 @@ local function stateFor(src)
     staffOnline  = #staffSrcs(),
     reports      = list,
     categories   = FLRP_REPORTS.Categories,
+    returnLocations = FLRP_REPORTS.ReturnLocations,
     logo         = GetConvar('flrp_reports_logo', FLRP_REPORTS.Logo),
     serverName   = FLRP_REPORTS.ServerName,
     key          = FLRP_REPORTS.Key,
@@ -409,6 +411,23 @@ local function teleport(fromSrc, toSrc)
   return true
 end
 
+-- Teleport a player to an absolute point (used by the return selector).
+local function teleportTo(toSrc, x, y, z, h)
+  local ped = GetPlayerPed(toSrc)
+  if not ped or ped == 0 then return false end
+  SetEntityCoords(ped, x + 0.0, y + 0.0, z + 0.0, false, false, false, false)
+  if h then SetEntityHeading(ped, h + 0.0) end
+  return true
+end
+
+-- Look up a preset return location by id.
+local function returnPreset(id)
+  for _, loc in ipairs(FLRP_REPORTS.ReturnLocations or {}) do
+    if loc.id == id then return loc end
+  end
+  return nil
+end
+
 H['goto'] = function(src, p)
   if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
   local r = reports[tonumber(p.id or 0)]; if not r then return { ok = false, error = 'Report not found.' } end
@@ -422,8 +441,40 @@ function H.bring(src, p)
   local r = reports[tonumber(p.id or 0)]; if not r then return { ok = false, error = 'Report not found.' } end
   local rs = srcByLicense(r.reporter_license)
   if not rs then return { ok = false, error = 'Reporter is not online.' } end
+  -- Remember exactly where they were, so we can send them back after the sit.
+  local ped = GetPlayerPed(rs)
+  if ped and ped ~= 0 then
+    local c = GetEntityCoords(ped)
+    r.broughtFrom = { x = c.x, y = c.y, z = c.z, h = GetEntityHeading(ped) }
+  end
   toast(rs, { kind = 'info', title = 'Teleported', body = (GetPlayerName(src) or 'Staff') .. ' brought you to them for your report.', seconds = 6 })
   return { ok = teleport(rs, src) }
+end
+
+-- Return a summoned player. dest = 'previous' (where they were Brought from)
+-- or a preset id from FLRP_REPORTS.ReturnLocations.
+function H.returnPlayer(src, p)
+  if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
+  local r = reports[tonumber(p.id or 0)]; if not r then return { ok = false, error = 'Report not found.' } end
+  local rs = srcByLicense(r.reporter_license)
+  if not rs then return { ok = false, error = 'Reporter is not online.' } end
+  local dest = tostring(p.dest or 'previous')
+
+  local x, y, z, h, where
+  if dest == 'previous' then
+    local b = r.broughtFrom
+    if not b then return { ok = false, error = 'No previous location saved — bring them first, or pick a set location.' } end
+    x, y, z, h, where = b.x, b.y, b.z, b.h, 'their previous location'
+  else
+    local loc = returnPreset(dest)
+    if not loc then return { ok = false, error = 'Unknown return location.' } end
+    x, y, z, h, where = loc.x, loc.y, loc.z, loc.h, loc.label
+  end
+
+  if not teleportTo(rs, x, y, z, h) then return { ok = false, error = 'Could not teleport the player.' } end
+  r.broughtFrom = nil -- consumed
+  toast(rs, { kind = 'info', title = 'Returned', body = (GetPlayerName(src) or 'Staff') .. ' returned you to ' .. where .. '.', seconds = 6 })
+  return { ok = true }
 end
 
 function H.analytics(src)
