@@ -38,12 +38,16 @@ local function rankOrder(label)
 end
 
 -- "25 minutes", "1 hour", "14 hours", "2 days" — SSRP-style natural duration.
+-- Compact duration: "1h 35m", "35m", "2d 4h", "0m".
 local function human(sec)
   sec = math.floor(tonumber(sec) or 0)
-  if sec < 60 then local n = math.max(0, sec); return n .. (n == 1 and ' second' or ' seconds') end
-  if sec < 3600 then local n = math.floor(sec / 60); return n .. (n == 1 and ' minute' or ' minutes') end
-  if sec < 86400 then local n = math.floor(sec / 3600); return n .. (n == 1 and ' hour' or ' hours') end
-  local n = math.floor(sec / 86400); return n .. (n == 1 and ' day' or ' days')
+  if sec < 0 then sec = 0 end
+  local d = math.floor(sec / 86400)
+  local h = math.floor((sec % 86400) / 3600)
+  local m = math.floor((sec % 3600) / 60)
+  if d > 0 then return (h > 0) and ('%dd %dh'):format(d, h) or ('%dd'):format(d) end
+  if h > 0 then return ('%dh %dm'):format(h, m) end
+  return ('%dm'):format(m)
 end
 
 local function webhookBase()
