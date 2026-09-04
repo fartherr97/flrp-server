@@ -96,3 +96,16 @@ FLRP_INTERACT.LeoToolbox = {
 -- vehicles to the registry with category 'donator' and they show up.
 FLRP_INTERACT.DonatorVehicleCategories = { 'donator', 'donor', 'vip' }
 FLRP_INTERACT.DonatorAce = 'flrp.donator'        -- gate for the category heading
+
+-- ---- Stations (LEO teleports) --------------------------------------------
+-- LEO-only "Stations" tab: teleport to stations and set areas on the map.
+-- >>> PLACEHOLDER coords — replace with the real FLRP station/area coords. <<<
+-- Optional `ace` per station restricts it to one dept (e.g. 'flrp.dept.bso').
+FLRP_INTERACT.Stations = {
+  { label = 'Mission Row PD',   x = 428.5,   y = -984.2,  z = 30.7, h = 90.0 },
+  { label = 'Sandy Shores SO',  x = 1853.1,  y = 3689.6,  z = 34.3, h = 210.0 },
+  { label = 'Paleto Bay SO',    x = -448.3,  y = 6012.5,  z = 31.7, h = 45.0 },
+  { label = 'Vespucci PD',      x = -1108.9, y = -845.0,  z = 19.3, h = 40.0 },
+  { label = 'LSIA Air Ops',     x = -1042.0, y = -2745.0, z = 21.4, h = 330.0 },
+  -- Add BSO / FHP / MPD stations + common areas here with real coords.
+}

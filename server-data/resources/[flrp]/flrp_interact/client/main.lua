@@ -200,6 +200,34 @@ local function vehicleMenu(vehicles)
   return m
 end
 
+-- ---- stations (LEO teleports) --------------------------------------------
+local function teleportTo(x, y, z, h)
+  local ped = PlayerPedId()
+  local veh = GetVehiclePedIsIn(ped, false)
+  if veh ~= 0 and GetPedInVehicleSeat(veh, -1) == ped then
+    SetEntityCoords(veh, x, y, z, false, false, false, false); SetEntityHeading(veh, h or 0.0)
+  else
+    SetEntityCoords(ped, x, y, z, false, false, false, false); SetEntityHeading(ped, h or 0.0)
+  end
+end
+
+local function stationsMenu()
+  local m = FLRPMenu.New(FLRP_INTERACT.Title, 'STATIONS')
+  local list = FLRP_INTERACT.Stations or {}
+  if #list == 0 then
+    m:Item({ label = 'No stations set', desc = 'Add stations in flrp_interact/config.lua.', disabled = true })
+    return m
+  end
+  for _, s in ipairs(list) do
+    m:Item({ label = s.label, desc = 'Teleport to ' .. (s.label or 'station') .. '.', onSelect = function()
+      FLRPMenu.Close()
+      teleportTo(s.x + 0.0, s.y + 0.0, s.z + 0.0, s.h or 0.0)
+      toast('Teleported to ' .. (s.label or 'station') .. '.', 'ok')
+    end })
+  end
+  return m
+end
+
 local function build(manifest)
   local root = FLRPMenu.New(FLRP_INTERACT.Title, FLRP_INTERACT.Subtitle)
 
@@ -211,6 +239,8 @@ local function build(manifest)
   if manifest.leo then
     root:Item({ label = 'LEO Toolbox', right = '›', desc = 'Law-enforcement tools.',
                 sub = toolboxMenu('LEO TOOLBOX', FLRP_INTERACT.LeoToolbox) })
+    root:Item({ label = 'Stations', right = '›', desc = 'Teleport to stations and set areas.',
+                sub = stationsMenu() })
   end
 
   -- Vehicle controls (everyone) — engine, locks, doors, windows, lights
