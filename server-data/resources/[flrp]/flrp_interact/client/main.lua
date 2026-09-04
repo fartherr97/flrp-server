@@ -287,6 +287,19 @@ RegisterCommand('flrp_interact_toggle', function() openMenu() end, false)
 RegisterCommand('interact', function() openMenu() end, false)          -- friendly alias
 RegisterKeyMapping('flrp_interact_toggle', 'FLRP: Interaction menu', 'keyboard', FLRP_INTERACT.Key)
 
+-- /coords — prints your current position as a ready-to-paste Stations config
+-- line (label + x/y/z + heading). Stand facing how you want the spawn, run it,
+-- and copy the line from the F8 console (also shown in chat).
+RegisterCommand('coords', function()
+  local ped = PlayerPedId()
+  local c = GetEntityCoords(ped)
+  local line = ("{ label = 'NAME', x = %.2f, y = %.2f, z = %.2f, h = %.1f },")
+    :format(c.x, c.y, c.z, GetEntityHeading(ped))
+  print('[coords] ' .. line)                                   -- copy this from F8
+  TriggerEvent('chat:addMessage', { color = { 0, 191, 196 }, multiline = true, args = { 'COORDS', line } })
+end, false)
+TriggerEvent('chat:addSuggestion', '/coords', 'Print your position as a station config line (copy from F8)')
+
 -- Primary open path: poll the raw M control (INPUT_INTERACTION_MENU = 244)
 -- directly, like vMenu does. This works even if the keymapping default didn't
 -- bind because M was already claimed in a player's keybinds (vMenu moved to F1,
