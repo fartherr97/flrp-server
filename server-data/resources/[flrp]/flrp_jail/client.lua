@@ -45,7 +45,7 @@ local function relay(name)
   RegisterNUICallback(name, function(data, cb) request(name, data or {}, function(res) cb(res or {}) end) end)
 end
 relay('jail'); relay('hospitalize'); relay('leoHospitalize'); relay('state')
-RegisterNUICallback('refresh', function(_, cb) request('state', {}, function(res) cb(res or {}) end) end)
+RegisterNUICallback('refresh', function(_, cb) request('refreshPenal', {}, function(res) cb(res or {}) end) end)
 RegisterNUICallback('close', function(_, cb) close(); cb({}) end)
 
 -- ---- shared HUD text -----------------------------------------------------

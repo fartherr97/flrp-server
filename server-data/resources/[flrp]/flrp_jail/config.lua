@@ -62,8 +62,9 @@ FLRP_JAIL.Hospitals = {
 -- OPTIONAL live sync: point this convar (in secrets.cfg) at a JSON endpoint that
 -- returns the SAME shape as penalcode.json ({ "charges":[{id,name,class,
 -- jailSeconds,fine}] }). The SERVER fetches it on start and overrides the file.
---   set flrp_penalcode_url "https://www.flrp.us/api/penalcode"
-FLRP_JAIL.PenalCodeConvar = 'flrp_penalcode_url'
+--   set flrp_penalcode_url "https://www.flrp.us/api/penal-code"
+FLRP_JAIL.PenalCodeConvar   = 'flrp_penalcode_url'
+FLRP_JAIL.PenalRefreshMins  = 5   -- auto re-poll the endpoint this often (0 = only on start + manual)
 
 -- ---- branding ------------------------------------------------------------
 FLRP_JAIL.Logo       = 'https://www.flrp.us/images/c8452f76261f8e9c.png'  -- convar flrp_reports_logo overrides

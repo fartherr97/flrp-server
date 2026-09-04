@@ -82,25 +82,43 @@ local function loadPenalCode()
 end
 loadPenalCode()
 
--- Optional live sync: fetch the site /penal-code endpoint on start and override.
-CreateThread(function()
-  Wait(3000)
+local function penalUrl()
   local url = GetConvar(FLRP_JAIL.PenalCodeConvar, '')
-  if url == '' or not url:find('^https?://') then return end
+  if url == '' or not url:find('^https?://') then return nil end
+  return url
+end
+
+-- Blocking fetch (awaited) — used by the in-game Refresh button. Returns
+-- true if the penal code was updated. Times out at 6s so a hung endpoint
+-- never freezes the request.
+local function fetchPenalCodeAwait()
+  local url = penalUrl(); if not url then return false end
+  local p, done = promise.new(), false
+  local function finish(v) if not done then done = true; p:resolve(v) end end
   PerformHttpRequest(url, function(status, body)
     if status == 200 and body and body ~= '' then
       local ok, data = pcall(json.decode, body)
       local norm = ok and normalizeCharges(data)
-      if norm then
-        charges = norm
-        print(('[flrp_jail] penal code synced from %s (%d charges).'):format(url, #charges))
-      else
-        print('[flrp_jail] penal code URL returned an unexpected shape — keeping penalcode.json.')
-      end
-    else
-      print(('[flrp_jail] penal code fetch failed (HTTP %s) — keeping penalcode.json.'):format(tostring(status)))
+      if norm then charges = norm; return finish(true) end
     end
+    print(('[flrp_jail] penal code fetch failed (HTTP %s / bad shape).'):format(tostring(status)))
+    finish(false)
   end, 'GET', '', { ['Accept'] = 'application/json' })
+  SetTimeout(6000, function() finish(false) end)
+  return Citizen.Await(p)
+end
+
+-- Startup fetch + periodic auto-poll so on-site edits flow in on their own.
+CreateThread(function()
+  if not penalUrl() then return end
+  Wait(3000)
+  if fetchPenalCodeAwait() then print(('[flrp_jail] penal code synced (%d charges).'):format(#charges)) end
+  local mins = tonumber(FLRP_JAIL.PenalRefreshMins) or 0
+  if mins <= 0 then return end
+  while true do
+    Wait(mins * 60000)
+    fetchPenalCodeAwait()
+  end
 end)
 
 local function injurySeconds(id)
@@ -154,6 +172,13 @@ end
 local H = {}
 
 function H.state(src) return stateFor(src) end
+
+-- In-game Refresh button: force an immediate re-pull of the penal code, then
+-- return fresh state (players + latest charges). No-ops the fetch if no URL.
+function H.refreshPenal(src)
+  fetchPenalCodeAwait()
+  return stateFor(src)
+end
 
 function H.jail(src, p)
   if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
