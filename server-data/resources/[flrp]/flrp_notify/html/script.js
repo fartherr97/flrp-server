@@ -1,13 +1,25 @@
 (function () {
   var stack = document.getElementById('toasts');
 
-  // Static, safe (no user data) — a Lucide shield-check, stroked in the accent.
-  var SHIELD =
-    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
-    'stroke-linecap="round" stroke-linejoin="round">' +
-    '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1' +
-    'c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>' +
-    '<path d="m9 12 2 2 4-4"/></svg>';
+  // Static, safe (no user data) — Lucide icons, stroked in the accent colour.
+  function svg(inner) {
+    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+      'stroke-linecap="round" stroke-linejoin="round">' + inner + '</svg>';
+  }
+  var ICONS = {
+    info:  svg('<circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/>'),        // "i"
+    ok:    svg('<path d="M20 6 9 17l-5-5"/>'),                                                         // check
+    error: svg('<circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/>'),          // "!"
+    warn:  svg('<path d="m21.73 18-8-14a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/>' +
+               '<path d="M12 9v4"/><path d="M12 17h.01"/>'),                                           // triangle !
+    join:  svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>' +
+               '<line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>'),       // user +
+    leave: svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>' +
+               '<line x1="22" x2="16" y1="11" y2="11"/>')                                              // user -
+  };
+  // aliases
+  ICONS.success = ICONS.ok;
+  ICONS.warning = ICONS.warn;
 
   function notify(data) {
     var max = data.max || 4;
@@ -19,7 +31,7 @@
 
     var icon = document.createElement('div');
     icon.className = 'ticon';
-    icon.innerHTML = SHIELD;                              // static markup, safe
+    icon.innerHTML = ICONS[data.variant] || ICONS.info;  // static markup, safe
 
     var text = document.createElement('div');
     text.className = 'ttext';

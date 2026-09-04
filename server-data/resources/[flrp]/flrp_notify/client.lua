@@ -7,6 +7,7 @@ RegisterNetEvent('flrp_notify:show', function(kind, name)
   SendNUIMessage({
     action   = 'notify',
     kind     = (kind == 'leave') and 'leave' or 'join',
+    variant  = (kind == 'leave') and 'leave' or 'join',   -- picks the icon
     name     = name,
     joinMsg  = FLRP_NOTIFY.JoinText,
     leaveMsg = FLRP_NOTIFY.LeaveText,
@@ -19,13 +20,14 @@ end)
 -- Generic transient toast for command confirmations / status, so they never
 -- land in chat history (which re-shows every time the chatbox opens).
 --   TriggerClientEvent('flrp_notify:toast', src, { title=, body=, kind='info'|'ok'|'error', duration= })
-local KIND_COLOUR = { info = '#00bfc4', ok = '#35d07f', error = '#ff4d4d' }
+local KIND_COLOUR = { info = '#00bfc4', ok = '#35d07f', error = '#ff4d4d', warn = '#f5b342' }
 RegisterNetEvent('flrp_notify:toast', function(d)
   if type(d) ~= 'table' then return end
   local body = tostring(d.body or '')
   SendNUIMessage({
     action   = 'notify',
-    kind     = 'join',                       -- layout only; colour below
+    kind     = 'join',                       -- layout only; colour + icon below
+    variant  = tostring(d.kind or 'info'),   -- info | ok | error | warn -> icon
     name     = tostring(d.title or 'FLRP'),
     joinMsg  = body, leaveMsg = body,
     color    = d.color or KIND_COLOUR[d.kind or 'info'] or KIND_COLOUR.info,
