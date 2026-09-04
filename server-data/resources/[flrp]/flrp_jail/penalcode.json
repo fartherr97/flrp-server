@@ -1,23 +1,4493 @@
 {
-  "_note": "STARTER penal code — replace with FLRP's real charges. Shape: charges[] with id, name, class, jailSeconds, fine. Or set flrp_penalcode_url to a JSON endpoint returning this same shape (server fetches it on start).",
+  "_note": "Imported from fartherr97/florida-roleplay-site (server/src/civilianHubSeed.js). Live sync: set flrp_penalcode_url to the site /penal-code API.",
   "charges": [
-    { "id": "speeding",         "name": "Speeding",                          "class": "Infraction",  "jailSeconds": 0,    "fine": 250 },
-    { "id": "reckless",         "name": "Reckless Driving",                  "class": "Misdemeanor", "jailSeconds": 120,  "fine": 500 },
-    { "id": "resisting",        "name": "Resisting Arrest",                  "class": "Misdemeanor", "jailSeconds": 120,  "fine": 500 },
-    { "id": "obstruction",      "name": "Obstruction of Justice",            "class": "Misdemeanor", "jailSeconds": 150,  "fine": 600 },
-    { "id": "assault",          "name": "Assault",                           "class": "Misdemeanor", "jailSeconds": 180,  "fine": 750 },
-    { "id": "poss_controlled",  "name": "Possession of Controlled Substance","class": "Misdemeanor", "jailSeconds": 180,  "fine": 800 },
-    { "id": "petit_theft",      "name": "Petit Theft",                       "class": "Misdemeanor", "jailSeconds": 120,  "fine": 400 },
-    { "id": "dui",              "name": "DUI",                               "class": "Misdemeanor", "jailSeconds": 240,  "fine": 1000 },
-    { "id": "evading",          "name": "Fleeing / Eluding",                 "class": "Felony",      "jailSeconds": 300,  "fine": 1500 },
-    { "id": "weapon",           "name": "Illegal Firearm Possession",        "class": "Felony",      "jailSeconds": 300,  "fine": 1500 },
-    { "id": "gta",              "name": "Grand Theft Auto",                  "class": "Felony",      "jailSeconds": 360,  "fine": 1500 },
-    { "id": "battery_leo",      "name": "Battery on a LEO",                  "class": "Felony",      "jailSeconds": 420,  "fine": 2000 },
-    { "id": "robbery",          "name": "Armed Robbery",                     "class": "Felony",      "jailSeconds": 600,  "fine": 3000 },
-    { "id": "trafficking",      "name": "Drug Trafficking",                  "class": "Felony",      "jailSeconds": 600,  "fine": 5000 },
-    { "id": "kidnapping",       "name": "Kidnapping",                        "class": "Felony",      "jailSeconds": 720,  "fine": 4000 },
-    { "id": "manslaughter",     "name": "Manslaughter",                      "class": "Felony",      "jailSeconds": 900,  "fine": 5000 },
-    { "id": "attempted_murder", "name": "Attempted Murder",                  "class": "Felony",      "jailSeconds": 1200, "fine": 7500 },
-    { "id": "murder1",          "name": "First-Degree Murder",               "class": "Felony",      "jailSeconds": 1800, "fine": 10000 }
+    {
+      "id": "pc-1",
+      "code": "11.047",
+      "name": "Give Take Contingency Fee for Legis Outcome",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-2",
+      "code": "15.03",
+      "name": "State Seal Violation",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-3",
+      "code": "16.557",
+      "name": "Disclose Priv Comm Protect Info Crime Stoppers",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-4",
+      "code": "28.2221",
+      "name": "Use Official Record in Manner Not Authorized",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-5",
+      "code": "30.46",
+      "name": "Simulate Sheriffs Colors on Motor Vehicle Etc",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-6",
+      "code": "30.46",
+      "name": "Wear Official Sheriffs Badge/insignia",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-7",
+      "code": "206.021",
+      "name": "Transport Fuel WO Lic",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-8",
+      "code": "206.04",
+      "name": "Transport Fuel WO License or Bill of Lading",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-9",
+      "code": "206.2",
+      "name": "Mtr Fuel Veh Public Roads WO Del Ticket",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-10",
+      "code": "206.204",
+      "name": "Mtr Fuel Vsl Nav Water WO Del Ticket",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-11",
+      "code": "206.205",
+      "name": "Fail Obtain Lic as Motor Fuel Carrier",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-12",
+      "code": "210.095",
+      "name": "Person 21+ Violate Tobacco Delivery Sale Reg",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-13",
+      "code": "210.095",
+      "name": "Person 21+ Submit False Tobacco Certification",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-14",
+      "code": "210.095",
+      "name": "Delivery Tobacco Product to Person Under 21",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-15",
+      "code": "210.15",
+      "name": "Act as Wholesale Cigarette Seller W/O Permit",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-16",
+      "code": "253.04",
+      "name": "Refuse Post Bond Accept Sign Boating Citation",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-17",
+      "code": "253.72",
+      "name": "Viol Posted Restrictions Leased State Lands",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-18",
+      "code": "253.72",
+      "name": "Harvest Shellfish 25 Ft/protected Boundaries",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-19",
+      "code": "253.74",
+      "name": "Conduct Aquaculture WO Board Authority",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-20",
+      "code": "258.007",
+      "name": "Violate State Park Rules",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-21",
+      "code": "258.008",
+      "name": "Fail Sign Citation Appear in Ct Ftc Ct Order",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-22",
+      "code": "258.008",
+      "name": "Take Destroy Water Formation Coral WO Auth",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-23",
+      "code": "258.008",
+      "name": "Trap Injure Wild Animal WO Authority",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-24",
+      "code": "258.008",
+      "name": "Collect Plant Animal Speciman WO Authority",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-25",
+      "code": "258.008",
+      "name": "Hunt in State Park WO Authority",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-26",
+      "code": "315.1515",
+      "name": "Prohibit U-turn",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-27",
+      "code": "316.027",
+      "name": "Hit and Run W/ Death",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-28",
+      "code": "316.027",
+      "name": "Hit and Run W/ Serious Injury",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-29",
+      "code": "316.027",
+      "name": "Hit and Run W/ Injury",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-30",
+      "code": "316.061",
+      "name": "Hit and Run Property Damage",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-31",
+      "code": "316.063",
+      "name": "Hit and Run Unattended Vehicle W/out Leaving ID",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-32",
+      "code": "316.074",
+      "name": "Failure to Obey Traffic Control Devices",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 60
+    },
+    {
+      "id": "pc-33",
+      "code": "316.081",
+      "name": "Impeding Traffic Left Lane",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 50
+    },
+    {
+      "id": "pc-34",
+      "code": "316.084",
+      "name": "Improper Passing",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 125
+    },
+    {
+      "id": "pc-35",
+      "code": "316.089",
+      "name": "Failure to Maintain Lanes",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-36",
+      "code": "316.121",
+      "name": "Vehicles Approaching or Entering Intersections",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-37",
+      "code": "316.126",
+      "name": "Slow Down or Move Over",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 0
+    },
+    {
+      "id": "pc-38",
+      "code": "316.183",
+      "name": "Speeding 1 - 5 Mph",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 50
+    },
+    {
+      "id": "pc-39",
+      "code": "316.192",
+      "name": "Reckless Drive Cause Serious Injury",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-40",
+      "code": "316.1922(A)",
+      "name": "Dangerous Excessive Speeding 1ST Offense",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 500
+    },
+    {
+      "id": "pc-41",
+      "code": "316.1923",
+      "name": "Aggressive Careless Driving",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 200
+    },
+    {
+      "id": "pc-42",
+      "code": "316.1925",
+      "name": "Careless Driving",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 164
+    },
+    {
+      "id": "pc-43",
+      "code": "316.1926",
+      "name": "Motorcycle Moped Law Third Viol",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-44",
+      "code": "316.1926",
+      "name": "Speed Limit Law Third Viol",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-45",
+      "code": "316.193",
+      "name": "DUI Cause Death to Human or Unborn Child",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-46",
+      "code": "316.193",
+      "name": "DUI Alcohol or Drugs 3RD Viol Wi 10 Years",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-47",
+      "code": "316.193",
+      "name": "DUI Alcohol or Drugs 4TH or Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-48",
+      "code": "316.193",
+      "name": "DUI and Serious Bodily Injury to Another",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-49",
+      "code": "316.193",
+      "name": "DUI Damage to Property or Person of Another",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-50",
+      "code": "316.193",
+      "name": "0.15 or Higher or W Person Under 18 in Vehicle",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-51",
+      "code": "316.193",
+      "name": "DUI Influence of Alcohol or Drugs",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-52",
+      "code": "316.193",
+      "name": "DUI Blood Alcohol 0.08 or More Per 100 Ml",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-53",
+      "code": "316.193",
+      "name": "DUI Breath Alcohol 0.08 or More Per 210 L",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-54",
+      "code": "316.1935",
+      "name": "Flee Elude Causing Injury or Death",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-55",
+      "code": "316.1935",
+      "name": "Flee Elude High Speed or Disr Safety Pers Prop",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-56",
+      "code": "316.1935",
+      "name": "Aggravated Fleeing W Injury or Damage",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-57",
+      "code": "316.1935",
+      "name": "Flee Elude LEO with Lights Siren Active",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-58",
+      "code": "316.1939",
+      "name": "Refusal Submit DUI Testing",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-59",
+      "code": "316.2015",
+      "name": "Unlawful for Person to Ride on Exterior of Vehicle",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-60",
+      "code": "316.2045",
+      "name": "Obstruction of Public Streets, Highways, and Roads",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 50
+    },
+    {
+      "id": "pc-61",
+      "code": "316.211",
+      "name": "Equipment for Motorcycle and Moped Riders",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 30
+    },
+    {
+      "id": "pc-62",
+      "code": "316.212",
+      "name": "Operation of Golf Carts on Certain Roadways",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 25
+    },
+    {
+      "id": "pc-63",
+      "code": "316.217",
+      "name": "Driving Without Headlamps Illuminating",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 30
+    },
+    {
+      "id": "pc-64",
+      "code": "316.22",
+      "name": "Headlamps on Motor Vehicles",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 30
+    },
+    {
+      "id": "pc-65",
+      "code": "316.228",
+      "name": "Lamps or Flags on Projecting Load",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-66",
+      "code": "316.234",
+      "name": "Signal Lamps and Signal Devices",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 164
+    },
+    {
+      "id": "pc-67",
+      "code": "316.2397",
+      "name": "Atempt/effect Stop MV Use Red White Blue Light",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-68",
+      "code": "316.2953",
+      "name": "Window Tint Violation (side Windows)",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 0
+    },
+    {
+      "id": "pc-69",
+      "code": "316.302",
+      "name": "Ftc Request for Inspection of Com Veh W Viol",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-70",
+      "code": "316.302",
+      "name": "Ftc Request for Inspection of Com Veh WO Viol",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-71",
+      "code": "316.302",
+      "name": "Commercial Veh Bears False ID Number",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-72",
+      "code": "316.302",
+      "name": "Hazardous WO Comply W Fed Regs",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-73",
+      "code": "316.3026",
+      "name": "Drive Com Mtr Veh W Out of Service Order",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-74",
+      "code": "316.305",
+      "name": "Wireless Communications Devices; Prohibition",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-75",
+      "code": "316.515",
+      "name": "Maximum Width, Height, Length. Width Limitation",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-76",
+      "code": "316.52",
+      "name": "Vehicle Load Escape Cause Injury Death",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-77",
+      "code": "316.52",
+      "name": "Loads on Vehicles",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-78",
+      "code": "316.535",
+      "name": "Maximum Weights",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-79",
+      "code": "316.545",
+      "name": "Resist Obstruct with Viol Veh Weigh by Fhp",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-80",
+      "code": "316.545",
+      "name": "Obst with Viol Weigh by Weight Inspector",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-81",
+      "code": "316.545",
+      "name": "Refuse Veh Weigh by Fhp",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-82",
+      "code": "316.545",
+      "name": "Refuse Veh Weigh by Weight Inspector",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-83",
+      "code": "316.61",
+      "name": "Not Roadworthy Vehicle",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 50
+    },
+    {
+      "id": "pc-84",
+      "code": "316.614",
+      "name": "Lack of Safety Belt Usage",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 50
+    },
+    {
+      "id": "pc-85",
+      "code": "316.8",
+      "name": "Unlawful Conveyance of Fuel",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-86",
+      "code": "319.14",
+      "name": "Sell Taxi/poli Veh WO Title Nonconform Status",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-87",
+      "code": "319.14",
+      "name": "Sell Rebuilt Vehicle WO Certif Title Rebuilt",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-88",
+      "code": "319.14",
+      "name": "Fail Obtain LEO Letter Notif Veh Pol Marks Rem",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-89",
+      "code": "320.02",
+      "name": "Fail to Register Motor Veh",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-90",
+      "code": "320.061",
+      "name": "Alter/remove/obscure License Plate",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-91",
+      "code": "320.07",
+      "name": "Expired Mtr Veh Reg Over 6 Mos Subsq Off",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-92",
+      "code": "320.13",
+      "name": "Misuse Dealer or Manufacturer License Plate",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-93",
+      "code": "322.03",
+      "name": "No Driver License 1ST",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-94",
+      "code": "322.03",
+      "name": "No Driver License 2ND",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-95",
+      "code": "322.03",
+      "name": "No Driver License 3RD Subs.",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-96",
+      "code": "322.03",
+      "name": "Possess More Than One Valid Drivers License",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-97",
+      "code": "322.03",
+      "name": "Operate Motorcycle W/O License",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-98",
+      "code": "322.03",
+      "name": "Drive W/ DL Expired More Than 6 Months",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-99",
+      "code": "322.065",
+      "name": "Driver's License Expired for 6 Months or Less",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 500
+    },
+    {
+      "id": "pc-100",
+      "code": "322.212",
+      "name": "Sell Barter Trade Give Away Dr License or ID",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-101",
+      "code": "322.212",
+      "name": "Poss Driver Lic/id Card W Altered Dob",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-102",
+      "code": "322.3",
+      "name": "Use Out of State License When Fl License Suspended",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-103",
+      "code": "322.32",
+      "name": "Possess Display Etc of Canc Revoked Etc Dr Lic",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-104",
+      "code": "322.32",
+      "name": "Refuse to Surrender Suspended Drivers License",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-105",
+      "code": "322.32",
+      "name": "Have Issued 2 Photo Dr Lic in Different Names",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-106",
+      "code": "322.34",
+      "name": "Flee to Elude W/ License Suspended or Revoked",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-107",
+      "code": "322.34",
+      "name": "Suspended or Revoked DL 3RD or Subs.",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-108",
+      "code": "322.34",
+      "name": "No Driver License Cause Serious Inj or Death",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-109",
+      "code": "322.34",
+      "name": "Suspended or Revoked DL Cause Serious Injury or Death",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-110",
+      "code": "322.34",
+      "name": "Suspended or Revoked DL Commercial First Offence",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-111",
+      "code": "322.34",
+      "name": "Suspended or Revoked DL 2ND",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-112",
+      "code": "322.34",
+      "name": "Dwlsr Revocation Equiv Status 2ND Subs Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-113",
+      "code": "322.34",
+      "name": "Suspended or Revoked DL 1ST",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-114",
+      "code": "322.341",
+      "name": "Drive on Permanently Revoked Driver License",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-115",
+      "code": "322.35",
+      "name": "Permit Unlicensed Minor to Drive",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-116",
+      "code": "322.38",
+      "name": "Fail to Keep Vehicle Rental Records",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-117",
+      "code": "322.53",
+      "name": "Drive WO Valid Commercial Drivers License",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-118",
+      "code": "327.35",
+      "name": "Bui Fail to Give Information or Render Aid",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-119",
+      "code": "327.35",
+      "name": "Bui Cause Death of Human Being",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-120",
+      "code": "327.35",
+      "name": "Bui 3RD Violation Within 10 Years",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-121",
+      "code": "327.35",
+      "name": "Bui 4TH or Subsq Offense",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-122",
+      "code": "327.35",
+      "name": "Bui Cause Serious Bodily Injury to Another",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-123",
+      "code": "327.35",
+      "name": "Bui 0.15 or Higher or Person Undr 18 in Vessel",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-124",
+      "code": "327.35",
+      "name": "Bui Damage Property or Person of Another",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-125",
+      "code": "327.35215",
+      "name": "Unlawful Oper Ves W Outstand Civil Penalty",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-126",
+      "code": "327.355",
+      "name": "Operate Vessel While Under Susp of Lic",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-127",
+      "code": "327.359",
+      "name": "Refuse to Submit to Bui Test",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-128",
+      "code": "327.39",
+      "name": "Unlawful to Allow Person Und 14YOA to Oper Ves",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-129",
+      "code": "327.461",
+      "name": "Operate Vessel in Zone After Warning",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-130",
+      "code": "327.461",
+      "name": "Stay Reenter Restricted Water Zone After Warning",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-131",
+      "code": "327.461",
+      "name": "Operate Vessel in Restricted Zone",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-132",
+      "code": "327.461",
+      "name": "Swim Wade Dive in Restricted Zone",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-133",
+      "code": "327.5",
+      "name": "Unlawful Use of Siren/flashing Lights on Boat",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-134",
+      "code": "328.07",
+      "name": "No or Improper Display of Hull ID Number",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-135",
+      "code": "328.07",
+      "name": "Alt Remove Destroy Deface Hull ID Numb Plate",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-136",
+      "code": "328.07",
+      "name": "Cover Hull ID Serial Number Plate",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-137",
+      "code": "330.04",
+      "name": "Fly WO Pilots License",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-138",
+      "code": "330.04",
+      "name": "Fail to Present Pilots License Upon Demand",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-139",
+      "code": "365.172",
+      "name": "Unauthorized Use of 911 Services 4+ Conviction",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-140",
+      "code": "365.172",
+      "name": "Unauthorized Use of 911 Services",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-141",
+      "code": "379.105",
+      "name": "LVL2 Vio Interfer W Taking Fish Game 2ND Wi 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-142",
+      "code": "379.105",
+      "name": "LVL2 Vio Interfer W Taking Fish Game 3RD Wi 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-143",
+      "code": "379.105",
+      "name": "LVL2 Vio Interfere Taking Fish Game 4TH Wi 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-144",
+      "code": "379.105",
+      "name": "Level 2 Viol Interfere W Taking Fish or Game",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-145",
+      "code": "379.226",
+      "name": "Alien Ves Take Poss Natural Resource Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-146",
+      "code": "379.226",
+      "name": "Alien Vessel Take Poss Natural Resource",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-147",
+      "code": "379.231",
+      "name": "Import Release Nonnative Animals WO Authority",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-148",
+      "code": "379.2413",
+      "name": "Take Food Fish for Oil Fert Compost Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-149",
+      "code": "379.2413",
+      "name": "Take Food Fish for Oil Fertilizer Compost",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-150",
+      "code": "379.2421",
+      "name": "LVL2 Vio Use More Thn 1 Net Dev Brdg 2ND Wi 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-151",
+      "code": "379.2421",
+      "name": "LV2 Vio Fail Releas Undrsze Food Fsh 4TH W 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-152",
+      "code": "379.2421",
+      "name": "LV2 Vio Fail Release Undrsze Food Fsh 3RD W 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-153",
+      "code": "379.2421",
+      "name": "LV2 Vio Fail Release Undrsze Food Fsh 2ND W 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-154",
+      "code": "379.2421",
+      "name": "LVL2 Vio Tke Food Fsh Illeg Purse Net 4TH W10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-155",
+      "code": "379.2421",
+      "name": "LVL2 Vio Tke Food Fsh Illeg Purse Net 3RD W 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-156",
+      "code": "379.2421",
+      "name": "LVL2 Vio Tke Food Fsh Illeg Purse Net 2ND W 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-157",
+      "code": "379.2421",
+      "name": "LVL2 Vio Use Mor Thn 1 Net Dev Brdg 4TH Wi 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-158",
+      "code": "379.2421",
+      "name": "LVL2 Vio Use More Thn 1 Net Dev Brdg 3RD Wi 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-159",
+      "code": "379.2421",
+      "name": "LVL2 Vio Att Saltwtr Fish Net Brdge 4TH Wi 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-160",
+      "code": "379.2421",
+      "name": "LVL2 Vio Att Saltwtr Fish Net Bridge 3RD Wi 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-161",
+      "code": "379.2421",
+      "name": "LVL2 Vio Att Saltwtr Fish Net Bridge 2ND Wi 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-162",
+      "code": "379.2421",
+      "name": "LV2 Vio Obst Wtrway Net Scren Seine 4TH Wi 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-163",
+      "code": "379.2421",
+      "name": "LVL2 Vio Obst Wtrway Net Scren Seine 3RD Wi 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-164",
+      "code": "379.2421",
+      "name": "LVL2 Vio Obst Wtrway Net Scren Seine 2ND Wi 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-165",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Illegal Poss Seines Nets 4TH Wi 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-166",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Illegal Poss Seines Nets 2ND Wi 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-167",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Illegal Poss Seines Nets 3RD Wi 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-168",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Illegal Possession Seines and Nets",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-169",
+      "code": "379.2421",
+      "name": "Lvl 2 Viol Fail to Release Undersize Food Fish",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-170",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Take Food Fish W Illegal Purse Net",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-171",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Attach Saltwater Fish Net to Bridge",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-172",
+      "code": "379.2421",
+      "name": "Lvl 2 Vio Obstruct Waterway W Net Screen Seine",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-173",
+      "code": "379.2421",
+      "name": "LVL2 Vio Use More Than 1 Net Device Frm Bridge",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-174",
+      "code": "379.2422",
+      "name": "Use Illegal Nets in State Waters",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-175",
+      "code": "379.2423",
+      "name": "Poss Transport Illegal Nets in State Waters",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-176",
+      "code": "379.2423",
+      "name": "Possess Sell Mullet Taken W Illegal Net",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-177",
+      "code": "379.2425",
+      "name": "Lvl 2 Viol Spearfish Restricted Area 2ND Wi 3Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-178",
+      "code": "379.2425",
+      "name": "Lvl 2 Viol Spearfish Restricted Area 3RD Wi 5Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-179",
+      "code": "379.2425",
+      "name": "Lvl 2 Vio Spearfish Restricted Area 4TH Wi 10Y",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-180",
+      "code": "379.2425",
+      "name": "Lvl 2 Violation Spearfish in Restricted Areas",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-181",
+      "code": "379.2426",
+      "name": "Possession of Separated Shark Fin 3RD Sub Viol",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-182",
+      "code": "379.2426",
+      "name": "Import Export Sale of Shark Fins 3RD Sub Viol",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-183",
+      "code": "379.2426",
+      "name": "Possession of Separated Shark Fin 1ST Viol",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-184",
+      "code": "379.2426",
+      "name": "Possession of Separated Shark Fin 2ND Viol",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-185",
+      "code": "379.2426",
+      "name": "Import Export or Sale of Shark Fins 1ST Viol",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-186",
+      "code": "379.2426",
+      "name": "Import Export or Sale of Shark Fins 2ND Viol",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-187",
+      "code": "379.2431",
+      "name": "Poss 11 or Fewer Marine Turtle Eggs Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-188",
+      "code": "379.2431",
+      "name": "Possess More Than 11 Marine Turtle Eggs",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-189",
+      "code": "379.2431",
+      "name": "Poss Marine Turtle Species or Hatchling Nest",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-190",
+      "code": "379.2431",
+      "name": "Solicit Conspire to Viol Marine Turtle Act",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-191",
+      "code": "379.2431",
+      "name": "Possess 11 or Fewer Marine Turtle Eggs 1ST Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-192",
+      "code": "379.2431",
+      "name": "Viol No Entry Boat Prohibited Zones Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-193",
+      "code": "379.2431",
+      "name": "Refuse Post Bond Accept Sign Boating Citation",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-194",
+      "code": "379.2431",
+      "name": "Viol Manatee Sanctuary Act or Rule",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-195",
+      "code": "379.2431",
+      "name": "Viol No Entry Motorboat Prohibited Zones",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-196",
+      "code": "379.245",
+      "name": "Fail to Submit Spiny Lobster Reports Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-197",
+      "code": "379.245",
+      "name": "Fail to Submit Spiny Lobster Reports",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-198",
+      "code": "379.248",
+      "name": "Viol Sponge Fishing Law Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-199",
+      "code": "379.248",
+      "name": "Viol Sponge Fishing Law",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-200",
+      "code": "379.25",
+      "name": "Sell Unlawfully Landed Saltwater Life",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-201",
+      "code": "379.2522",
+      "name": "Sell Outside State Oyster WO Proper Label",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-202",
+      "code": "379.3313",
+      "name": "Resist Interfere W Fwc LEO Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-203",
+      "code": "379.3313",
+      "name": "Resist Interfere W Fwc LEO",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-204",
+      "code": "379.3761",
+      "name": "Poss Sell Wild Animal WO Authority Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-205",
+      "code": "379.3761",
+      "name": "Possess Sell Wild Animal WO Authority",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-206",
+      "code": "379.3762",
+      "name": "Personal Poss Wildlife WO Permit Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-207",
+      "code": "379.3762",
+      "name": "Personal Possession of Wildlife WO Permit",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-208",
+      "code": "379.401",
+      "name": "Fail to Appear in Court",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-209",
+      "code": "379.401",
+      "name": "Viol Level 2 Fwc Rule or Reg 1ST Offense",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-210",
+      "code": "379.4015",
+      "name": "Level Three Viol After Revocation Lic Permit",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-211",
+      "code": "379.4015",
+      "name": "Level Four Violations",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-212",
+      "code": "379.4015",
+      "name": "Viol Fwc Rule Order Captive Wildlife Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-213",
+      "code": "379.4015",
+      "name": "Viol Fwc Rules or Orders Level Three",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-214",
+      "code": "379.4015",
+      "name": "Refuse to Post Bond or Accept and Sign Summons",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-215",
+      "code": "379.4015",
+      "name": "Viol Fwc Rule or Order Re Captive Wildlife",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-216",
+      "code": "379.402",
+      "name": "Poss 3 or More Traps Lic in Another Name",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-217",
+      "code": "379.402",
+      "name": "Poss Live Bait Trap or Contents of Another",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-218",
+      "code": "379.402",
+      "name": "Poss Less Than 3 Traps Lic in Another Name",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-219",
+      "code": "379.404",
+      "name": "Sell Deer Wild Turkey Taken in Viol of Law",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-220",
+      "code": "379.404",
+      "name": "Take Deer or Turkey with Gun and Light",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-221",
+      "code": "379.404",
+      "name": "Take Kill Poss Deer or Turkey Closed Season",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-222",
+      "code": "379.404",
+      "name": "Take Kill Doe Fawn Deer W Too Small Antlers",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-223",
+      "code": "379.404",
+      "name": "Enter Private Property Shine Light for Deer",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-224",
+      "code": "379.4041",
+      "name": "Possess for Sale Sell Bears Lvl 4 Viol",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-225",
+      "code": "379.4041",
+      "name": "Illegal Taking Possess Bears Lvl 3 Viol",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-226",
+      "code": "379.4041",
+      "name": "Illegal Take Possess Bears Lvl 3 Conv Wi 10 Yr",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-227",
+      "code": "379.407",
+      "name": "Drag Shrimp Nets in Tortugas WO Lic 3RD Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-228",
+      "code": "379.407",
+      "name": "Poss Excess Mullet and Illegal Entangling Net",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-229",
+      "code": "379.407",
+      "name": "Flagrant Violation of Fishing Net Law or Rule",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-230",
+      "code": "379.407",
+      "name": "Fish W Revkd Susp Sltwtr Lic 3RD Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-231",
+      "code": "379.407",
+      "name": "Comm Harvest Poss Excess Trout Snook Redfish",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-232",
+      "code": "379.407",
+      "name": "3RD Viol Wi 1 Yr Aftr 2ND Viol Poss Spiny Lob",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-233",
+      "code": "379.407",
+      "name": "4TH or Subseq Viol Possession Spiny Lobster",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-234",
+      "code": "379.407",
+      "name": "Rec Comm Har Poss 100 More Undrsize Spiny Lob",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-235",
+      "code": "379.407",
+      "name": "Buy Sell Saltwater Product WO Lic 3RD Off 1 Yr",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-236",
+      "code": "379.407",
+      "name": "Buy Sell Saltwtr Product WO Lic 4TH Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-237",
+      "code": "379.407",
+      "name": "Buy Sell Saltwater Product W Revoked Lic",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-238",
+      "code": "379.407",
+      "name": "Com Har Dealer Buy Sell W Susp Lic 2ND Wi 12MO",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-239",
+      "code": "379.407",
+      "name": "Com Har Dealer Buy Sell W Susp Lic 3RD Wi 24MO",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-240",
+      "code": "379.407",
+      "name": "Com Harv WO Lic or Endorsement 3RD Vio Wi 1 Yr",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-241",
+      "code": "379.407",
+      "name": "Com Harvest WO Lic or Endorsement 4TH or Subsq",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-242",
+      "code": "379.407",
+      "name": "Take More 100 Illegal Crabs Spiny Lobster",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-243",
+      "code": "379.407",
+      "name": "Viol Shrimping Area Gear Count Season",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-244",
+      "code": "379.407",
+      "name": "Take Food Shrimp in Santa Rosa Sound",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-245",
+      "code": "379.407",
+      "name": "Drag Shrimp Nets in Tortugas WO Lic 2ND Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-246",
+      "code": "379.407",
+      "name": "Take Oysters Unapproved Area or Unculled",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-247",
+      "code": "379.407",
+      "name": "Take Clams from Unapproved Area",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-248",
+      "code": "379.407",
+      "name": "Take Endangered Threatened Special Species",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-249",
+      "code": "379.407",
+      "name": "Take More Than 100 Lbs Finfish 2ND Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-250",
+      "code": "379.407",
+      "name": "Take More Than 1000 Lbs Illegal Finfish",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-251",
+      "code": "379.407",
+      "name": "Stone Crab Viol Season Count Traps Egg Bearing",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-252",
+      "code": "379.407",
+      "name": "Spiny Lobster Viol Season Count Trap Eggs",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-253",
+      "code": "379.407",
+      "name": "Blue Crab Viol Count Traps",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-254",
+      "code": "379.407",
+      "name": "Finfish Viol Take More Than 100 Lbs",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-255",
+      "code": "379.407",
+      "name": "Prohibited Marine Species Count Season Gear",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-256",
+      "code": "379.407",
+      "name": "Fish W Revoked Suspended Saltwater License",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-257",
+      "code": "379.407",
+      "name": "Poss Excess Trout Snook Redfish",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-258",
+      "code": "379.407",
+      "name": "Possession of Spiny Lobster 2ND Viol",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-259",
+      "code": "379.407",
+      "name": "Possession of Spiny Lobster 3RD Viol",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-260",
+      "code": "379.407",
+      "name": "Rec Com Har Pos Few 100 Undrsiz Spin Lob Subsq",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-261",
+      "code": "379.407",
+      "name": "Buy Sell Saltwater Product WO Lic 2ND Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-262",
+      "code": "379.407",
+      "name": "Buy Sell Saltwater Product WO Lic 3RD Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-263",
+      "code": "379.407",
+      "name": "Com Harv Dealr Buy Sell Fish W Sus Lic 1ST Vio",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-264",
+      "code": "379.407",
+      "name": "Com Harv Dealr Buy Sell Fish W Sus Lic 2ND Vio",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-265",
+      "code": "379.407",
+      "name": "Comm Harvest WO License or Endorsement 2ND Vio",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-266",
+      "code": "379.407",
+      "name": "Comm Harvest WO License or Endorsement 3RD Vio",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-267",
+      "code": "381.986",
+      "name": "Mfg Sell Dispense Counterfeit Medic Marijuana",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-268",
+      "code": "381.986",
+      "name": "Possess Unlaw Marijuana Use Registry ID Card",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-269",
+      "code": "381.986",
+      "name": "Use Medic Marijuana in Veh Aircraft Motorboat",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-270",
+      "code": "381.986",
+      "name": "Use Medical Marijuana on School Bus or Grounds",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-271",
+      "code": "381.986",
+      "name": "Use Medical Marijuana Open to General Public",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-272",
+      "code": "381.986",
+      "name": "Fail Refuse Present Marij Use Registry ID Card",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-273",
+      "code": "403.727",
+      "name": "Transport Hazardous Waste to Nonlicensed Facil",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-274",
+      "code": "403.727",
+      "name": "Dispose of Hazardous Waste Without Permit",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-275",
+      "code": "406.12",
+      "name": "Fail to Report Death to Med Examiner or LEO",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-276",
+      "code": "562.11",
+      "name": "Sell/give/serve Alcohol to Person Under 21",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-277",
+      "code": "562.12",
+      "name": "Sell Alcoholic Drinks W/O License",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-278",
+      "code": "562.12",
+      "name": "Sell Alcoholic Drinks W/O License 2ND/SUBSQ",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-279",
+      "code": "562.451",
+      "name": "Moonshine Whiskey; Ownership, Possession, or Control Prohibited",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-280",
+      "code": "562.453",
+      "name": "Curbside Drink Intoxicating Liquor Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-281",
+      "code": "562.453",
+      "name": "Curbside Drink Intoxicating Liquor 1ST Viol",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-282",
+      "code": "590.11",
+      "name": "Build Fire Not Attend or Extinguish",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-283",
+      "code": "590.125",
+      "name": "Noncertified Burning",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-284",
+      "code": "590.28",
+      "name": "Reckless Land Burning",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-285",
+      "code": "633.214",
+      "name": "Refuse Sign Accept Citation Fire Inspector",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-286",
+      "code": "782.06",
+      "name": "Murder LEO",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-287",
+      "code": "782.071",
+      "name": "Vehicular Manslaughter",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-288",
+      "code": "782.081",
+      "name": "Commercial Exploitation or Assist Self-murder",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-289",
+      "code": "782.09",
+      "name": "Injure Mother Kill Unborn Child 1ST Degree",
+      "class": "Capital Felony",
+      "jailSeconds": 1200,
+      "fine": 0
+    },
+    {
+      "id": "pc-290",
+      "code": "782.09",
+      "name": "Injure Mother Kill Unborn Child 2ND Degree",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-291",
+      "code": "782.09",
+      "name": "Injure Mother Kill Unborn Child Manslaughter",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-292",
+      "code": "782.09",
+      "name": "Injure Mother Kill Unborn Child 3RD Degree",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-293",
+      "code": "784.021",
+      "name": "Aggravated Assault",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-294",
+      "code": "784.03",
+      "name": "Battery in Furtherance Riot or Agg Riot",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-295",
+      "code": "784.031",
+      "name": "Battery by Strangulation",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-296",
+      "code": "784.041",
+      "name": "Commit Felony Battery",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-297",
+      "code": "784.041",
+      "name": "Commit Domestic Battery by Strangulation",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-298",
+      "code": "784.045",
+      "name": "Aggrav Battery Cause Bodily Harm or Disability",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-299",
+      "code": "784.045",
+      "name": "Aggrav Battery with a Deadly Weapon",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-300",
+      "code": "784.045",
+      "name": "Aggrav Battery on Pregnant Victim",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-301",
+      "code": "784.048",
+      "name": "Stalking Victim After No Contact Order",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-302",
+      "code": "784.048",
+      "name": "Follow Harass Cyberstalk Another",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-303",
+      "code": "784.07",
+      "name": "Aggrav Battery on Specified Personnel",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-304",
+      "code": "784.07",
+      "name": "Aggrav Assault on Specified Personnel",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-305",
+      "code": "784.07",
+      "name": "Battery on Specified Personnel",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-306",
+      "code": "784.07",
+      "name": "Assault on Specified Personnel",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-307",
+      "code": "784.08",
+      "name": "Agg Assault on Person 65 Yoa or Older",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-308",
+      "code": "787.01",
+      "name": "Kidnap Another Person",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-309",
+      "code": "787.02",
+      "name": "False Imprisonment of Person",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-310",
+      "code": "787.07",
+      "name": "Transport 5+ Unlawful Entered Persons to State",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-311",
+      "code": "787.07",
+      "name": "Transport Unlawfully Entered Person Into State",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-312",
+      "code": "790.01",
+      "name": "Unlawful Carry of Concealed Firearm",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-313",
+      "code": "790.01",
+      "name": "Unlawful Carry of Concealed Weapon",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-314",
+      "code": "790.054",
+      "name": "Use Chem Spray Dart Stun Gun Elec Weap on LEO",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-315",
+      "code": "790.06",
+      "name": "Concealed or Open Carry Weapon Specified Areas",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-316",
+      "code": "790.065",
+      "name": "Sale and Delivery of Firearms",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-317",
+      "code": "790.07",
+      "name": "Use or Display of Weapon in Commission of Felony",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-318",
+      "code": "790.115",
+      "name": "Exhibit Weapon at School or Wi 1000 Ft",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-319",
+      "code": "790.115",
+      "name": "Possess Destructive Device on School Property",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-320",
+      "code": "790.115",
+      "name": "Possess Electronic Weapon on School Property",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-321",
+      "code": "790.115",
+      "name": "Possess Firearm on School Property",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-322",
+      "code": "790.162",
+      "name": "Bomb Threat",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-323",
+      "code": "790.163",
+      "name": "False Report Bomb Explosive Wpn Mass Dest",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-324",
+      "code": "790.17",
+      "name": "Delivery or Sale of Firearm to Under 21 Yrs",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-325",
+      "code": "790.19",
+      "name": "Discharge Firearm Into Dwelling Veh Building or Aircraft",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-326",
+      "code": "790.22",
+      "name": "Under 18 Unlawful Poss Firearm Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-327",
+      "code": "790.22",
+      "name": "Under 18 Yoa Unlawful Poss Firearm",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-328",
+      "code": "790.221",
+      "name": "Short Barreled Gun Rifle or Machine Gun",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-329",
+      "code": "790.23",
+      "name": "Possession of a Firearm or Ammo by a Convicted Felon",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 10000
+    },
+    {
+      "id": "pc-330",
+      "code": "790.27",
+      "name": "Alteration or Removal of Firearm Serial Number or Possession, Sale, or Delivery of Firearm with Serial Number Altered or Removed Prohibited; Penalties",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-331",
+      "code": "806.01",
+      "name": "1ST Degree Arson",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-332",
+      "code": "806.01",
+      "name": "2ND Degree Arson",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-333",
+      "code": "806.101",
+      "name": "False Fire Alarm 2ND or Subsq Off",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-334",
+      "code": "806.101",
+      "name": "False Fire Alarm 1ST Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-335",
+      "code": "810.02",
+      "name": "Burglary Causing Damage",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-336",
+      "code": "810.02",
+      "name": "Burglary with Assault or Battery",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-337",
+      "code": "810.02",
+      "name": "Burglary of Occupied Dwelling Armed",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-338",
+      "code": "810.02",
+      "name": "Burglary of Occupied Dwelling Unarmed",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-339",
+      "code": "810.02",
+      "name": "Burglary of Unoccupied Dwelling Unarmed",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-340",
+      "code": "810.02",
+      "name": "Burglary of Unoccupied Structure Unarmed",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-341",
+      "code": "810.02",
+      "name": "Burglary Unoccupied Structure Unarmed",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-342",
+      "code": "810.02",
+      "name": "Burglary Unoccupied Structure Armed",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-343",
+      "code": "810.02",
+      "name": "Burglary Occupied Structure Unarmed",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-344",
+      "code": "810.02",
+      "name": "Burglary Occupied Structure Armed",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-345",
+      "code": "810.06",
+      "name": "Possess Burglary Tools with Intent to Use",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-346",
+      "code": "810.08",
+      "name": "Trespass Occupied Structure or Conveyance",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-347",
+      "code": "810.08",
+      "name": "Trespassing Structure or Conveyance",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-348",
+      "code": "810.09",
+      "name": "Trespass Armed with Firearm/dangerous Weapon",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-349",
+      "code": "810.09",
+      "name": "Trespass Posted Construction Site",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-350",
+      "code": "810.09",
+      "name": "Trespass Operational Area of Airport",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-351",
+      "code": "810.09",
+      "name": "Trespass Fail to Leave Prop on Order of Owner",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-352",
+      "code": "812.014",
+      "name": "Grand Theft $20,000 or More Less Than $100,000",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-353",
+      "code": "812.014",
+      "name": "Grand Theft Emergency Medical Equipment",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-354",
+      "code": "812.014",
+      "name": "Grand Theft LEO Equip Authorized Emergency Veh",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-355",
+      "code": "812.014",
+      "name": "Grand Theft 750 Less Than 5K Dols",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-356",
+      "code": "812.014",
+      "name": "Grand Theft of Any Stop Sign",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-357",
+      "code": "812.014",
+      "name": "Grand Theft of Controlled Substance",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-358",
+      "code": "812.014",
+      "name": "Grand Theft 5K Less Than 10K Dols",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-359",
+      "code": "812.014",
+      "name": "Grand Theft 10K Less Than 20K Dols",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-360",
+      "code": "812.014",
+      "name": "Grand Theft of Firearm",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-361",
+      "code": "812.014",
+      "name": "Grand Theft of Motor Vehicle",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-362",
+      "code": "812.014",
+      "name": "Petit Theft Gasoline Drive Off Without Paying",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-363",
+      "code": "812.015",
+      "name": "Retail Theft",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-364",
+      "code": "812.017",
+      "name": "Request Refund W False Receipt",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-365",
+      "code": "812.135",
+      "name": "Home Invasion with Weapon",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-366",
+      "code": "812.135",
+      "name": "Home Invasion W/O Firearm or Weapon",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-367",
+      "code": "825.102",
+      "name": "Aggravated Abuse Elderly or Disabled Adult",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-368",
+      "code": "828.12",
+      "name": "Aggravated Animal Cruelty Excessive Pain/death",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-369",
+      "code": "828.122",
+      "name": "Bet Wager on Animal Fight or Bait",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-370",
+      "code": "828.122",
+      "name": "Attend Animal Fight or Bait",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-371",
+      "code": "828.125",
+      "name": "Kill Harm Mutilate Horse or Cattle",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-372",
+      "code": "836.12",
+      "name": "Threat Firefighter Family Death Harm",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-373",
+      "code": "836.12",
+      "name": "Threat Firefighter Death Harm",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-374",
+      "code": "836.12",
+      "name": "Threat LEO Death/harm",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-375",
+      "code": "836.12",
+      "name": "Threat LEO Family Death/harm",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-376",
+      "code": "837.05",
+      "name": "Falso Info to LEO During Investigation",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-377",
+      "code": "838.015",
+      "name": "Bribery of or by Public Servant",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-378",
+      "code": "843.01",
+      "name": "Resist Officer with Violence",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-379",
+      "code": "843.02",
+      "name": "Resist Officer W/O Violence",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-380",
+      "code": "843.01",
+      "name": "Resist Police Canine/horse W/ Violence",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-381",
+      "code": "843.021",
+      "name": "Poss Concealed Handcuff Key While in Custody",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-382",
+      "code": "843.08",
+      "name": "False Personation Officials in Commission Fel",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-383",
+      "code": "843.08",
+      "name": "False Personation of Officials",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-384",
+      "code": "843.085",
+      "name": "Unlawful Use Badge or Oth Indicia of Authority",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-385",
+      "code": "843.12",
+      "name": "Aid or Assist in Prisoner Escape",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-386",
+      "code": "843.165",
+      "name": "Transmit on Police or Fire Radio Frequency",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-387",
+      "code": "843.19",
+      "name": "Cause Great Harm Death Police Fire Sar Animal",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-388",
+      "code": "843.19",
+      "name": "Use Deadly Weapon on Police Fire Sar Animal",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-389",
+      "code": "843.19",
+      "name": "Touch/strike/cause Harm Police/fire/sar Animal",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-390",
+      "code": "843.19",
+      "name": "Harass/tease/interfere Police/fire/sar Animal",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-391",
+      "code": "859.01",
+      "name": "Poison Food Water or Medicine Wit Kill or Inj",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-392",
+      "code": "860.142",
+      "name": "Poss/purch/sell Stolen Catalytic Converter",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-393",
+      "code": "860.142",
+      "name": "Poss/purch/sell Catalytic Converter Stolen MV",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-394",
+      "code": "861.01",
+      "name": "Obstruct Highway",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-395",
+      "code": "870.01",
+      "name": "Agg Riot 25 or More Persons",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-396",
+      "code": "870.01",
+      "name": "Agg Riot Great Bodily Harm",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-397",
+      "code": "870.01",
+      "name": "Agg Riot Property Damage Greater Than 5K Dols",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-398",
+      "code": "870.01",
+      "name": "Agg Riot with Deadly Weapon",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-399",
+      "code": "870.01",
+      "name": "Agg Riot Endanger Vehicle Travel",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-400",
+      "code": "870.01",
+      "name": "Agg Incite Riot Great Bodily Harm",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-401",
+      "code": "870.01",
+      "name": "Agg Incite Riot Property Damage > 5K Dols",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-402",
+      "code": "870.01",
+      "name": "Agg Incite Riot Provide Prep Deadly Weapon",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-403",
+      "code": "870.01",
+      "name": "Incite or Encourage Riot",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-404",
+      "code": "870.01",
+      "name": "Riot Injury to Person",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-405",
+      "code": "870.01",
+      "name": "Riot Damage to Property",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-406",
+      "code": "870.01",
+      "name": "Riot W Imminent Injury Person or Damage Prop",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-407",
+      "code": "872.02",
+      "name": "Excavate Expose Remove Content Grave or Tomb",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-408",
+      "code": "874.05",
+      "name": "Recruit Encourage Criminal Gang Subsq Off",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-409",
+      "code": "874.05",
+      "name": "Recruit Encourage Criminal Gang 1ST Offense",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-410",
+      "code": "877.03",
+      "name": "Breach of the Peace",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-411",
+      "code": "877.111",
+      "name": "Sell/distribute Nitrous Oxide 16 Grams or More",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-412",
+      "code": "877.111",
+      "name": "Poss/buy/sell/transfer Harmful Chemicals",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-413",
+      "code": "893.09",
+      "name": "Interfere W LEO W Violence",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-414",
+      "code": "893.09",
+      "name": "Interfere W LEO WO Violence",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-415",
+      "code": "893.13",
+      "name": "Manufacture Fentanyl/fentanyl Analogues",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-416",
+      "code": "893.13",
+      "name": "Sell Fentanyl/fentanyl Analogues",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-417",
+      "code": "893.13",
+      "name": "Fentanyl Possession W/ Intent to Distribute",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-418",
+      "code": "893.13",
+      "name": "Deliver Fentanyl/fentanyl Analogues",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-419",
+      "code": "893.13",
+      "name": "Sell Controlled Substance Schedule Ii",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-420",
+      "code": "893.13",
+      "name": "Sell Controlled Substance Schedule I",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-421",
+      "code": "893.13",
+      "name": "Poss Intent Sell/mfg/deliv Ctrl Sub Schedule I",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-422",
+      "code": "893.13",
+      "name": "Deliver Controlled Substance Schedule Ii",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-423",
+      "code": "893.13",
+      "name": "Poss Intent Sell/mfg/del Ctrl Sub Schedule Ii",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-424",
+      "code": "893.13",
+      "name": "Deliver Controlled Substance Schedule I",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-425",
+      "code": "893.13",
+      "name": "Purchase Controlled Substance Schedule Ii",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-426",
+      "code": "893.13",
+      "name": "Intent Purchase Control Substance Schedule I",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-427",
+      "code": "893.13",
+      "name": "Purchase Controlled Substance Schedule I",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-428",
+      "code": "893.13",
+      "name": "Bring Unauthorized Sched Ii Ctrl Sub to State",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-429",
+      "code": "893.13",
+      "name": "Bring Unauthorized Sched I Ctrl Sub Into State",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-430",
+      "code": "893.13",
+      "name": "Sell Controlled Substance Schedule Iii",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-431",
+      "code": "893.13",
+      "name": "Mfg Controlled Substance Schedule Iii",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-432",
+      "code": "893.13",
+      "name": "Poss Intent Sell/mfg/deliv Ctrl Sub Sched Iii",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-433",
+      "code": "893.13",
+      "name": "Deliver Controlled Substance Schedule Iv",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-434",
+      "code": "893.13",
+      "name": "Mfg Controlled Substance Schedule Iv",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-435",
+      "code": "893.13",
+      "name": "Deliver Controlled Substance Schedule Iii",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-436",
+      "code": "893.13",
+      "name": "Poss Intent Sell/mfg/deliv Ctrl Sub Sched Iv",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-437",
+      "code": "893.13",
+      "name": "Purchase Controlled Substance Schedule Iii",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-438",
+      "code": "893.13",
+      "name": "Intent Purchase Control Substance Schedule Iii",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-439",
+      "code": "893.13",
+      "name": "Intent Purchase Control Substance Schedule Iv",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-440",
+      "code": "893.13",
+      "name": "Purchase Controlled Substance Schedule Iv",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-441",
+      "code": "893.13",
+      "name": "Bring Unauthorized Sched Iv Ctrl Sub to State",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-442",
+      "code": "893.13",
+      "name": "Bring Unauthorized Sched Iii Ctrl Sub to State",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-443",
+      "code": "893.13",
+      "name": "Possess Controlled Substance W/O Prescription",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-444",
+      "code": "893.13",
+      "name": "Sell Controlled Substance Schedule V",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-445",
+      "code": "893.13",
+      "name": "Poss Intent Sell/mfg/deliv Ctrl Sub Schedule V",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-446",
+      "code": "893.13",
+      "name": "Deliver Controlled Substance Schedule V",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-447",
+      "code": "893.13",
+      "name": "Mfg Controlled Substance Schedule V",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-448",
+      "code": "893.13",
+      "name": "Purchase Controlled Substance Schedule V",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-449",
+      "code": "893.13",
+      "name": "Intent Purchase Control Substance Schedule V",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-450",
+      "code": "893.13",
+      "name": "Bring Unauthorized Sched V Ctrl Sub Into State",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-451",
+      "code": "893.13",
+      "name": "Possess Less Than 20 Grams Cannabis",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-452",
+      "code": "893.13",
+      "name": "Possess More Than 20 Grams Cannabis",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-453",
+      "code": "893.13",
+      "name": "Possess Controlled Substance",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-454",
+      "code": "893.135",
+      "name": "Trafficking in Methaqualone 200 Grams or More",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-455",
+      "code": "893.135",
+      "name": "Cannabis Excess of 25 Lbs or 300+ Plants",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-456",
+      "code": "893.135",
+      "name": "Trafficking in Cocaine 28 Grams to 150 Kg",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-457",
+      "code": "893.135",
+      "name": "Traffic Opium/heroin/illegal Drugs 4G to 30KG",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-458",
+      "code": "893.135",
+      "name": "Trafficking in Hydrocodone 28 Grams or More",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-459",
+      "code": "893.135",
+      "name": "Trafficking in Oxycodone 7 Grams or More",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-460",
+      "code": "893.135",
+      "name": "Traffic Fentanyl/fentanyl Analogues 4 Grams+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-461",
+      "code": "893.135",
+      "name": "Traffic Phencyclidine (pcp) 28 Grams+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-462",
+      "code": "893.135",
+      "name": "Traffic in Meth/amphetamine 14 Grams+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-463",
+      "code": "893.135",
+      "name": "Trafficking in Flunitrazepam 4 Grams to 30 Kg",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-464",
+      "code": "893.135",
+      "name": "Traffic Gamma-hydroxybutyric Acid (ghb) 1KG+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-465",
+      "code": "893.135",
+      "name": "Trafficking in Gammabutyrolactone (gbl) 1KG+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-466",
+      "code": "893.135",
+      "name": "Trafficking in 1,4-BUTANEDIOL 1 Kg or More",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-467",
+      "code": "893.135",
+      "name": "Traffic in Phenethylamines 10 Grams or More",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-468",
+      "code": "893.135",
+      "name": "Traffic Lysergic Acid Diethylamide (lsd) 1G+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-469",
+      "code": "893.135",
+      "name": "Traffic Synthetic Cannabinoids 280 Grams+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-470",
+      "code": "893.135",
+      "name": "Traffic N-benzyl Phenethylamines 14 Grams+",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-471",
+      "code": "893.135",
+      "name": "Trafficking in Cocaine 150 Kg or More",
+      "class": "Life Felony",
+      "jailSeconds": 1000,
+      "fine": 0
+    },
+    {
+      "id": "pc-472",
+      "code": "893.135",
+      "name": "Trafficking Opium/heroin/illegal Drugs 30KG+",
+      "class": "Life Felony",
+      "jailSeconds": 1000,
+      "fine": 0
+    },
+    {
+      "id": "pc-473",
+      "code": "893.135",
+      "name": "Trafficking in Flunitrazepam 30 Kg or More",
+      "class": "Life Felony",
+      "jailSeconds": 1000,
+      "fine": 0
+    },
+    {
+      "id": "pc-474",
+      "code": "893.147",
+      "name": "Retail Sale of Drug Paraphernalia",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-475",
+      "code": "896.101",
+      "name": "Money Launder Trans 100K Dols or More",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-476",
+      "code": "896.101",
+      "name": "Money Launder Trans 20K Less Than 100K Dols",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-477",
+      "code": "896.101",
+      "name": "Money Launder Trans Over 300 Less 20K Dols",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-478",
+      "code": "901.36",
+      "name": "False ID Given to LEO",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-479",
+      "code": "316.074(2)",
+      "name": "Obedience to and Required Traffic Control Devices",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 500
+    },
+    {
+      "id": "pc-480",
+      "code": "316.075(1C)",
+      "name": "Failure to Stop at a Steady Red Signal Before Making Right Turn",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 164
+    },
+    {
+      "id": "pc-481",
+      "code": "316.075(1C)",
+      "name": "Failure to Stop at a Steady Red Signal Before Making Right Turn",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 164
+    },
+    {
+      "id": "pc-482",
+      "code": "316.085(2)",
+      "name": "Improper Change of Lane",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-483",
+      "code": "316.0875(1)",
+      "name": "Passing in No Passing Zone",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 125
+    },
+    {
+      "id": "pc-484",
+      "code": "316.121(1)",
+      "name": "Failure to Yield (at Intersection)",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-485",
+      "code": "316.121(3)",
+      "name": "Failure to Yield (upon Entering Road or Highway from Road Not Subject to Traffic Control Device)",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-486",
+      "code": "316.123(1)",
+      "name": "Too Fast for Conditions",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-487",
+      "code": "316.123(2A)",
+      "name": "Failure to Come to a Complete Stop at a Stop Sign",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 164
+    },
+    {
+      "id": "pc-488",
+      "code": "316.182C",
+      "name": "Reckless Driving Subsq Off",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-489",
+      "code": "316.183.1",
+      "name": "Speeding 6 -9 Mph",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-490",
+      "code": "316.183.2",
+      "name": "Speeding 10 - 14 Mph",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 300
+    },
+    {
+      "id": "pc-491",
+      "code": "316.183.3",
+      "name": "Speeding 15 - 19 Mph",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 400
+    },
+    {
+      "id": "pc-492",
+      "code": "316.183.4",
+      "name": "Speeding 20 - 29 Mph",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 450
+    },
+    {
+      "id": "pc-493",
+      "code": "316.183.5",
+      "name": "Speeding 30 or More",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 555
+    },
+    {
+      "id": "pc-494",
+      "code": "316.183(5)",
+      "name": "Impeding the Flow of Traffic",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-495",
+      "code": "316.192A",
+      "name": "Reckless Drive Damage Property",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-496",
+      "code": "316.192B",
+      "name": "Reckless Driving 1ST Off",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 0
+    },
+    {
+      "id": "pc-497",
+      "code": "316.195(1)",
+      "name": "Improper Parking on Two-way Roadway",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 30
+    },
+    {
+      "id": "pc-498",
+      "code": "316.195(2)",
+      "name": "Improper Parking Against/flow Curb or One Way Traffic",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 60
+    },
+    {
+      "id": "pc-499",
+      "code": "316.520(3)(b)",
+      "name": "Loads on Vehicles",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 10000
+    },
+    {
+      "id": "pc-500",
+      "code": "320.02(1)",
+      "name": "No Motor Vehicle Registration",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 500
+    },
+    {
+      "id": "pc-501",
+      "code": "322.15(1)",
+      "name": "DL Not Carried, Exhibited on Demand",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 30
+    },
+    {
+      "id": "pc-502",
+      "code": "322.34(1)",
+      "name": "Unknowingly Operating a Motor Vehicle on DL Suspended or Revoked",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 500
+    },
+    {
+      "id": "pc-503",
+      "code": "782.07A",
+      "name": "Manslaughter",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-504",
+      "code": "784.03(1)(2)",
+      "name": "Battery",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-505",
+      "code": "790.15A",
+      "name": "Discharge Firearm in Public",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-506",
+      "code": "893.147(1)",
+      "name": "Use or Possession of Drug Paraphernalia",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-507",
+      "code": "316.235",
+      "name": "Additional Lighting Equipment",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-508",
+      "code": "316.224",
+      "name": "Color of Lamps and Lights on Vehicle",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-509",
+      "code": "316.2397(10A)",
+      "name": "Certain Lights Prohibited; Attempts to or Stops Another Vehicle with Blue/white/red Lights",
+      "class": "Third Degree Misdemeanor",
+      "jailSeconds": 400,
+      "fine": 1000
+    },
+    {
+      "id": "pc-510",
+      "code": "316.2397(10B)",
+      "name": "Certain Lights Prohibited; Use of Red/blue/white Lights",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 300
+    },
+    {
+      "id": "pc-511",
+      "code": "403.413",
+      "name": "Florida Litter Law",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-512",
+      "code": "777.03",
+      "name": "Accessory After the Fact",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-513",
+      "code": "812.019",
+      "name": "Dealing in Stolen Property",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-514",
+      "code": "876.12",
+      "name": "Wearing Mask, Hood, or Other Device on Public Way",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 1000
+    },
+    {
+      "id": "pc-515",
+      "code": "876.13",
+      "name": "Wearing Mask, Hood, or Other Device on Public Property",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 1000
+    },
+    {
+      "id": "pc-516",
+      "code": "876.14",
+      "name": "Wearing Mask, Hood, or Other Device on Property of Another",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 1000
+    },
+    {
+      "id": "pc-517",
+      "code": "790.10",
+      "name": "Improper Exhibition of Dangerous Weapons or Firearms",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 3000
+    },
+    {
+      "id": "pc-518",
+      "code": "843.31",
+      "name": "Approaching a First Responder with Specified Intent After a Warning",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 500
+    },
+    {
+      "id": "pc-519",
+      "code": "316.610",
+      "name": "Safety of Vehicle; Inspection",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-520",
+      "code": "782.04",
+      "name": "First Degree Murder",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-521",
+      "code": "782.04(1)(A)",
+      "name": "Attempted Murder",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-522",
+      "code": "782.04(1)(B)",
+      "name": "Second Degree Murder",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-523",
+      "code": "811.102",
+      "name": "Illegal Entry by Adult Unauthorized Alien Into This State",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-524",
+      "code": "811.103",
+      "name": "Illegal Reentry of an Adult Unauthorized Alien",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-525",
+      "code": "918.13",
+      "name": "Tampering with or Fabricating Physical Evidence",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-526",
+      "code": "806.13A",
+      "name": "Criminal Mischief <1000",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 1000
+    },
+    {
+      "id": "pc-527",
+      "code": "803.13B",
+      "name": "Criminal Mischief >1000",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 5000
+    },
+    {
+      "id": "pc-528",
+      "code": "806.13B",
+      "name": "Criminal Mischief >1000",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 5000
+    },
+    {
+      "id": "pc-529",
+      "code": "320.261",
+      "name": "Attaching Registration License Plate Not Assigned Unlawful",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 1000
+    },
+    {
+      "id": "pc-530",
+      "code": "316.1922(B)",
+      "name": "Dangerous Excessive Speeding Subsequent Offense",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 1000
+    },
+    {
+      "id": "pc-531",
+      "code": "817.60",
+      "name": "Theft; Obtaining Credit Card Through Fradulent Means",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-532",
+      "code": "817.61",
+      "name": "Fraudulent Use of Credit Cards",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-533",
+      "code": "817.625",
+      "name": "Use of Scanning Device, Skimming Device, or Reencoder to Defraud; Possession of Skimming Device; Penalties.",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-534",
+      "code": "316.088",
+      "name": "One-way Roadways and Rotary Traffic Islands",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-535",
+      "code": "319.33",
+      "name": "Offenses Involving Vehicle Identification Numbers, Applications, Certificates, Papers",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-536",
+      "code": "817.568",
+      "name": "Criminal Use of Personal Identification Information",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-537",
+      "code": "316.191",
+      "name": "Stunt Driving",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 2000
+    },
+    {
+      "id": "pc-538",
+      "code": "790.166",
+      "name": "Manufacture, Possession, Sale, Delivery, Display, or Use of a Weapon of Mass Destruction or Hoax",
+      "class": "First Degree Felony",
+      "jailSeconds": 800,
+      "fine": 0
+    },
+    {
+      "id": "pc-539",
+      "code": "856.021",
+      "name": "Loitering or Prowling",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 250
+    },
+    {
+      "id": "pc-540",
+      "code": "316.075(1D)",
+      "name": "Failure to Stop at a Steady Red Signal",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 164
+    },
+    {
+      "id": "pc-541",
+      "code": "860.13",
+      "name": "Operation of Aircraft While Intoxicated or in Careless or Reckless Manner",
+      "class": "Third Degree Felony",
+      "jailSeconds": 400,
+      "fine": 0
+    },
+    {
+      "id": "pc-542",
+      "code": "784.011",
+      "name": "Assault",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 1000
+    },
+    {
+      "id": "pc-543",
+      "code": "817.49",
+      "name": "False Reports of a Commission of a Crime",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 1500
+    },
+    {
+      "id": "pc-544",
+      "code": "870.02",
+      "name": "Unlawful Assemblies",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 1000
+    },
+    {
+      "id": "pc-545",
+      "code": "944.40",
+      "name": "Escapes",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-546",
+      "code": "944.47",
+      "name": "Introduction, Removal, or Possession of Contraband",
+      "class": "Second Degree Felony",
+      "jailSeconds": 600,
+      "fine": 0
+    },
+    {
+      "id": "pc-547",
+      "code": "316.209",
+      "name": "Operating Motorcycles on Roadways Laned for Traffic",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 500
+    },
+    {
+      "id": "pc-548",
+      "code": "316.072",
+      "name": "Obedience to and Effect of Traffic Laws",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 100,
+      "fine": 100
+    },
+    {
+      "id": "pc-549",
+      "code": "316.0895",
+      "name": "Following Too Closely (tailgating)",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 150
+    },
+    {
+      "id": "pc-550",
+      "code": "812.13(2)(c)",
+      "name": "Robbery",
+      "class": "Second Degree Felony",
+      "jailSeconds": 400,
+      "fine": 10000
+    },
+    {
+      "id": "pc-551",
+      "code": "812.13(2)(a)",
+      "name": "Armed Robbery",
+      "class": "First Degree Felony",
+      "jailSeconds": 600,
+      "fine": 10000
+    },
+    {
+      "id": "pc-552",
+      "code": "856.011",
+      "name": "Disorderly Intoxication",
+      "class": "Second Degree Misdemeanor",
+      "jailSeconds": 60,
+      "fine": 500
+    },
+    {
+      "id": "pc-553",
+      "code": "316.191(2)",
+      "name": "Racing on Highways, Street Takeovers, and Stunt Driving",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 0,
+      "fine": 2000
+    },
+    {
+      "id": "pc-554",
+      "code": "806.13",
+      "name": "Criminal Mischief",
+      "class": "Third Degree Felony",
+      "jailSeconds": 5,
+      "fine": 5000
+    },
+    {
+      "id": "pc-555",
+      "code": "327.03",
+      "name": "Reckless Operation of a Vessel",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 500
+    },
+    {
+      "id": "pc-556",
+      "code": "800.03",
+      "name": "Exposure of Sexual Organs",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 0
+    },
+    {
+      "id": "pc-557",
+      "code": "316.155",
+      "name": "When Signal Ready",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 100
+    },
+    {
+      "id": "pc-558",
+      "code": "376.041",
+      "name": "Pollution of Waters and Lands of the State Prohibited",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 750
+    },
+    {
+      "id": "pc-559",
+      "code": "316.3045",
+      "name": "Operation of Radios or Other Mechanical or Electronic Soundmaking Devices or Instruments in Vehicles",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 250
+    },
+    {
+      "id": "pc-560",
+      "code": "316.271",
+      "name": "Horns and Warning Devices",
+      "class": "Infraction",
+      "jailSeconds": 0,
+      "fine": 500
+    },
+    {
+      "id": "pc-561",
+      "code": "562.111",
+      "name": "Possession of Alcoholic Beverages by Persons Under Age 21 Prohibited",
+      "class": "First Degree Misdemeanor",
+      "jailSeconds": 200,
+      "fine": 1000
+    }
   ]
 }

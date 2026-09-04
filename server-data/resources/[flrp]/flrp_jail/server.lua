@@ -49,17 +49,40 @@ end
 
 -- ---- penal code -----------------------------------------------------------
 local charges = {}
+
+-- Accept either the flrp shape ({charges:[{id,name,class,jailSeconds,fine}]})
+-- OR the FLRP website shape (a bare array of {id,code,title,degree,jail,fine}).
+local function normalizeCharges(data)
+  local list = (type(data) == 'table' and data.charges) or data
+  if type(list) ~= 'table' then return nil end
+  local out = {}
+  for _, e in ipairs(list) do
+    if type(e) == 'table' then
+      local nm  = e.name or e.title
+      local cls = e.class or e.degree or ''
+      local secs = tonumber(e.jailSeconds) or tonumber(e.jail) or 0
+      local fine = e.fine
+      if type(fine) == 'string' then fine = tonumber((fine:gsub('[^%d]', ''))) end
+      fine = tonumber(fine) or 0
+      if nm then
+        out[#out + 1] = { id = e.id or nm, code = e.code or '', name = nm, class = cls, jailSeconds = math.floor(secs), fine = fine }
+      end
+    end
+  end
+  return (#out > 0) and out or nil
+end
+
 local function loadPenalCode()
   local raw = LoadResourceFile(GetCurrentResourceName(), 'penalcode.json')
   if raw then
     local ok, data = pcall(json.decode, raw)
-    if ok and type(data) == 'table' and type(data.charges) == 'table' then charges = data.charges end
+    if ok then charges = normalizeCharges(data) or {} end
   end
   print(('[flrp_jail] penal code: %d charges from penalcode.json'):format(#charges))
 end
 loadPenalCode()
 
--- Optional live override: server fetches a JSON endpoint (same shape) on start.
+-- Optional live sync: fetch the site /penal-code endpoint on start and override.
 CreateThread(function()
   Wait(3000)
   local url = GetConvar(FLRP_JAIL.PenalCodeConvar, '')
@@ -67,9 +90,10 @@ CreateThread(function()
   PerformHttpRequest(url, function(status, body)
     if status == 200 and body and body ~= '' then
       local ok, data = pcall(json.decode, body)
-      if ok and type(data) == 'table' and type(data.charges) == 'table' and #data.charges > 0 then
-        charges = data.charges
-        print(('[flrp_jail] penal code loaded from %s (%d charges).'):format(url, #charges))
+      local norm = ok and normalizeCharges(data)
+      if norm then
+        charges = norm
+        print(('[flrp_jail] penal code synced from %s (%d charges).'):format(url, #charges))
       else
         print('[flrp_jail] penal code URL returned an unexpected shape — keeping penalcode.json.')
       end
