@@ -8,8 +8,11 @@ export function App() {
   const [search, setSearch] = useState('');
   const [secs, setSecs] = useState<Record<number, number>>({});
   const [hosp, setHosp] = useState<Record<number, string>>({});
+  const [injury, setInjury] = useState<Record<number, string>>({});
   const [armed, setArmed] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const fmt = (s: number) => (s <= 0 ? '—' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m${s % 60 ? ' ' + (s % 60) + 's' : ''}`);
 
   useNuiEvent<{ state: State }>('open', (d) => { setState(d.state); setSearch(''); setArmed(null); });
   useNuiEvent('close', () => setState(null));
@@ -35,6 +38,13 @@ export function App() {
 
   const secOf = (id: number) => secs[id] ?? state.defaultSeconds;
   const hospOf = (id: number) => hosp[id] ?? state.hospitals[0]?.id;
+  const injOf = (id: number) => injury[id] ?? state.defaultInjury ?? state.injuries[0]?.id;
+
+  const addCharge = (id: number, chargeId: string) => {
+    const c = state.charges.find((x) => x.id === chargeId);
+    if (!c) return;
+    setSecs((s) => ({ ...s, [id]: Math.min(state.maxSeconds, (s[id] ?? state.defaultSeconds) + c.jailSeconds) }));
+  };
 
   const doJail = async (p: JailPlayer) => {
     if (busy) return;
@@ -45,7 +55,7 @@ export function App() {
   };
   const doHosp = async (p: JailPlayer, cb: string) => {
     if (busy) return; setBusy(true);
-    await fetchNui(cb, { id: p.id, hospital: hospOf(p.id) });
+    await fetchNui(cb, { id: p.id, hospital: hospOf(p.id), injury: injOf(p.id) });
     setBusy(false); refresh();
   };
 
@@ -101,15 +111,17 @@ export function App() {
                 </div>
 
                 {/* actions */}
-                <div className="flex items-center justify-end gap-1.5">
-                  {(perms.hospitalize || perms.leoHospitalize) && (
-                    <select value={hospOf(p.id)} onChange={(e) => setHosp((h) => ({ ...h, [p.id]: e.target.value }))}
-                      className="h-8 max-w-[130px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
-                      {state.hospitals.map((h) => <option key={h.id} value={h.id}>{h.label}</option>)}
-                    </select>
-                  )}
+                <div className="flex flex-wrap items-center justify-end gap-1.5">
                   {perms.jail && (
                     <>
+                      {state.charges.length > 0 && (
+                        <select value="" title="Add a charge's time from the penal code"
+                          onChange={(e) => { addCharge(p.id, e.target.value); e.currentTarget.value = ''; }}
+                          className="h-8 max-w-[140px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
+                          <option value="" disabled>+ Charge</option>
+                          {state.charges.map((c) => <option key={c.id} value={c.id}>{c.name} ({fmt(c.jailSeconds)})</option>)}
+                        </select>
+                      )}
                       <input type="number" min={1} max={state.maxSeconds} value={secOf(p.id)}
                         onChange={(e) => setSecs((s) => ({ ...s, [p.id]: Math.max(1, Math.min(state.maxSeconds, +e.target.value || 0)) }))}
                         className="h-8 w-14 rounded-sm border border-border bg-panel px-2 text-center text-xs tabular-nums text-fg focus:border-primary focus:outline-none" />
@@ -119,14 +131,28 @@ export function App() {
                       </button>
                     </>
                   )}
+                  {(perms.hospitalize || perms.leoHospitalize) && (
+                    <select value={hospOf(p.id)} onChange={(e) => setHosp((h) => ({ ...h, [p.id]: e.target.value }))}
+                      title="Hospital"
+                      className="h-8 max-w-[120px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
+                      {state.hospitals.map((h) => <option key={h.id} value={h.id}>{h.label}</option>)}
+                    </select>
+                  )}
                   {perms.hospitalize && (
-                    <button onClick={() => doHosp(p, 'hospitalize')} disabled={busy}
-                      className="inline-flex h-8 items-center gap-1 rounded-sm bg-success px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
-                      <Ambulance />Hosp
-                    </button>
+                    <>
+                      <select value={injOf(p.id)} onChange={(e) => setInjury((i) => ({ ...i, [p.id]: e.target.value }))}
+                        title="Injury type (sets downtime)"
+                        className="h-8 max-w-[130px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
+                        {state.injuries.map((inj) => <option key={inj.id} value={inj.id}>{inj.label} ({fmt(inj.seconds)})</option>)}
+                      </select>
+                      <button onClick={() => doHosp(p, 'hospitalize')} disabled={busy}
+                        className="inline-flex h-8 items-center gap-1 rounded-sm bg-success px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
+                        <Ambulance />Hosp
+                      </button>
+                    </>
                   )}
                   {perms.leoHospitalize && (
-                    <button onClick={() => doHosp(p, 'leoHospitalize')} disabled={busy} title="LEO Hospitalize (2m)"
+                    <button onClick={() => doHosp(p, 'leoHospitalize')} disabled={busy} title={`LEO Hospitalize (${fmt(state.leoHospSeconds)})`}
                       className="inline-flex h-8 items-center gap-1 rounded-sm bg-info px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
                       <ShieldPlus />LEO
                     </button>

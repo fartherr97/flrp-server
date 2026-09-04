@@ -47,6 +47,44 @@ local function activeUntil(lic)
   return tonumber(FLRP.DB.Scalar('SELECT `until_ts` FROM `jail_active` WHERE `license` = ?', { lic }))
 end
 
+-- ---- penal code -----------------------------------------------------------
+local charges = {}
+local function loadPenalCode()
+  local raw = LoadResourceFile(GetCurrentResourceName(), 'penalcode.json')
+  if raw then
+    local ok, data = pcall(json.decode, raw)
+    if ok and type(data) == 'table' and type(data.charges) == 'table' then charges = data.charges end
+  end
+  print(('[flrp_jail] penal code: %d charges from penalcode.json'):format(#charges))
+end
+loadPenalCode()
+
+-- Optional live override: server fetches a JSON endpoint (same shape) on start.
+CreateThread(function()
+  Wait(3000)
+  local url = GetConvar(FLRP_JAIL.PenalCodeConvar, '')
+  if url == '' or not url:find('^https?://') then return end
+  PerformHttpRequest(url, function(status, body)
+    if status == 200 and body and body ~= '' then
+      local ok, data = pcall(json.decode, body)
+      if ok and type(data) == 'table' and type(data.charges) == 'table' and #data.charges > 0 then
+        charges = data.charges
+        print(('[flrp_jail] penal code loaded from %s (%d charges).'):format(url, #charges))
+      else
+        print('[flrp_jail] penal code URL returned an unexpected shape — keeping penalcode.json.')
+      end
+    else
+      print(('[flrp_jail] penal code fetch failed (HTTP %s) — keeping penalcode.json.'):format(tostring(status)))
+    end
+  end, 'GET', '', { ['Accept'] = 'application/json' })
+end)
+
+local function injurySeconds(id)
+  for _, i in ipairs(FLRP_JAIL.Injuries) do if i.id == id then return i.seconds end end
+  for _, i in ipairs(FLRP_JAIL.Injuries) do if i.id == FLRP_JAIL.DefaultInjury then return i.seconds end end
+  return 240
+end
+
 -- ---- views ---------------------------------------------------------------
 local function playerList()
   local list = {}
@@ -72,11 +110,13 @@ local function stateFor(src)
     perms     = { jail = isStaff(src), hospitalize = isStaff(src), leoHospitalize = isLeo(src) or isStaff(src) },
     players   = playerList(),
     hospitals = FLRP_JAIL.Hospitals,
+    injuries  = FLRP_JAIL.Injuries,
+    charges   = charges,
     logo      = GetConvar('flrp_reports_logo', FLRP_JAIL.Logo),
     serverName= FLRP_JAIL.ServerName,
     maxSeconds= FLRP_JAIL.MaxSeconds,
     defaultSeconds  = FLRP_JAIL.DefaultSeconds,
-    hospitalSeconds = FLRP_JAIL.HospitalSeconds,
+    defaultInjury   = FLRP_JAIL.DefaultInjury,
     leoHospSeconds  = FLRP_JAIL.LeoHospSeconds,
   }
 end
@@ -129,7 +169,7 @@ function H.hospitalize(src, p)
   if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
   local target = tonumber(p.id or 0)
   if not target or not GetPlayerName(target) then return { ok = false, error = 'Player not online.' } end
-  doHospitalize(src, target, p.hospital, FLRP_JAIL.HospitalSeconds, 'hospitalized')
+  doHospitalize(src, target, p.hospital, injurySeconds(tostring(p.injury or FLRP_JAIL.DefaultInjury)), 'hospitalized')
   return { ok = true }
 end
 

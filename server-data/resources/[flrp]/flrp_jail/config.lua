@@ -18,9 +18,25 @@ FLRP_JAIL.Commands   = { 'jail' }
 -- ---- limits --------------------------------------------------------------
 FLRP_JAIL.MaxSeconds        = 1800   -- max jail seconds a staffer can enter (30m)
 FLRP_JAIL.DefaultSeconds    = 60     -- default value in the seconds box
-FLRP_JAIL.HospitalSeconds   = 300    -- staff Hospitalize downtime (SET FROM PENAL CODE / your call)
-FLRP_JAIL.LeoHospSeconds    = 120    -- blue LEO Hospitalize = 2 minutes
+FLRP_JAIL.LeoHospSeconds    = 120    -- blue LEO Hospitalize = 2 minutes (fixed)
 FLRP_JAIL.LeoHospTargetLeo  = true   -- LEO Hospitalize only works on other LEO (staff bypass)
+
+-- Hospitalize injury types -> downtime. Staff pick the injury; its time is used.
+-- Reasonable defaults (tune freely). LEO Hospitalize ignores these (fixed 2m).
+FLRP_JAIL.Injuries = {
+  { id = 'minor',      label = 'Minor Injury',        seconds = 120 },  -- 2m
+  { id = 'moderate',   label = 'Moderate Injury',     seconds = 240 },  -- 4m
+  { id = 'laceration', label = 'Deep Laceration',     seconds = 300 },  -- 5m
+  { id = 'fracture',   label = 'Broken Bone',         seconds = 300 },  -- 5m
+  { id = 'blunt',      label = 'Blunt Force Trauma',  seconds = 300 },  -- 5m
+  { id = 'mvc',        label = 'Vehicle Collision',   seconds = 360 },  -- 6m
+  { id = 'stab',       label = 'Stab Wound',          seconds = 360 },  -- 6m
+  { id = 'overdose',   label = 'Overdose',            seconds = 240 },  -- 4m
+  { id = 'burn',       label = 'Burns',               seconds = 420 },  -- 7m
+  { id = 'gsw',        label = 'Gunshot Wound',       seconds = 420 },  -- 7m
+  { id = 'critical',   label = 'Critical / Multiple', seconds = 600 },  -- 10m
+}
+FLRP_JAIL.DefaultInjury = 'moderate'
 
 -- ---- locations -----------------------------------------------------------
 -- Jail cell (target is teleported here and kept within CellRadius of it).
@@ -39,9 +55,13 @@ FLRP_JAIL.Hospitals = {
 }
 
 -- ---- penal code (charge -> jail time) ------------------------------------
--- OPTIONAL future: pull charges + times from the FLRP website penal code.
--- Set the endpoint convar in secrets.cfg (a JSON API). Until it's set the
--- manager uses the manual seconds box only.
+-- Charges + jail times load from penalcode.json in this resource (seeded with a
+-- reasonable STARTER set — replace with your real penal code). Selecting charges
+-- in the Jail Manager adds their time to the seconds box.
+--
+-- OPTIONAL live sync: point this convar (in secrets.cfg) at a JSON endpoint that
+-- returns the SAME shape as penalcode.json ({ "charges":[{id,name,class,
+-- jailSeconds,fine}] }). The SERVER fetches it on start and overrides the file.
 --   set flrp_penalcode_url "https://www.flrp.us/api/penalcode"
 FLRP_JAIL.PenalCodeConvar = 'flrp_penalcode_url'
 

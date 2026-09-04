@@ -1,0 +1,23 @@
+{
+  "_note": "STARTER penal code — replace with FLRP's real charges. Shape: charges[] with id, name, class, jailSeconds, fine. Or set flrp_penalcode_url to a JSON endpoint returning this same shape (server fetches it on start).",
+  "charges": [
+    { "id": "speeding",         "name": "Speeding",                          "class": "Infraction",  "jailSeconds": 0,    "fine": 250 },
+    { "id": "reckless",         "name": "Reckless Driving",                  "class": "Misdemeanor", "jailSeconds": 120,  "fine": 500 },
+    { "id": "resisting",        "name": "Resisting Arrest",                  "class": "Misdemeanor", "jailSeconds": 120,  "fine": 500 },
+    { "id": "obstruction",      "name": "Obstruction of Justice",            "class": "Misdemeanor", "jailSeconds": 150,  "fine": 600 },
+    { "id": "assault",          "name": "Assault",                           "class": "Misdemeanor", "jailSeconds": 180,  "fine": 750 },
+    { "id": "poss_controlled",  "name": "Possession of Controlled Substance","class": "Misdemeanor", "jailSeconds": 180,  "fine": 800 },
+    { "id": "petit_theft",      "name": "Petit Theft",                       "class": "Misdemeanor", "jailSeconds": 120,  "fine": 400 },
+    { "id": "dui",              "name": "DUI",                               "class": "Misdemeanor", "jailSeconds": 240,  "fine": 1000 },
+    { "id": "evading",          "name": "Fleeing / Eluding",                 "class": "Felony",      "jailSeconds": 300,  "fine": 1500 },
+    { "id": "weapon",           "name": "Illegal Firearm Possession",        "class": "Felony",      "jailSeconds": 300,  "fine": 1500 },
+    { "id": "gta",              "name": "Grand Theft Auto",                  "class": "Felony",      "jailSeconds": 360,  "fine": 1500 },
+    { "id": "battery_leo",      "name": "Battery on a LEO",                  "class": "Felony",      "jailSeconds": 420,  "fine": 2000 },
+    { "id": "robbery",          "name": "Armed Robbery",                     "class": "Felony",      "jailSeconds": 600,  "fine": 3000 },
+    { "id": "trafficking",      "name": "Drug Trafficking",                  "class": "Felony",      "jailSeconds": 600,  "fine": 5000 },
+    { "id": "kidnapping",       "name": "Kidnapping",                        "class": "Felony",      "jailSeconds": 720,  "fine": 4000 },
+    { "id": "manslaughter",     "name": "Manslaughter",                      "class": "Felony",      "jailSeconds": 900,  "fine": 5000 },
+    { "id": "attempted_murder", "name": "Attempted Murder",                  "class": "Felony",      "jailSeconds": 1200, "fine": 7500 },
+    { "id": "murder1",          "name": "First-Degree Murder",               "class": "Felony",      "jailSeconds": 1800, "fine": 10000 }
+  ]
+}
