@@ -357,7 +357,7 @@ local function buildEmbed(from, to, o)
     table.insert(byGroup[g], ('%s: %d claim%s (%s)'):format(who, st.claims, st.claims == 1 and '' or 's', human(st.vest)))
   end
 
-  local desc = ('**Overall Statistics**\n'
+  local desc = ('__**Overall Statistics**__\n'
     .. 'Total Staff: **%d**\nTotal Reports: **%d**\nTotal Claims: **%d**\n'
     .. 'Attempted Self-Claims: **%d**\nTotal Vest Time: **%s**')
     :format(totalStaff, ov.reports, ov.claims, ov.selfClaims, human(ov.vest))
@@ -373,7 +373,7 @@ local function buildEmbed(from, to, o)
       local chunk, first, len = {}, true, 0
       local function flush()
         if #chunk == 0 then return end
-        fields[#fields + 1] = { name = first and g or (g .. ' (cont.)'), value = table.concat(chunk, '\n'), inline = false }
+        fields[#fields + 1] = { name = '__' .. (first and g or (g .. ' (cont.)')) .. '__', value = table.concat(chunk, '\n'), inline = false }
         chunk = {}; first = false; len = 0
       end
       for _, line in ipairs(lines) do

@@ -167,20 +167,20 @@ local function buildEmbed()
   if #rosterText > 1000 then rosterText = rosterText:sub(1, 1000) .. '\n…' end
 
   local fields = {
-    { name = 'Server Status',   value = '🟢 Online',                                    inline = true },
-    { name = 'Players Online',  value = ('`%d / %d`'):format(nPlayers, maxPlayers()),   inline = true },
-    { name = 'Staff In-Game',   value = ('`%d`'):format(staffCount),                    inline = true },
-    { name = 'Current AOP',     value = formatAop(),                                    inline = true },
-    { name = 'Vehicles',        value = ('`%d`'):format(vehicleCount()),                inline = true },
-    { name = 'Priority Status', value = formatPriority(),                               inline = false },
-    { name = ('Law Enforcement On Duty (%d)'):format(leoTotal), value = duty,           inline = false },
+    { name = '__Server Status__',   value = '🟢 Online',                                inline = true },
+    { name = '__Players Online__',  value = ('`%d / %d`'):format(nPlayers, maxPlayers()), inline = true },
+    { name = '__Staff In-Game__',   value = ('`%d`'):format(staffCount),                inline = true },
+    { name = '__Current AOP__',     value = formatAop(),                                inline = true },
+    { name = '__Vehicles__',        value = ('`%d`'):format(vehicleCount()),            inline = true },
+    { name = '__Priority Status__', value = formatPriority(),                           inline = false },
+    { name = ('__Law Enforcement On Duty (%d)__'):format(leoTotal), value = duty,       inline = false },
   }
   if hasFire then
-    fields[#fields + 1] = { name = ('Fire / EMS On Duty (%d)'):format(fireTotal), value = fireBlock, inline = false }
+    fields[#fields + 1] = { name = ('__Fire / EMS On Duty (%d)__'):format(fireTotal), value = fireBlock, inline = false }
   end
-  fields[#fields + 1] = { name = ('Staff Online (%d)'):format(staffCount), value = rosterText, inline = false }
+  fields[#fields + 1] = { name = ('__Staff Online (%d)__'):format(staffCount), value = rosterText, inline = false }
   if JOIN_URL ~= '' then
-    fields[#fields + 1] = { name = 'Join Server', value = ('**[%s](%s)**'):format(FLRP_STATUS.JoinLabel, JOIN_URL), inline = false }
+    fields[#fields + 1] = { name = '__Join Server__', value = ('**[%s](%s)**'):format(FLRP_STATUS.JoinLabel, JOIN_URL), inline = false }
   end
 
   return {
