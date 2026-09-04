@@ -34,6 +34,7 @@ FLRP_LEO.Spike = {
   burstRadius = 3.2,    -- metres from a spike that bursts tyres
   minSpeed    = 4.0,    -- m/s minimum speed to pop (stops parked cars deflating)
   reach       = 10.0,   -- metres — removal clears every spike within this of you
+  lifetime    = 300,    -- seconds — forgotten spikes auto-despawn after this (0 = never)
   -- Length presets = how many segments are chained across the road.
   counts      = { short = 1, med = 2, long = 3 },
 }

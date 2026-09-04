@@ -157,7 +157,7 @@ RegisterNetEvent('flrp_leotools:spikeDeploy', function(list)
       if obj and obj ~= 0 then
         SetEntityHeading(obj, h)
         FreezeEntityPosition(obj, true)
-        spikes[obj] = { x = x, y = y, z = z }
+        spikes[obj] = { x = x, y = y, z = z, at = os.time() }
         n = n + 1
       end
     end
@@ -175,6 +175,23 @@ RegisterNetEvent('flrp_leotools:spikeRemove', function(x, y, z)
     if (dx * dx + dy * dy + dz * dz) <= r2 then
       if DoesEntityExist(obj) then DeleteEntity(obj) end
       spikes[obj] = nil
+    end
+  end
+end)
+
+-- Auto-despawn forgotten spikes after FLRP_LEO.Spike.lifetime seconds.
+CreateThread(function()
+  while true do
+    Wait(30000)
+    local life = FLRP_LEO.Spike.lifetime or 0
+    if life > 0 then
+      local now = os.time()
+      for obj, p in pairs(spikes) do
+        if (now - (p.at or now)) >= life then
+          if DoesEntityExist(obj) then DeleteEntity(obj) end
+          spikes[obj] = nil
+        end
+      end
     end
   end
 end)
