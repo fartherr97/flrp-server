@@ -1,6 +1,7 @@
 import { useState, useMemo, useCallback } from 'react';
-import { RefreshCw, X, Gavel, Ambulance, ShieldPlus, Search } from 'lucide-react';
+import { RefreshCw, X, Gavel, Ambulance, ShieldPlus, Search, ListPlus } from 'lucide-react';
 import { fetchNui, useNuiEvent, useEscape } from '@flrp/components';
+import { ChargePicker } from './components/ChargePicker';
 import type { State, JailPlayer } from './types';
 
 export function App() {
@@ -10,6 +11,7 @@ export function App() {
   const [hosp, setHosp] = useState<Record<number, string>>({});
   const [injury, setInjury] = useState<Record<number, string>>({});
   const [armed, setArmed] = useState<number | null>(null);
+  const [chargeFor, setChargeFor] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
 
   const fmt = (s: number) => (s <= 0 ? '—' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m${s % 60 ? ' ' + (s % 60) + 's' : ''}`);
@@ -115,12 +117,10 @@ export function App() {
                   {perms.jail && (
                     <>
                       {state.charges.length > 0 && (
-                        <select value="" title="Add a charge's time from the penal code"
-                          onChange={(e) => { addCharge(p.id, e.target.value); e.currentTarget.value = ''; }}
-                          className="h-8 max-w-[140px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
-                          <option value="" disabled>+ Charge</option>
-                          {state.charges.map((c) => <option key={c.id} value={c.id}>{c.name} ({fmt(c.jailSeconds)})</option>)}
-                        </select>
+                        <button onClick={() => setChargeFor(p.id)} title="Add charges from the penal code"
+                          className="inline-flex h-8 items-center gap-1 rounded-sm bg-panel-hover px-2.5 text-xs font-semibold text-fg-muted hover:text-fg [&_svg]:size-3.5">
+                          <ListPlus />Charges
+                        </button>
                       )}
                       <input type="number" min={1} max={state.maxSeconds} value={secOf(p.id)}
                         onChange={(e) => setSecs((s) => ({ ...s, [p.id]: Math.max(1, Math.min(state.maxSeconds, +e.target.value || 0)) }))}
@@ -167,6 +167,15 @@ export function App() {
           Tip: Type <b className="text-fg-muted">/jail</b> to open this menu. Use seconds up to {state.maxSeconds}. Click <b className="text-fg-muted">Jail</b> twice to confirm.
         </div>
       </div>
+
+      {chargeFor != null && (() => {
+        const p = state.players.find((x) => x.id === chargeFor);
+        if (!p) return null;
+        return <ChargePicker player={p} charges={state.charges} current={secOf(p.id)} max={state.maxSeconds}
+          onPick={(c) => addCharge(p.id, c.id)}
+          onReset={() => setSecs((s) => ({ ...s, [p.id]: state.defaultSeconds }))}
+          onClose={() => setChargeFor(null)} />;
+      })()}
     </div>
   );
 }
