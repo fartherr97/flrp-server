@@ -140,6 +140,7 @@ local function playerList()
       discord = discordOf(pid) or '',
       total   = totalJails(lic),
       jailed  = (until_ts ~= nil and until_ts > os.time()),
+      untilTs = until_ts,   -- epoch when their jail ends (for the live countdown)
     }
   end
   table.sort(list, function(a, b) return a.name:lower() < b.name:lower() end)
@@ -160,6 +161,7 @@ local function stateFor(src)
     defaultSeconds  = FLRP_JAIL.DefaultSeconds,
     defaultInjury   = FLRP_JAIL.DefaultInjury,
     leoHospSeconds  = FLRP_JAIL.LeoHospSeconds,
+    now       = os.time(),   -- server clock, so the countdown aligns
   }
 end
 
@@ -178,6 +180,18 @@ function H.state(src) return stateFor(src) end
 function H.refreshPenal(src)
   fetchPenalCodeAwait()
   return stateFor(src)
+end
+
+function H.unjail(src, p)
+  if not isStaff(src) then return { ok = false, error = 'Staff only.' } end
+  local target = tonumber(p.id or 0)
+  if not target or not GetPlayerName(target) then return { ok = false, error = 'Player not online.' } end
+  local lic = licenseOf(target); if not lic then return { ok = false, error = 'Could not read license.' } end
+  FLRP.DB.Update('DELETE FROM `jail_active` WHERE `license` = ?', { lic })
+  TriggerClientEvent('flrp_jail:release', target)
+  TriggerClientEvent('flrp_notify:toast', target, { title = 'Jail', kind = 'ok', body = 'You were released early by staff.' })
+  pcall(function() exports.flrp_logs:Send('jail', { player = src, description = ('%s unjailed %s'):format(name(src), name(target)) }) end)
+  return { ok = true }
 end
 
 function H.jail(src, p)

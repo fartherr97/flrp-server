@@ -1,5 +1,5 @@
-import { useState, useMemo, useCallback } from 'react';
-import { RefreshCw, X, Gavel, Ambulance, ShieldPlus, Search, ListPlus } from 'lucide-react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { RefreshCw, X, Gavel, Ambulance, ShieldPlus, Search, ListPlus, DoorOpen } from 'lucide-react';
 import { fetchNui, useNuiEvent, useEscape } from '@flrp/components';
 import { ChargePicker } from './components/ChargePicker';
 import type { State, JailPlayer } from './types';
@@ -13,8 +13,17 @@ export function App() {
   const [armed, setArmed] = useState<number | null>(null);
   const [chargeFor, setChargeFor] = useState<number | null>(null);
   const [busy, setBusy] = useState(false);
+  const [now, setNow] = useState(() => Math.floor(Date.now() / 1000));
+  const [skew, setSkew] = useState(0);   // server epoch - client epoch, so the countdown aligns
+
+  useEffect(() => {
+    const t = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000);
+    return () => clearInterval(t);
+  }, []);
+  useEffect(() => { if (state?.now) setSkew(state.now - Math.floor(Date.now() / 1000)); }, [state?.now]);
 
   const fmt = (s: number) => (s <= 0 ? '—' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m${s % 60 ? ' ' + (s % 60) + 's' : ''}`);
+  const clock = (s: number) => { const m = Math.max(0, Math.floor(s / 60)); const ss = Math.max(0, s % 60); return `${m}:${String(ss).padStart(2, '0')}`; };
 
   useNuiEvent<{ state: State }>('open', (d) => { setState(d.state); setSearch(''); setArmed(null); });
   useNuiEvent('close', () => setState(null));
@@ -60,6 +69,12 @@ export function App() {
     await fetchNui(cb, { id: p.id, hospital: hospOf(p.id), injury: injOf(p.id) });
     setBusy(false); refresh();
   };
+  const doUnjail = async (p: JailPlayer) => {
+    if (busy) return; setBusy(true);
+    await fetchNui('unjail', { id: p.id });
+    setBusy(false); refresh();
+  };
+  const remainingOf = (p: JailPlayer) => (p.untilTs ? p.untilTs - (now + skew) : 0);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/45 p-6 font-sans text-fg">
@@ -108,13 +123,20 @@ export function App() {
                 <div className="truncate text-[13px] font-semibold" title={p.name}>{p.name}</div>
                 <div className="truncate font-mono text-xs text-fg-muted" title={p.discord}>{p.discord || '—'}</div>
                 <div className="text-sm font-bold tabular-nums">{p.total}</div>
-                <div className={`text-[13px] font-semibold ${p.jailed ? 'text-danger' : 'text-success'}`}>
-                  {p.jailed ? 'Jailed' : 'Free'}
-                </div>
+                {(() => { const rem = remainingOf(p); const jailedNow = p.jailed && rem > 0; return (
+                  <div className={`text-[13px] font-semibold tabular-nums ${jailedNow ? 'text-danger' : 'text-success'}`}>
+                    {jailedNow ? <>Jailed <span className="text-fg-muted">{clock(rem)}</span></> : 'Free'}
+                  </div>
+                ); })()}
 
                 {/* actions */}
                 <div className="flex flex-wrap items-center justify-end gap-1.5">
-                  {perms.jail && (
+                  {perms.jail && (p.jailed && remainingOf(p) > 0 ? (
+                    <button onClick={() => doUnjail(p)} disabled={busy} title="Release early"
+                      className="inline-flex h-8 items-center gap-1 rounded-sm bg-success px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
+                      <DoorOpen />Unjail
+                    </button>
+                  ) : (
                     <>
                       {state.charges.length > 0 && (
                         <button onClick={() => setChargeFor(p.id)} title="Add charges from the penal code"
@@ -130,7 +152,7 @@ export function App() {
                         <Gavel />{armed === p.id ? 'Confirm' : 'Jail'}
                       </button>
                     </>
-                  )}
+                  ))}
                   {(perms.hospitalize || perms.leoHospitalize) && (
                     <select value={hospOf(p.id)} onChange={(e) => setHosp((h) => ({ ...h, [p.id]: e.target.value }))}
                       title="Hospital"
