@@ -104,7 +104,38 @@ AddEventHandler('playerDropped', function(reason)
                                         or ('**%s** disconnected.'):format(name) })
 end)
 
-RegisterNetEvent('flrp_logs:death', function(kind)
-  local name = GetPlayerName(source) or ('Player ' .. source)
-  Send('death', { description = ('**%s** %s.'):format(name, kind == 'killed' and 'was killed' or 'died') })
+-- Only these labels are accepted from the client; anything else -> 'Unknown'.
+local DEATH_CAUSES = {
+  Suicide = true, Firearm = true, Melee = true, Explosive = true,
+  Vehicle = true, Fall = true, Drowning = true, Fire = true, Unknown = true,
+}
+
+RegisterNetEvent('flrp_logs:death', function(cause, killerSid)
+  local src  = source
+  local name = GetPlayerName(src) or ('Player ' .. src)
+  if not DEATH_CAUSES[cause] then cause = 'Unknown' end
+
+  -- Killer name only if the claimed id is a real, connected player (and not the
+  -- victim themselves). Client-supplied, so we sanity-check rather than trust it.
+  local killerName
+  killerSid = tonumber(killerSid)
+  if killerSid and killerSid ~= src then
+    killerName = GetPlayerName(killerSid)
+  end
+
+  local desc
+  if cause == 'Suicide' then
+    desc = ('**%s** committed suicide.'):format(name)
+  elseif killerName then
+    desc = ('**%s** was killed by **%s** by **%s**.'):format(name, cause, killerName)
+  else
+    desc = ('**%s** died from **%s**.'):format(name, cause)
+  end
+
+  local fields = { { name = 'Cause', value = cause, inline = true } }
+  if killerName then
+    fields[#fields + 1] = { name = 'Killed by', value = killerName, inline = true }
+  end
+
+  Send('death', { description = desc, fields = fields })
 end)
