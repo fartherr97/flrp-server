@@ -143,28 +143,39 @@ RegisterNetEvent('flrp_leotools:collected', function(officer, weapons)
 end)
 
 -- ---- spike strips ---------------------------------------------------------
-local spikes = {}  -- [entity] = true (networked stinger props we spawned)
+local spikes = {}  -- [entity] = { x, y, z } (networked stinger props we spawned)
 
-RegisterNetEvent('flrp_leotools:spikeDeploy', function(x, y, z, h)
+RegisterNetEvent('flrp_leotools:spikeDeploy', function(list)
   local src = source
-  if not isLeo(src) then return end
-  x, y, z, h = tonumber(x), tonumber(y), tonumber(z), tonumber(h)
-  if not (x and y and z and h) then return end
-  local obj = CreateObject(GetHashKey(FLRP_LEO.Spike.model), x, y, z, true, true, false)
-  if not obj or obj == 0 then return end
-  SetEntityHeading(obj, h)
-  FreezeEntityPosition(obj, true)
-  spikes[obj] = true
+  if not isLeo(src) or type(list) ~= 'table' then return end
+  local n = 0
+  for _, s in ipairs(list) do
+    if n >= 8 then break end                       -- cap chained segments per deploy
+    local x, y, z, h = tonumber(s.x), tonumber(s.y), tonumber(s.z), tonumber(s.h)
+    if x and y and z and h then
+      local obj = CreateObject(GetHashKey(FLRP_LEO.Spike.model), x, y, z, true, true, false)
+      if obj and obj ~= 0 then
+        SetEntityHeading(obj, h)
+        FreezeEntityPosition(obj, true)
+        spikes[obj] = { x = x, y = y, z = z }
+        n = n + 1
+      end
+    end
+  end
 end)
 
-RegisterNetEvent('flrp_leotools:spikeRemove', function(netId)
+RegisterNetEvent('flrp_leotools:spikeRemove', function(x, y, z)
   local src = source
   if not isLeo(src) then return end
-  netId = tonumber(netId); if not netId then return end
-  local obj = NetworkGetEntityFromNetworkId(netId)
-  if obj and obj ~= 0 and DoesEntityExist(obj) then
-    spikes[obj] = nil
-    DeleteEntity(obj)
+  x, y, z = tonumber(x), tonumber(y), tonumber(z)
+  if not (x and y and z) then return end
+  local r2 = FLRP_LEO.Spike.reach * FLRP_LEO.Spike.reach
+  for obj, p in pairs(spikes) do
+    local dx, dy, dz = p.x - x, p.y - y, p.z - z
+    if (dx * dx + dy * dy + dz * dz) <= r2 then
+      if DoesEntityExist(obj) then DeleteEntity(obj) end
+      spikes[obj] = nil
+    end
   end
 end)
 

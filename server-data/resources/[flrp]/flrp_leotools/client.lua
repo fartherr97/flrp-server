@@ -219,30 +219,39 @@ end)
 -- ---- spike strips --------------------------------------------------------
 local SPIKE = C.Spike
 
-local function deploySpike()
+-- Lay `count` stinger segments chained across the road, centred on the officer.
+local function laySpikes(count)
+  count = math.max(1, math.floor(count or 1))
   local ped = PlayerPedId()
-  local c   = GetEntityCoords(ped)
-  local fwd = GetEntityForwardVector(ped)
-  local x, y = c.x + fwd.x * SPIKE.ahead, c.y + fwd.y * SPIKE.ahead
-  local found, gz = GetGroundZFor_3dCoord(x, y, c.z + 1.0, false)
-  local z = found and gz or (c.z - 0.9)
-  TriggerServerEvent('flrp_leotools:spikeDeploy', x, y, z, GetEntityHeading(ped))
+  local h   = GetEntityHeading(ped)
+  local seg = SPIKE.segment
+  local start = -((count - 1) / 2) * seg
+  local list = {}
+  for i = 0, count - 1 do
+    local p = GetOffsetFromEntityInWorldCoords(ped, start + i * seg, SPIKE.ahead, 0.0)
+    local found, gz = GetGroundZFor_3dCoord(p.x, p.y, p.z + 1.0, false)
+    list[#list + 1] = { x = p.x + 0.0, y = p.y + 0.0, z = (found and gz or (p.z - 0.9)) + 0.0, h = h }
+  end
+  TriggerServerEvent('flrp_leotools:spikeDeploy', list)
 end
 
 local function removeSpike()
   local c = GetEntityCoords(PlayerPedId())
-  local obj = GetClosestObjectOfType(c.x, c.y, c.z, SPIKE.reach, GetHashKey(SPIKE.model), false, false, false)
-  if obj == 0 or not DoesEntityExist(obj) then return toast('No spike strip nearby.', 'error') end
-  if not NetworkGetEntityIsNetworked(obj) then return toast('Cannot remove that spike.', 'error') end
-  TriggerServerEvent('flrp_leotools:spikeRemove', NetworkGetNetworkIdFromEntity(obj))
+  TriggerServerEvent('flrp_leotools:spikeRemove', c.x + 0.0, c.y + 0.0, c.z + 0.0)
 end
 
-AddEventHandler('flrp_leotools:doSpike',       deploySpike)
+AddEventHandler('flrp_leotools:doSpikeShort',  function() laySpikes(SPIKE.counts.short) end)
+AddEventHandler('flrp_leotools:doSpikeMed',    function() laySpikes(SPIKE.counts.med) end)
+AddEventHandler('flrp_leotools:doSpikeLong',   function() laySpikes(SPIKE.counts.long) end)
 AddEventHandler('flrp_leotools:doSpikeRemove', removeSpike)
-RegisterCommand('spikes',    deploySpike, false)
-RegisterCommand('unspikes',  removeSpike, false)
-RegisterKeyMapping('spikes',   'LEO: Deploy spike strip', 'keyboard', '')
-RegisterKeyMapping('unspikes', 'LEO: Remove nearest spike', 'keyboard', '')
+
+RegisterCommand('spikes', function(_, args)
+  local a = (args[1] or 'med'):lower()
+  laySpikes(SPIKE.counts[a] or SPIKE.counts.med)   -- /spikes short|med|long
+end, false)
+RegisterCommand('unspikes', removeSpike, false)
+RegisterKeyMapping('spikes',   'LEO: Deploy spike strip (medium)', 'keyboard', '')
+RegisterKeyMapping('unspikes', 'LEO: Remove nearby spikes',        'keyboard', '')
 
 -- Any driver bursts their OWN tyres when driving over a live spike (owner-safe).
 CreateThread(function()

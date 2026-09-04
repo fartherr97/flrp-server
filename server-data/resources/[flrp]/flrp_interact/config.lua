@@ -79,8 +79,10 @@ FLRP_INTERACT.LeoToolbox = {
   { label = 'Put in Vehicle',     desc = 'Seat the nearest person in a nearby vehicle.',   action = 'client_event', arg = 'flrp_leotools:doSeat' },
   { label = 'Remove from Vehicle',desc = 'Pull the nearest person out of a vehicle.',      action = 'client_event', arg = 'flrp_leotools:doUnseat' },
   { label = 'Search (ID)',        desc = 'Search the nearest person; shows ID, wallet and weapons in chat.', action = 'client_event', arg = 'flrp_leotools:doSearch' },
-  { label = 'Deploy Spike Strip', desc = 'Lay a spike strip in front of you.',              action = 'client_event', arg = 'flrp_leotools:doSpike' },
-  { label = 'Remove Spike Strip', desc = 'Pick up the nearest spike strip.',                action = 'client_event', arg = 'flrp_leotools:doSpikeRemove' },
+  { label = 'Spike Strip — Short', desc = 'Lay a 1-segment spike strip in front of you.',    action = 'client_event', arg = 'flrp_leotools:doSpikeShort' },
+  { label = 'Spike Strip — Medium',desc = 'Lay a 2-segment spike strip in front of you.',    action = 'client_event', arg = 'flrp_leotools:doSpikeMed' },
+  { label = 'Spike Strip — Long',  desc = 'Lay a 3-segment spike strip across the road.',    action = 'client_event', arg = 'flrp_leotools:doSpikeLong' },
+  { label = 'Remove Spike Strips', desc = 'Pick up every spike strip near you.',             action = 'client_event', arg = 'flrp_leotools:doSpikeRemove' },
   { label = 'Duty Menu',          desc = 'Open the on-duty menu (callsign, loadout).',     action = 'command',      arg = 'duty' },
   { label = 'Stop Animation',     desc = 'Cancel the current animation.',                  action = 'cancel' },
   -- Add more department utilities here as their scripts are installed, e.g.

@@ -29,8 +29,11 @@ FLRP_LEO.Drag = {
 -- Spike strips (native stinger prop; each driver bursts their own tyres over it).
 FLRP_LEO.Spike = {
   model       = 'p_ld_stinger_s',
-  ahead       = 2.5,    -- metres in front of the officer to lay it
+  ahead       = 2.5,    -- metres in front of the officer to lay the strip
+  segment     = 2.5,    -- metres between chained segments (one stinger's length)
   burstRadius = 3.2,    -- metres from a spike that bursts tyres
   minSpeed    = 4.0,    -- m/s minimum speed to pop (stops parked cars deflating)
-  reach       = 8.0,    -- metres to find the nearest spike to remove
+  reach       = 10.0,   -- metres — removal clears every spike within this of you
+  -- Length presets = how many segments are chained across the road.
+  counts      = { short = 1, med = 2, long = 3 },
 }
