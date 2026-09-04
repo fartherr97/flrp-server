@@ -48,6 +48,14 @@ FLRP_LOGS.Categories = {
   menu        = { convar = 'flrp_log_webhook_menu',        color = 0x9b59b6, title = 'MENU' },
   undercover  = { convar = 'flrp_log_webhook_undercover',  color = 0x34495e, title = 'UNDERCOVER' },
   thermal     = { convar = 'flrp_log_webhook_thermal',     color = 0xe67e22, title = 'THERMAL' },
+  spectate    = { convar = 'flrp_log_webhook_spectate',    color = 0x9b59b6, title = 'SPECTATE' },
+  tempid      = { convar = 'flrp_log_webhook_tempid',      color = 0x95a5a6, title = 'TEMP ID' },
+  grab        = { convar = 'flrp_log_webhook_grab',        color = 0xe67e22, title = 'GRAB / CARRY' },
+  trucker     = { convar = 'flrp_log_webhook_trucker',     color = 0xf1c40f, title = 'TRUCKER' },
+  timeweather = { convar = 'flrp_log_webhook_timeweather', color = 0x3498db, title = 'TIME / WEATHER' },
+  music       = { convar = 'flrp_log_webhook_music',       color = 0x9b59b6, title = 'MUSIC' },
+  repair      = { convar = 'flrp_log_webhook_repair',      color = 0x1abc9c, title = 'REPAIR' },
+  hitch       = { convar = 'flrp_log_webhook_hitch',       color = 0x7f8c8d, title = 'HITCH / TOW' },
 }
 
 -- Rank labels, highest first (used in the "[id] pid | rank | name" footer).
