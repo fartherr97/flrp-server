@@ -224,7 +224,7 @@ local function doHospitalize(src, target, hospitalId, secs, tag)
   })
   TriggerClientEvent('flrp_notify:toast', target, { title = 'Hospital', kind = 'info',
     body = ('You were hospitalized at %s for %d seconds.'):format(h.label, secs) })
-  pcall(function() exports.flrp_logs:Send('jail', { player = src, title = 'HOSPITALIZE',
+  pcall(function() exports.flrp_logs:Send('hospital', { player = src, title = 'HOSPITALIZE',
     description = ('%s %s %s -> %s (%ds)'):format(name(src), tag, name(target), h.label, secs) }) end)
 end
 

@@ -55,6 +55,8 @@ RegisterNetEvent('flrp_death:revive', function(target)
   dead[target] = nil
   TriggerClientEvent('flrp_death:revived', target, src)
   toast(src, 'You revived ' .. name(target) .. '.', 'ok')
+  pcall(function() exports.flrp_logs:Send('revive', { player = src,
+    description = ('%s revived %s'):format(name(src), name(target)) }) end)
 end)
 
 AddEventHandler('playerDropped', function()

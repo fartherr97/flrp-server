@@ -30,12 +30,24 @@ FLRP_LOGS.Categories = {
   -- Call: exports.flrp_logs:Send('<category>', { player = src, description = '...' })
   money     = { convar = 'flrp_log_webhook_money',     color = 0xf1c40f, title = 'MONEY' },
   taser     = { convar = 'flrp_log_webhook_taser',     color = 0xf39c12, title = 'TASER' },
-  jail      = { convar = 'flrp_log_webhook_jail',      color = 0x8e44ad, title = 'JAIL' },
+  jail      = { convar = 'flrp_log_webhook_jail',      color = 0x8e44ad, title = 'JAIL' },        -- #staff-jail-logs
+  hospital  = { convar = 'flrp_log_webhook_hospital',  color = 0xe67e22, title = 'HOSPITALIZE' }, -- #jail-hospital-logs
   revive    = { convar = 'flrp_log_webhook_revive',    color = 0x2ecc71, title = 'REVIVE' },
   vest      = { convar = 'flrp_log_webhook_vest',      color = 0x3498db, title = 'STAFF VEST' },
   namechange= { convar = 'flrp_log_webhook_namechange',color = 0x95a5a6, title = 'NAME CHANGE' },
   aop       = { convar = 'flrp_log_webhook_aop',       color = 0x1abc9c, title = 'AOP CHANGE' },
   report    = { convar = 'flrp_log_webhook_report',    color = 0x00bfc4, title = 'REPORT' },
+  blocked   = { convar = 'flrp_log_webhook_blocked',   color = 0xe74c3c, title = 'BLOCKED CONNECTION' },
+
+  -- ---- channels awaiting an owning feature (convars ready; nothing sends yet) ----
+  damage      = { convar = 'flrp_log_webhook_damage',      color = 0xc0392b, title = 'DAMAGE' },
+  chatfilter  = { convar = 'flrp_log_webhook_chatfilter',  color = 0x95a5a6, title = 'CHAT FILTER' },
+  winch       = { convar = 'flrp_log_webhook_winch',       color = 0x7f8c8d, title = 'WINCH' },
+  staffblip   = { convar = 'flrp_log_webhook_staffblip',   color = 0x3498db, title = 'STAFF BLIP' },
+  personalveh = { convar = 'flrp_log_webhook_personalveh', color = 0x1abc9c, title = 'PERSONAL VEHICLE' },
+  menu        = { convar = 'flrp_log_webhook_menu',        color = 0x9b59b6, title = 'MENU' },
+  undercover  = { convar = 'flrp_log_webhook_undercover',  color = 0x34495e, title = 'UNDERCOVER' },
+  thermal     = { convar = 'flrp_log_webhook_thermal',     color = 0xe67e22, title = 'THERMAL' },
 }
 
 -- Rank labels, highest first (used in the "[id] pid | rank | name" footer).

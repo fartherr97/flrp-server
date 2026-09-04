@@ -14,6 +14,18 @@ local function denyMessage(reason)
     :format(reason, invite)
 end
 
+-- Fire a #blocked-connection-logs entry. Best-effort; never breaks the gate.
+-- The player isn't fully connected here, so the name/Discord id go in the body
+-- rather than the "[id] rank | name" footer.
+local function logBlocked(name, discordId, reason)
+  pcall(function()
+    exports.flrp_logs:Send('blocked', {
+      description = ('**%s** was denied — %s'):format(name or 'Unknown', reason),
+      fields = discordId and { { name = 'Discord ID', value = ('`%s`'):format(discordId), inline = true } } or nil,
+    })
+  end)
+end
+
 AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
   local source = source
   deferrals.defer()
@@ -39,6 +51,7 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     return
   end
   if not discordId then
+    logBlocked(name, nil, 'no Discord account linked to FiveM client')
     deferrals.done(denyMessage(
       'no Discord account is linked to your FiveM client. Open the FiveM/Discord ' ..
       'integration (Discord > Settings > Connections, and link FiveM), then reconnect.'))
@@ -63,6 +76,7 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
   local status, member = FLRPA.Discord.GetGuildMember(FLRPA.Config.guildId, discordId)
 
   if status == 'not_member' then
+    logBlocked(name, discordId, 'not a member of the FLRP Discord')
     deferrals.done(denyMessage('you are not a member of the FLRP Discord'))
     return
   elseif status == 'rate_limited' then
@@ -84,6 +98,7 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
   -- 4. Verify required Community Member / verification role (if configured).
   if FLRPA.Config.IsCommunityRoleRequired() then
     if not FLRPA.Discord.MemberHasRole(member, FLRPA.Config.communityRole) then
+      logBlocked(name, discordId, 'missing Community Member (verification) role')
       deferrals.done(denyMessage(
         'you have not completed verification. Get the Community Member role in our Discord first'))
       return
