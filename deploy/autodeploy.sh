@@ -85,12 +85,21 @@ else
 fi
 
 # ---- 2. content repos -----------------------------------------------------
-# Content (scripts/maps/vehicles) stream assets; safest to bounce the server.
+# sync-content.sh emits surgical actions: `content-reload: <res>` for a resource
+# that changed (hot-reloaded live), or `content-restart: ...` when a full bounce
+# is needed (maps, first clone, or an undetectable diff).
 if [ -x "$REPO/deploy/sync-content.sh" ]; then
   sc_out="$(FLRP_RESOURCES="$REPO/server-data/resources" "$REPO/deploy/sync-content.sh" 2>&1 || true)"
   if [ -n "$sc_out" ]; then
     echo "$sc_out"
-    if printf '%s\n' "$sc_out" | grep -q "content-changed"; then full_restart=1; fi
+    while IFS= read -r line; do
+      case "$line" in
+        content-restart:*) full_restart=1 ;;
+        content-reload:*)
+          res="${line#content-reload: }"; res="${res%% *}"
+          [ -n "$res" ] && { reload_res["$res"]=1; need_refresh=1; } ;;
+      esac
+    done < <(printf '%s\n' "$sc_out")
   fi
 fi
 
