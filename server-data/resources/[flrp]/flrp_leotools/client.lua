@@ -216,6 +216,57 @@ RegisterNetEvent('flrp_leotools:unseat', function()
   if veh and veh ~= 0 then TaskLeaveVehicle(ped, veh, 0) end
 end)
 
+-- ---- spike strips --------------------------------------------------------
+local SPIKE = C.Spike
+
+local function deploySpike()
+  local ped = PlayerPedId()
+  local c   = GetEntityCoords(ped)
+  local fwd = GetEntityForwardVector(ped)
+  local x, y = c.x + fwd.x * SPIKE.ahead, c.y + fwd.y * SPIKE.ahead
+  local found, gz = GetGroundZFor_3dCoord(x, y, c.z + 1.0, false)
+  local z = found and gz or (c.z - 0.9)
+  TriggerServerEvent('flrp_leotools:spikeDeploy', x, y, z, GetEntityHeading(ped))
+end
+
+local function removeSpike()
+  local c = GetEntityCoords(PlayerPedId())
+  local obj = GetClosestObjectOfType(c.x, c.y, c.z, SPIKE.reach, GetHashKey(SPIKE.model), false, false, false)
+  if obj == 0 or not DoesEntityExist(obj) then return toast('No spike strip nearby.', 'error') end
+  if not NetworkGetEntityIsNetworked(obj) then return toast('Cannot remove that spike.', 'error') end
+  TriggerServerEvent('flrp_leotools:spikeRemove', NetworkGetNetworkIdFromEntity(obj))
+end
+
+AddEventHandler('flrp_leotools:doSpike',       deploySpike)
+AddEventHandler('flrp_leotools:doSpikeRemove', removeSpike)
+RegisterCommand('spikes',    deploySpike, false)
+RegisterCommand('unspikes',  removeSpike, false)
+RegisterKeyMapping('spikes',   'LEO: Deploy spike strip', 'keyboard', '')
+RegisterKeyMapping('unspikes', 'LEO: Remove nearest spike', 'keyboard', '')
+
+-- Any driver bursts their OWN tyres when driving over a live spike (owner-safe).
+CreateThread(function()
+  local hash = GetHashKey(SPIKE.model)
+  while true do
+    local wait = 500
+    local ped = PlayerPedId()
+    local veh = GetVehiclePedIsIn(ped, false)
+    if veh ~= 0 and GetPedInVehicleSeat(veh, -1) == ped then
+      wait = 100
+      local vc = GetEntityCoords(veh)
+      local spike = GetClosestObjectOfType(vc.x, vc.y, vc.z, SPIKE.burstRadius + 4.0, hash, false, false, false)
+      if spike ~= 0 and DoesEntityExist(spike)
+         and #(vc - GetEntityCoords(spike)) < SPIKE.burstRadius
+         and GetEntitySpeed(veh) > SPIKE.minSpeed then
+        for i = 0, 7 do
+          if not IsVehicleTyreBurst(veh, i, false) then SetVehicleTyreBurst(veh, i, false, 1000.0) end
+        end
+      end
+    end
+    Wait(wait)
+  end
+end)
+
 -- Safety: on resource stop, clear our own restraint so we're never stuck.
 AddEventHandler('onResourceStop', function(res)
   if res ~= GetCurrentResourceName() then return end

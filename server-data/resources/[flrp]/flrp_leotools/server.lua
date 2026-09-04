@@ -142,6 +142,39 @@ RegisterNetEvent('flrp_leotools:collected', function(officer, weapons)
   log(officer, target, 'searched')
 end)
 
+-- ---- spike strips ---------------------------------------------------------
+local spikes = {}  -- [entity] = true (networked stinger props we spawned)
+
+RegisterNetEvent('flrp_leotools:spikeDeploy', function(x, y, z, h)
+  local src = source
+  if not isLeo(src) then return end
+  x, y, z, h = tonumber(x), tonumber(y), tonumber(z), tonumber(h)
+  if not (x and y and z and h) then return end
+  local obj = CreateObject(GetHashKey(FLRP_LEO.Spike.model), x, y, z, true, true, false)
+  if not obj or obj == 0 then return end
+  SetEntityHeading(obj, h)
+  FreezeEntityPosition(obj, true)
+  spikes[obj] = true
+end)
+
+RegisterNetEvent('flrp_leotools:spikeRemove', function(netId)
+  local src = source
+  if not isLeo(src) then return end
+  netId = tonumber(netId); if not netId then return end
+  local obj = NetworkGetEntityFromNetworkId(netId)
+  if obj and obj ~= 0 and DoesEntityExist(obj) then
+    spikes[obj] = nil
+    DeleteEntity(obj)
+  end
+end)
+
+AddEventHandler('onResourceStop', function(res)   -- tidy up any spikes we own
+  if res ~= GetCurrentResourceName() then return end
+  for obj in pairs(spikes) do
+    if DoesEntityExist(obj) then DeleteEntity(obj) end
+  end
+end)
+
 AddEventHandler('playerDropped', function()
   local src = source
   cuffed[src] = nil
