@@ -189,7 +189,7 @@ const MOCK_HEADER: Header = {
   tagline: 'Florida Roleplay',
 };
 const MOCK: Point[] = [
-  { index: 1, name: 'Legion Square', area: 'Los Santos', image: '../img/legion.svg', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
+  { index: 1, name: 'Legion Square', area: 'Los Santos', image: '../img/legion.webp', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
   { index: 2, name: 'Pillbox Hill', area: 'Los Santos', image: '../img/pillbox.svg', desc: 'Central medical district next to Pillbox Hospital.' },
   { index: 3, name: 'Mission Row PD', area: 'MPD — LEO only', image: '../img/missionrow.svg', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
   { index: 4, name: 'Sandy Shores', area: 'Blaine County', image: '../img/sandyshores.svg', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
