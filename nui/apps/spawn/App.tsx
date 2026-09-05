@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapPin, Lock, Play, ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
+import { Play, ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
 import { cn, fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/components';
 
 interface Point { index: number; name: string; area?: string; desc?: string; image?: string; locked?: boolean }
@@ -156,14 +156,9 @@ function Card({ p, isFocused, picking, onFocus, onPlay }:
       )}
 
       {/* title */}
-      <div className="relative flex items-center gap-3 p-5">
-        <span className="grid size-11 place-items-center rounded-lg bg-primary text-primary-fg shadow-lg shadow-primary/30">
-          {p.locked ? <Lock className="size-5" /> : <MapPin className="size-5" />}
-        </span>
-        <div className="leading-tight [text-shadow:0_1px_6px_rgba(0,0,0,.7)]">
-          <div className="text-xl font-bold uppercase tracking-tight text-white">{p.name}</div>
-          {p.area && <div className="text-[11px] font-medium uppercase tracking-widest text-primary/90">{p.area}</div>}
-        </div>
+      <div className="relative p-5 leading-tight [text-shadow:0_1px_6px_rgba(0,0,0,.7)]">
+        <div className="text-xl font-bold uppercase tracking-tight text-white">{p.name}</div>
+        {p.area && <div className="text-[11px] font-medium uppercase tracking-widest text-primary/90">{p.area}</div>}
       </div>
 
       {/* information + play */}
