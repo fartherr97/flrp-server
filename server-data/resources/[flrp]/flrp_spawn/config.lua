@@ -35,7 +35,7 @@ Config.Points = {
   { name = 'Mission Row PD', area = 'MPD — LEO only',  image = '../img/missionrow.svg',  desc = 'Mission Row police station. Sworn law enforcement only.',           coords = vector4(428.23, -984.28, 30.71, 0.0), ace = 'flrp.leo' },
   { name = 'Sandy Shores',   area = 'Blaine County',  image = '../img/sandyshores.svg', desc = 'Desert town in the county — Sandy SO and the trailer parks.',       coords = vector4(1884.41, 3714.45, 32.93, 210.0) },
   { name = 'Paleto Bay',     area = 'Blaine County',  image = '../img/paleto.svg',      desc = 'The far-north coastal town, Paleto SO and the bank.',               coords = vector4(-134.20, 6212.20, 31.21, 47.09) },
-  { name = 'Grapeseed',      area = 'Blaine County',  image = '../img/grapeseed.svg',   desc = 'Quiet farming community east of the Alamo Sea.',                    coords = vector4(1654.72, 4825.46, 42.08, 280.0) },
+  { name = 'Grapeseed',      area = 'Blaine County',  image = '../img/grapeseed.webp',  desc = 'Quiet farming community east of the Alamo Sea.',                    coords = vector4(1654.72, 4825.46, 42.08, 280.0) },
   { name = 'Vinewood',       area = 'Los Santos',     image = '../img/vinewood.webp',   desc = 'The hills above the city — clubs, mansions and the sign.',          coords = vector4(436.64, 218.38, 103.62, 160.0) },
   { name = 'Del Perro',      area = 'Los Santos',     image = '../img/delperro.jpg',    desc = 'West-side beachfront, the pier and the boardwalk.',                 coords = vector4(-1341.27, -1298.66, 4.84, 292.0) },
   { name = 'Mirror Park',    area = 'Los Santos',     image = '../img/mirrorpark.webp', desc = 'East-side residential neighbourhood around the lake.',              coords = vector4(1130.21, -645.9, 56.58, 272.0) },
