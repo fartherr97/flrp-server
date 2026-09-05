@@ -38,7 +38,7 @@ Config.Points = {
   { name = 'Grapeseed',      area = 'Blaine County',  image = '../img/grapeseed.svg',   desc = 'Quiet farming community east of the Alamo Sea.',                    coords = vector4(1654.72, 4825.46, 42.08, 280.0) },
   { name = 'Vinewood',       area = 'Los Santos',     image = '../img/vinewood.svg',    desc = 'The hills above the city — clubs, mansions and the sign.',          coords = vector4(436.64, 218.38, 103.62, 160.0) },
   { name = 'Del Perro',      area = 'Los Santos',     image = '../img/delperro.svg',    desc = 'West-side beachfront, the pier and the boardwalk.',                 coords = vector4(-1341.27, -1298.66, 4.84, 292.0) },
-  { name = 'Mirror Park',    area = 'Los Santos',     image = '../img/mirrorpark.svg',  desc = 'East-side residential neighbourhood around the lake.',              coords = vector4(1130.21, -645.9, 56.58, 272.0) },
+  { name = 'Mirror Park',    area = 'Los Santos',     image = '../img/mirrorpark.webp', desc = 'East-side residential neighbourhood around the lake.',              coords = vector4(1130.21, -645.9, 56.58, 272.0) },
 }
 
 -- Preview camera: when a card is focused, the camera flies to that spawn and
