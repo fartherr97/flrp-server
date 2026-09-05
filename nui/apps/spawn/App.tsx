@@ -42,14 +42,22 @@ export function App() {
   const select = (p: Point) => { setPicking(p.index); setDenied(null); fetchNui('select', { index: p.index }); };
   const page = (dir: number) => scroller.current?.scrollBy({ left: dir * 360, behavior: 'smooth' });
 
+  // The backdrop is the focused location's own art, heavily blurred + darkened,
+  // so it drifts as you move across cards without ever crowding them.
+  const bgImage = (points?.find((p) => p.index === focused) || points?.[0])?.image;
+
   return (
     <div className="absolute inset-0 flex flex-col animate-flrp-in">
-      {/* Dev only: a dim stand-in for the live game world behind glass cards. */}
-      {isBrowser() && <div className="absolute inset-0 -z-20" style={{ background:
-        'linear-gradient(160deg,#12222c 0%,#1a3540 40%,#3a2f28 100%)' }} />}
+      {/* solid base so backdrop cross-fades never flash to nothing */}
+      <div className="absolute inset-0 -z-30 bg-[#05070b]" />
+      {/* blurred backdrop of the focused location (re-mounts + fades per focus) */}
+      {bgImage && (
+        <div key={bgImage} className="absolute inset-0 -z-20 bg-cover bg-center animate-flrp-in"
+          style={{ backgroundImage: `url("${bgImage}")`, filter: 'blur(34px) brightness(.52) saturate(1.25)', transform: 'scale(1.14)' }} />
+      )}
 
-      {/* top + bottom scrim keeps header / footer text readable over the world */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/65 via-transparent to-black/60" />
+      {/* top + bottom scrim keeps header / footer text readable over the backdrop */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/25 to-black/70" />
 
       {/* ---- header ---- */}
       <header className="relative flex items-start justify-between px-[6vw] pt-[5vh] [text-shadow:0_1px_6px_rgba(0,0,0,.6)]">
