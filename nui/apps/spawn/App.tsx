@@ -5,9 +5,6 @@ import { cn, fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/compone
 interface Point { index: number; name: string; area?: string; desc?: string; image?: string; locked?: boolean }
 interface Header { title?: string; subtitle?: string; blurb?: string; tagline?: string }
 
-// Scrim for cards that DO have a static thumbnail image.
-const IMG_SCRIM =
-  'linear-gradient(to bottom, rgba(7,10,15,.68) 0%, rgba(7,10,15,.08) 30%, rgba(7,10,15,.42) 60%, rgba(7,10,15,.96) 100%)';
 
 export function App() {
   const [open, setOpen] = useState(false);
@@ -47,9 +44,9 @@ export function App() {
 
   return (
     <div className="absolute inset-0 flex flex-col animate-flrp-in">
-      {/* Dev only: fake "game world" behind the glass so the layout can be judged. */}
-      {isBrowser() && <div className="absolute inset-0 -z-10" style={{ background:
-        'linear-gradient(160deg,#1b3a4a 0%,#2a5566 30%,#c98a5a 62%,#3a2a3f 100%)' }} />}
+      {/* Dev only: a dim stand-in for the live game world behind glass cards. */}
+      {isBrowser() && <div className="absolute inset-0 -z-20" style={{ background:
+        'linear-gradient(160deg,#12222c 0%,#1a3540 40%,#3a2f28 100%)' }} />}
 
       {/* top + bottom scrim keeps header / footer text readable over the world */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/65 via-transparent to-black/60" />
@@ -137,17 +134,20 @@ function Card({ p, isFocused, picking, onFocus, onPlay }:
         dimmed && 'opacity-45',
       )}>
 
-      {/* background: static thumbnail if provided, else glass onto the live world */}
+      {/* background: bundled location art if provided, else glass onto the live world */}
       {p.image ? (
         <div className="absolute inset-0 -z-10 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-          style={{ backgroundImage: `${IMG_SCRIM}, url("${p.image}")` }} />
+          style={{ backgroundImage: `url("${p.image}")` }} />
       ) : (
         <div className={cn('absolute inset-0 -z-10 backdrop-blur-[2px] transition-colors',
           isFocused ? 'bg-white/[0.02]' : 'bg-black/35')} />
       )}
-      {/* inner top/bottom gradients so title + footer read over the world */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+      {/* light top scrim so the title reads over bright skies */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+      {/* the art already carries its own bottom vignette; glass cards need one added */}
+      {!p.image && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
+      )}
 
       {/* title */}
       <div className="relative flex items-center gap-3 p-5">
@@ -189,9 +189,9 @@ const MOCK_HEADER: Header = {
   tagline: 'Florida Roleplay',
 };
 const MOCK: Point[] = [
-  { index: 1, name: 'Legion Square', area: 'Los Santos', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
-  { index: 2, name: 'Pillbox Hill', area: 'Los Santos', desc: 'Central medical district next to Pillbox Hospital.' },
-  { index: 3, name: 'Mission Row PD', area: 'MPD — LEO only', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
-  { index: 4, name: 'Sandy Shores', area: 'Blaine County', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
-  { index: 5, name: 'Paleto Bay', area: 'Blaine County', desc: 'The far-north coastal town, Paleto SO and the bank.' },
+  { index: 1, name: 'Legion Square', area: 'Los Santos', image: '../img/legion.svg', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
+  { index: 2, name: 'Pillbox Hill', area: 'Los Santos', image: '../img/pillbox.svg', desc: 'Central medical district next to Pillbox Hospital.' },
+  { index: 3, name: 'Mission Row PD', area: 'MPD — LEO only', image: '../img/missionrow.svg', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
+  { index: 4, name: 'Sandy Shores', area: 'Blaine County', image: '../img/sandyshores.svg', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
+  { index: 5, name: 'Paleto Bay', area: 'Blaine County', image: '../img/paleto.svg', desc: 'The far-north coastal town, Paleto SO and the bank.' },
 ];
