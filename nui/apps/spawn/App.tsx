@@ -142,8 +142,8 @@ function Card({ p, isFocused, picking, onFocus, onPlay }:
         <div className={cn('absolute inset-0 -z-10 backdrop-blur-[2px] transition-colors',
           isFocused ? 'bg-white/[0.02]' : 'bg-black/35')} />
       )}
-      {/* light top scrim so the title reads over bright skies */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/55 to-transparent" />
+      {/* top scrim so the title + area read over bright photos/skies */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/75 via-black/25 to-transparent" />
       {/* the art already carries its own bottom vignette; glass cards need one added */}
       {!p.image && (
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
@@ -190,7 +190,7 @@ const MOCK_HEADER: Header = {
 };
 const MOCK: Point[] = [
   { index: 1, name: 'Legion Square', area: 'Los Santos', image: '../img/legion.webp', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
-  { index: 2, name: 'Pillbox Hill', area: 'Los Santos', image: '../img/pillbox.svg', desc: 'Central medical district next to Pillbox Hospital.' },
+  { index: 2, name: 'Pillbox Hill', area: 'Los Santos', image: '../img/pillbox.jpg', desc: 'Central medical district next to Pillbox Hospital.' },
   { index: 3, name: 'Mission Row PD', area: 'MPD — LEO only', image: '../img/missionrow.svg', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
   { index: 4, name: 'Sandy Shores', area: 'Blaine County', image: '../img/sandyshores.svg', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
   { index: 5, name: 'Paleto Bay', area: 'Blaine County', image: '../img/paleto.svg', desc: 'The far-north coastal town, Paleto SO and the bank.' },

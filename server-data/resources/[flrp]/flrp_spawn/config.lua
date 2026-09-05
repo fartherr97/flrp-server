@@ -30,7 +30,7 @@ Config.Header = {
 -- location behind it.
 Config.Points = {
   { name = 'Legion Square',  area = 'Los Santos',     image = '../img/legion.webp',     desc = 'Downtown core — banks, shops and the busiest civilian hub.',        coords = vector4(197.94, -932.4, 30.69, 320.0) },
-  { name = 'Pillbox Hill',   area = 'Los Santos',     image = '../img/pillbox.svg',     desc = 'Central medical district next to Pillbox Hospital.',                coords = vector4(298.98, -584.45, 43.26, 70.0) },
+  { name = 'Pillbox Hill',   area = 'Los Santos',     image = '../img/pillbox.jpg',     desc = 'Central medical district next to Pillbox Hospital.',                coords = vector4(298.98, -584.45, 43.26, 70.0) },
   { name = 'LS Airport',     area = 'Los Santos',     image = '../img/airport.svg',     desc = 'Los Santos International — air ops and the southern highway.',      coords = vector4(-1037.74, -2738.04, 20.17, 330.0) },
   { name = 'Mission Row PD', area = 'MPD — LEO only',  image = '../img/missionrow.svg',  desc = 'Mission Row police station. Sworn law enforcement only.',           coords = vector4(428.23, -984.28, 30.71, 0.0), ace = 'flrp.leo' },
   { name = 'Sandy Shores',   area = 'Blaine County',  image = '../img/sandyshores.svg', desc = 'Desert town in the county — Sandy SO and the trailer parks.',       coords = vector4(1884.41, 3714.45, 32.93, 210.0) },
