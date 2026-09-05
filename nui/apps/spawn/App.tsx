@@ -27,7 +27,7 @@ export function App() {
 
   useEffect(() => {
     if (!isBrowser()) return;
-    mockMessage('open', { logo: '', header: MOCK_HEADER, playerName: 'Furkan Yücel' });
+    mockMessage('open', { logo: '../img/flrp-logo.png', header: MOCK_HEADER, playerName: 'Furkan Yücel' });
     mockMessage('points', { points: MOCK });
   }, []);
 
@@ -54,7 +54,7 @@ export function App() {
       {/* ---- header ---- */}
       <header className="relative flex items-start justify-between px-[6vw] pt-[5vh] [text-shadow:0_1px_6px_rgba(0,0,0,.6)]">
         <div className="flex items-center gap-4">
-          {logo && <img src={logo} alt="FLRP" className="h-14 w-auto max-w-[64px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,.6)]" />}
+          {logo && <img src={logo} alt="FLRP" className="size-[68px] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,.6)]" />}
           <span className="w-[3px] self-stretch rounded bg-primary/90" />
           <div>
             <h1 className="text-3xl font-extrabold uppercase tracking-tight leading-none">

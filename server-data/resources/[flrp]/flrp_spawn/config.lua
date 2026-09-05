@@ -55,4 +55,6 @@ Config.Preview = {
   interp = 900,
 }
 
-Config.LogoUrl = 'https://www.flrp.us/images/c8452f76261f8e9c.png'
+-- Banner logo (top-left). Bundled locally so it never depends on the website
+-- being up; swap the file in img/ or point this at any https URL instead.
+Config.LogoUrl = '../img/flrp-logo.png'
