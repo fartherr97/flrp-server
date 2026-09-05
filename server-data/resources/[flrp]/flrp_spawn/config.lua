@@ -38,11 +38,18 @@ Config.Points = {
   { name = 'Mirror Park',    area = 'Los Santos',     desc = 'East-side residential neighbourhood around the lake.',              coords = vector4(1130.21, -645.9, 56.58, 272.0) },
 }
 
--- Camera position while the selector is open (high over the map).
-Config.Camera = {
-  pos  = vector3(-410.0, -5021.0, 3000.0),
-  rot  = vector3(-40.0, 0.0, 0.0),
-  fov  = 45.0,
+-- Preview camera: when a card is focused, the camera flies to that spawn and
+-- the real location renders behind the (translucent) cards. Tune the framing
+-- here, or override per-point with a `preview = { dist=, height=, fov= }` field.
+--   dist   : metres the camera sits back from the spawn (along its heading)
+--   height : metres above the spawn
+--   fov    : field of view (lower = more zoomed in)
+--   interp : ms to glide between locations as you move across cards
+Config.Preview = {
+  dist   = 20.0,
+  height = 10.0,
+  fov    = 50.0,
+  interp = 900,
 }
 
 Config.LogoUrl = 'https://www.flrp.us/images/c8452f76261f8e9c.png'

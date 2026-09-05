@@ -7,26 +7,63 @@
 -- spawnmanager at the chosen coords. Everything here is plain, inspectable Lua.
 -- ==========================================================================
 
-local selecting = false
-local cam = nil
+local selecting   = false
+local activeCam   = nil
+local focusedIdx  = nil    -- which point the preview camera is showing
+local camGen      = 0      -- guards against out-of-order interp cleanups
 
-local function setupCamera()
-  cam = CreateCamWithParams(
-    'DEFAULT_SCRIPTED_CAMERA',
-    Config.Camera.pos.x, Config.Camera.pos.y, Config.Camera.pos.z,
-    Config.Camera.rot.x, Config.Camera.rot.y, Config.Camera.rot.z,
-    Config.Camera.fov, false, 0
-  )
-  SetCamActive(cam, true)
-  RenderScriptCams(true, false, 0, true, true)
+-- Build a scenic preview camera for a point: sit behind + above the spawn,
+-- looking at it. `preview` (per-point) or Config.Preview tunes dist/height/fov.
+local function makePreviewCam(p)
+  local pv = p.preview or Config.Preview
+  local c  = p.coords
+  local rad = math.rad(c.w)
+  local fx, fy = -math.sin(rad), math.cos(rad)   -- forward vector from heading
+  local camx = c.x - fx * pv.dist
+  local camy = c.y - fy * pv.dist
+  local camz = c.z + pv.height
+
+  local cam = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
+  SetCamCoord(cam, camx, camy, camz)
+  PointCamAtCoord(cam, c.x, c.y, c.z + 1.0)
+  SetCamFov(cam, pv.fov)
+  return cam
+end
+
+-- Fly the preview camera to a point and stream that area so the REAL location
+-- renders behind the (translucent) cards.
+local function focusPoint(index)
+  local p = Config.Points[index]
+  if not p or index == focusedIdx then return end
+  focusedIdx = index
+
+  -- Force the engine to stream world/collision around the previewed spot,
+  -- otherwise a far location shows as empty LOD.
+  SetFocusPosAndVel(p.coords.x, p.coords.y, p.coords.z, 0.0, 0.0, 0.0)
+
+  local newCam = makePreviewCam(p)
+  if activeCam then
+    SetCamActiveWithInterp(newCam, activeCam, Config.Preview.interp, 1, 1)
+    RenderScriptCams(true, false, 0, true, true)
+    local old = activeCam
+    activeCam = newCam
+    camGen = camGen + 1
+    local myGen = camGen
+    SetTimeout(Config.Preview.interp + 120, function()
+      if old and old ~= activeCam and myGen == camGen then DestroyCam(old, false) end
+    end)
+  else
+    activeCam = newCam
+    SetCamActive(newCam, true)
+    RenderScriptCams(true, false, 0, true, true)
+  end
 end
 
 local function teardownCamera()
   RenderScriptCams(false, false, 0, true, true)
-  if cam then
-    DestroyCam(cam, false)
-    cam = nil
-  end
+  if activeCam then DestroyCam(activeCam, false); activeCam = nil end
+  ClearFocus()
+  focusedIdx = nil
 end
 
 local function openSelector()
@@ -43,7 +80,9 @@ local function openSelector()
   ShutdownLoadingScreenNui()
 
   DoScreenFadeIn(500)
-  setupCamera()
+  -- Open on the first point; the NUI drives the camera from there as the
+  -- player moves between cards (see the 'focus' callback below).
+  focusPoint(1)
 
   SetNuiFocus(true, true)
   SendNUIMessage({
@@ -72,6 +111,13 @@ RegisterNetEvent('flrp_spawn:points', function(allowed)
     end
   end
   SendNUIMessage({ action = 'points', points = list })
+end)
+
+-- Player focused a card (hover / scroll) -> fly the preview camera there.
+RegisterNUICallback('focus', function(data, cb)
+  local index = tonumber(data.index)
+  if index then focusPoint(index) end
+  cb('ok')
 end)
 
 -- Player clicked a card -> ask the server to approve it.
