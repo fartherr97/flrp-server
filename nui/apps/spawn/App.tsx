@@ -53,7 +53,7 @@ export function App() {
       {/* blurred backdrop of the focused location (re-mounts + fades per focus) */}
       {bgImage && (
         <div key={bgImage} className="absolute inset-0 -z-20 bg-cover bg-center animate-flrp-in"
-          style={{ backgroundImage: `url("${bgImage}")`, filter: 'blur(34px) brightness(.52) saturate(1.25)', transform: 'scale(1.14)' }} />
+          style={{ backgroundImage: `url("${bgImage}")`, filter: 'blur(22px) brightness(.52) saturate(1.25)', transform: 'scale(1.12)' }} />
       )}
 
       {/* top + bottom scrim keeps header / footer text readable over the backdrop */}
