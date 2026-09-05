@@ -53,8 +53,9 @@ export function App() {
 
       {/* ---- header ---- */}
       <header className="relative flex items-start justify-between px-[6vw] pt-[5vh] [text-shadow:0_1px_6px_rgba(0,0,0,.6)]">
-        <div className="flex items-stretch gap-4">
-          <span className="mt-1 w-[3px] rounded bg-primary/90" />
+        <div className="flex items-center gap-4">
+          {logo && <img src={logo} alt="FLRP" className="h-14 w-auto max-w-[64px] object-contain drop-shadow-[0_2px_8px_rgba(0,0,0,.6)]" />}
+          <span className="w-[3px] self-stretch rounded bg-primary/90" />
           <div>
             <h1 className="text-3xl font-extrabold uppercase tracking-tight leading-none">
               <span className="text-white">{header.title || 'FLRP'}</span>{' '}
@@ -65,12 +66,9 @@ export function App() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="text-right">
-            <div className="text-sm font-semibold text-white">{playerName || 'Player'}</div>
-            <div className="text-xs text-primary/90">{header.tagline || 'Florida Roleplay'}</div>
-          </div>
-          {logo && <img src={logo} alt="" className="size-11 rounded-lg object-cover ring-1 ring-primary/40" />}
+        <div className="text-right">
+          <div className="text-sm font-semibold text-white">{playerName || 'Player'}</div>
+          <div className="text-xs text-primary/90">{header.tagline || 'Florida Roleplay'}</div>
         </div>
       </header>
 
