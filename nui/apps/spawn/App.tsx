@@ -191,7 +191,12 @@ const MOCK_HEADER: Header = {
 const MOCK: Point[] = [
   { index: 1, name: 'Legion Square', area: 'Los Santos', image: '../img/legion.webp', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
   { index: 2, name: 'Pillbox Hill', area: 'Los Santos', image: '../img/pillbox.jpg', desc: 'Central medical district next to Pillbox Hospital.' },
-  { index: 3, name: 'Mission Row PD', area: 'MPD — LEO only', image: '../img/missionrow.webp', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
-  { index: 4, name: 'Sandy Shores', area: 'Blaine County', image: '../img/sandyshores.svg', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
-  { index: 5, name: 'Paleto Bay', area: 'Blaine County', image: '../img/paleto.svg', desc: 'The far-north coastal town, Paleto SO and the bank.' },
+  { index: 3, name: 'LS Airport', area: 'Los Santos', image: '../img/airport.webp', desc: 'Los Santos International — air ops and the southern highway.' },
+  { index: 4, name: 'Mission Row PD', area: 'MPD — LEO only', image: '../img/missionrow.webp', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
+  { index: 5, name: 'Sandy Shores', area: 'Blaine County', image: '../img/sandyshores.webp', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
+  { index: 6, name: 'Paleto Bay', area: 'Blaine County', image: '../img/paleto.jpg', desc: 'The far-north coastal town, Paleto SO and the bank.' },
+  { index: 7, name: 'Grapeseed', area: 'Blaine County', image: '../img/grapeseed.webp', desc: 'Quiet farming community east of the Alamo Sea.' },
+  { index: 8, name: 'Vinewood', area: 'Los Santos', image: '../img/vinewood.webp', desc: 'The hills above the city — clubs, mansions and the sign.' },
+  { index: 9, name: 'Del Perro', area: 'Los Santos', image: '../img/delperro.jpg', desc: 'West-side beachfront, the pier and the boardwalk.' },
+  { index: 10, name: 'Mirror Park', area: 'Los Santos', image: '../img/mirrorpark.webp', desc: 'East-side residential neighbourhood around the lake.' },
 ];
