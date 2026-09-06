@@ -11,16 +11,23 @@
 
 local staffOnDuty = {} -- [src] = true
 
--- LEO = connected players with a live flrp_duty_members row for an FLRP
--- department (BSO / FHP / MPD), read via flrp_duty's roster export.
-local function countLeo()
+-- Department entity ids that count as Fire/EMS; everything else on duty is LEO.
+-- Mirror flrp_status.FireDepts. FLRP has no Fire/EMS department yet, so this
+-- row simply sits at 0 until one is added to flrp_onduty.
+local FIRE_DEPTS = { fire = true, ems = true, safd = true, fhd = true, fr = true, safr = true }
+
+-- Count connected on-duty units, split LEO vs Fire/EMS by department, read via
+-- flrp_duty's roster export (fed by flrp_onduty: BSO / FHP / MPD, …).
+local function countDuty()
   local ok, roster = pcall(function() return exports.flrp_duty:GetOnDutyRoster() end)
-  if not ok or type(roster) ~= 'table' then return 0 end
-  local n = 0
+  if not ok or type(roster) ~= 'table' then return 0, 0 end
+  local leo, fire = 0, 0
   for _, u in ipairs(roster) do
-    if u.online and u.department then n = n + 1 end
+    if u.online and u.department then
+      if FIRE_DEPTS[tostring(u.department):lower()] then fire = fire + 1 else leo = leo + 1 end
+    end
   end
-  return n
+  return leo, fire
 end
 
 local function countStaff()
@@ -31,13 +38,14 @@ local function countStaff()
   return n
 end
 
-local last = { leo = 0, staff = 0, seeded = false }
+local last = { leo = 0, fire = 0, staff = 0, seeded = false }
 
 local function broadcast(force)
-  local leo, staff = countLeo(), countStaff()
-  if force or not last.seeded or leo ~= last.leo or staff ~= last.staff then
-    last.leo, last.staff, last.seeded = leo, staff, true
-    TriggerClientEvent('flrp_dutycounter:update', -1, { leo = leo, staff = staff })
+  local leo, fire = countDuty()
+  local staff = countStaff()
+  if force or not last.seeded or leo ~= last.leo or fire ~= last.fire or staff ~= last.staff then
+    last.leo, last.fire, last.staff, last.seeded = leo, fire, staff, true
+    TriggerClientEvent('flrp_dutycounter:update', -1, { leo = leo, fire = fire, staff = staff })
   end
 end
 
@@ -51,7 +59,7 @@ end)
 
 -- A client asking for the current values (on join / resource start).
 RegisterNetEvent('flrp_dutycounter:request', function()
-  TriggerClientEvent('flrp_dutycounter:update', source, { leo = last.leo, staff = last.staff })
+  TriggerClientEvent('flrp_dutycounter:update', source, { leo = last.leo, fire = last.fire, staff = last.staff })
 end)
 
 -- Staff on/off state is owned by flrp_staffactivity (the /vest toggle) and
