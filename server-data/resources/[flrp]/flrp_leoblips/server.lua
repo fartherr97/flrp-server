@@ -26,7 +26,8 @@ local function buildUnits()
         units[#units + 1] = {
           src      = u.src,
           x = c.x, y = c.y, z = c.z,
-          colour   = colourFor(u.entity),
+          -- per-subdivision blip colour from the duty roster; dept map is the fallback
+          colour   = u.blip or colourFor(u.entity),
           label    = (u.callsign and u.callsign ~= '' and (tostring(u.callsign) .. ' | ') or '')
                      .. (u.name or ('Unit ' .. u.src)),
         }

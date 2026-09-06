@@ -26,19 +26,54 @@ FLRP_ONDUTY.ServerName   = 'Florida Roleplay'
 FLRP_ONDUTY.CallsignMax  = 8
 FLRP_ONDUTY.RemoveWeaponsOffDuty = true   -- strip the loadout when going off duty
 
+-- ---- Departments -----------------------------------------------------------
+-- Each department has:
+--   colour  : hex accent for the duty MENU (UI only)
+--   blip     : the DEFAULT map-blip colour for its units (GTA blip colour index,
+--              0-85 — see the palette cheat-sheet below). Officers with no
+--              subdivision, or a subdivision without its own `blip`, use this.
+--   ranks    : who may go on (ace-gated; OverrideAce sees all)
+--   subdivisions : optional. When a dept has them, officers pick one when going
+--              on duty. Each subdivision may set its own `blip` (map colour) and
+--              `colour` (menu accent); leave them off to inherit the dept's.
+--              Gate a subdivision to a role with `ace = 'flrp.sub.<dept>.<sub>'`;
+--              omit `ace` to let any dept member pick it. The FIRST subdivision
+--              is the default (usually plain Patrol).
+--
+-- GTA blip-colour cheat-sheet (common, tune to taste):
+--   0 white   1 red     2 green    3 blue     5 yellow   17 orange  27 purple
+--   38 lt-blue 40 grey  46 gold    47 tan/orange 48 lt-green 49 dk-green
+--   50 teal   52 lt-purple 59 dk-red 60 brown  69 dk-green2  83 dk-orange
+--   (BSO/FHP/MPD keep 46 / 47 / 3 so the map matches today; subdivisions below
+--    just shift the shade — e.g. BSO 46 gold, BSO K-9 5 yellow.)
 FLRP_ONDUTY.Departments = {
-  { id = 'bso', label = "Broward Sheriff's Office",  short = 'BSO', colour = '#e0b341', requireCallsign = true, loadout = 'police',
+  { id = 'bso', label = "Broward Sheriff's Office",  short = 'BSO', colour = '#e0b341', blip = 46, requireCallsign = true, loadout = 'police',
     ranks = { { id = 'patrol', label = 'Patrol', ace = 'flrp.dept.bso' },
               { id = 'supervisor', label = 'Supervisor', ace = 'flrp.rank.bso.supervisor' },
-              { id = 'command', label = 'Command', ace = 'flrp.rank.bso.command' } } },
-  { id = 'fhp', label = 'Florida Highway Patrol',    short = 'FHP', colour = '#c9852b', requireCallsign = true, loadout = 'police',
+              { id = 'command', label = 'Command', ace = 'flrp.rank.bso.command' } },
+    subdivisions = {
+      { id = 'patrol', label = 'Patrol' },                                          -- default: dept gold
+      { id = 'k9',     label = 'K-9 Unit',  blip = 5,  colour = '#f2d24b', ace = 'flrp.sub.bso.k9' },
+      { id = 'swat',   label = 'SWAT',      blip = 1,  colour = '#d0453b', ace = 'flrp.sub.bso.swat' },
+      { id = 'marine', label = 'Marine',    blip = 3,  colour = '#3b82f6', ace = 'flrp.sub.bso.marine' } } },
+
+  { id = 'fhp', label = 'Florida Highway Patrol',    short = 'FHP', colour = '#c9852b', blip = 47, requireCallsign = true, loadout = 'police',
     ranks = { { id = 'patrol', label = 'Patrol', ace = 'flrp.dept.fhp' },
               { id = 'supervisor', label = 'Supervisor', ace = 'flrp.rank.fhp.supervisor' },
-              { id = 'command', label = 'Command', ace = 'flrp.rank.fhp.command' } } },
-  { id = 'mpd', label = 'Miami Police Department',   short = 'MPD', colour = '#3b82f6', requireCallsign = true, loadout = 'police',
+              { id = 'command', label = 'Command', ace = 'flrp.rank.fhp.command' } },
+    subdivisions = {
+      { id = 'patrol', label = 'Patrol' },                                          -- default: dept tan
+      { id = 'motors', label = 'Motors',    blip = 17, colour = '#e07b2b', ace = 'flrp.sub.fhp.motors' },
+      { id = 'cve',    label = 'CVE',        blip = 60, colour = '#9c6b3b', ace = 'flrp.sub.fhp.cve' } } },
+
+  { id = 'mpd', label = 'Miami Police Department',   short = 'MPD', colour = '#3b82f6', blip = 3,  requireCallsign = true, loadout = 'police',
     ranks = { { id = 'patrol', label = 'Patrol', ace = 'flrp.dept.mpd' },
               { id = 'supervisor', label = 'Supervisor', ace = 'flrp.rank.mpd.supervisor' },
-              { id = 'command', label = 'Command', ace = 'flrp.rank.mpd.command' } } },
+              { id = 'command', label = 'Command', ace = 'flrp.rank.mpd.command' } },
+    subdivisions = {
+      { id = 'patrol', label = 'Patrol' },                                          -- default: dept blue
+      { id = 'k9',     label = 'K-9 Unit',  blip = 38, colour = '#60a5fa', ace = 'flrp.sub.mpd.k9' },
+      { id = 'swat',   label = 'SWAT',      blip = 27, colour = '#7c5cd0', ace = 'flrp.sub.mpd.swat' } } },
 }
 
 -- Weapons handed out on duty (applied client-side; removed on off-duty).

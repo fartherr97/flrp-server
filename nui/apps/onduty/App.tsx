@@ -21,6 +21,7 @@ export function App() {
   const [units, setUnits] = useState<UnitsState | null>(null);
   const [sel, setSel] = useState<string | null>(null);
   const [rank, setRank] = useState<string | null>(null);
+  const [sub, setSub] = useState<string | null>(null);
   const [callsign, setCallsign] = useState('');
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -59,7 +60,10 @@ export function App() {
   const confirm = async () => {
     if (busy || !selDept) return;
     setBusy(true);
-    const r = await req<DutyState>('goOn', { entity: selDept.id, rank: rank || selDept.ranks[0]?.id, callsign });
+    const r = await req<DutyState>('goOn', {
+      entity: selDept.id, rank: rank || selDept.ranks[0]?.id,
+      subdivision: sub || selDept.subdivisions?.[0]?.id, callsign,
+    });
     setBusy(false);
     if (!r.ok) return setErr((r as any).error || 'Failed.');
     setErr(null); setSel(null); setCallsign(''); setState(r);
@@ -69,7 +73,7 @@ export function App() {
     const r = await req<DutyState>('goOff'); setBusy(false);
     if (r.ok) setState(r);
   };
-  const pick = (d: DeptAvail) => { setSel(d.id === sel ? null : d.id); setRank(d.ranks[0]?.id ?? null); setErr(null); };
+  const pick = (d: DeptAvail) => { setSel(d.id === sel ? null : d.id); setRank(d.ranks[0]?.id ?? null); setSub(d.subdivisions?.[0]?.id ?? null); setErr(null); };
 
   return (
     <div className="absolute inset-0 flex items-center justify-center animate-flrp-in">
@@ -89,7 +93,9 @@ export function App() {
                     <StatusIndicator tone="success" label={`On Duty · ${state.onDuty.short}`} />
                     <div className="mt-1 text-[15px] font-bold">{state.onDuty.label}</div>
                     <div className="mt-0.5 flex items-center gap-1.5 text-xs text-fg-muted tabular-nums">
-                      {state.onDuty.rankLabel}{state.onDuty.callsign && <> · <span className="font-semibold text-fg">{state.onDuty.callsign}</span></>}
+                      {state.onDuty.rankLabel}
+                      {state.onDuty.subLabel && <> · <span className="font-medium text-fg">{state.onDuty.subLabel}</span></>}
+                      {state.onDuty.callsign && <> · <span className="font-semibold text-fg">{state.onDuty.callsign}</span></>}
                       <span className="text-fg-faint">·</span><Clock className="size-3" />{dur(Date.now() / 1000 - state.onDuty.since)}
                     </div>
                   </div>
@@ -130,6 +136,18 @@ export function App() {
                               <button key={r.id} onClick={() => setRank(r.id)}
                                 className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${rank === r.id ? 'bg-primary/15 text-primary ring-1 ring-primary/40' : 'bg-panel-hover text-fg-muted hover:text-fg'}`}>
                                 {r.label}
+                              </button>
+                            ))}
+                          </div>
+                        </Field>
+                      )}
+                      {d.subdivisions && d.subdivisions.length > 1 && (
+                        <Field label="Subdivision">
+                          <div className="flex flex-wrap gap-1.5">
+                            {d.subdivisions.map((s) => (
+                              <button key={s.id} onClick={() => setSub(s.id)}
+                                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${sub === s.id ? 'bg-primary/15 text-primary ring-1 ring-primary/40' : 'bg-panel-hover text-fg-muted hover:text-fg'}`}>
+                                <span className="size-2 rounded-full" style={{ background: s.colour }} />{s.label}
                               </button>
                             ))}
                           </div>
@@ -187,7 +205,7 @@ function UnitsBoard({ units }: { units: UnitsState | null }) {
             <div key={u.src} className="grid grid-cols-[70px_1fr_auto_auto] items-center gap-2.5 border-b border-border-soft px-3 py-1.5 text-[13px] last:border-0">
               <span className={`font-bold tabular-nums tracking-wide ${u.callsign ? 'text-fg' : 'text-fg-faint font-medium'}`}>{u.callsign || '—'}</span>
               <span className="truncate">{u.name}</span>
-              <span className="text-2xs text-fg-muted">{u.rank}</span>
+              <span className="text-2xs text-fg-muted">{u.rank}{u.sub && <span className="text-fg-faint"> · {u.sub}</span>}</span>
               <span className="flex items-center gap-1 text-2xs text-fg-faint tabular-nums"><Circle className="size-2 fill-success text-success" />{dur(Date.now() / 1000 - u.since)}</span>
             </div>
           ))}
@@ -201,8 +219,14 @@ const MOCK: DutyState = {
   ok: true, onDuty: null, logo: '', serverName: 'Florida Roleplay', key: 'F6', callsignMax: 8, now: Date.now() / 1000,
   counts: { bso: 2, mpd: 1 },
   available: [
-    { id: 'bso', label: "Broward Sheriff's Office", short: 'BSO', colour: '#e0b341', requireCallsign: true, ranks: [{ id: 'patrol', label: 'Patrol' }, { id: 'supervisor', label: 'Supervisor' }] },
-    { id: 'fhp', label: 'Florida Highway Patrol', short: 'FHP', colour: '#c9852b', requireCallsign: true, ranks: [{ id: 'patrol', label: 'Patrol' }] },
-    { id: 'mpd', label: 'Miami Police Department', short: 'MPD', colour: '#3b82f6', requireCallsign: true, ranks: [{ id: 'patrol', label: 'Patrol' }] },
+    { id: 'bso', label: "Broward Sheriff's Office", short: 'BSO', colour: '#e0b341', requireCallsign: true,
+      ranks: [{ id: 'patrol', label: 'Patrol' }, { id: 'supervisor', label: 'Supervisor' }],
+      subdivisions: [{ id: 'patrol', label: 'Patrol', colour: '#e0b341' }, { id: 'k9', label: 'K-9 Unit', colour: '#f2d24b' }, { id: 'swat', label: 'SWAT', colour: '#d0453b' }, { id: 'marine', label: 'Marine', colour: '#3b82f6' }] },
+    { id: 'fhp', label: 'Florida Highway Patrol', short: 'FHP', colour: '#c9852b', requireCallsign: true,
+      ranks: [{ id: 'patrol', label: 'Patrol' }],
+      subdivisions: [{ id: 'patrol', label: 'Patrol', colour: '#c9852b' }, { id: 'motors', label: 'Motors', colour: '#e07b2b' }, { id: 'cve', label: 'CVE', colour: '#9c6b3b' }] },
+    { id: 'mpd', label: 'Miami Police Department', short: 'MPD', colour: '#3b82f6', requireCallsign: true,
+      ranks: [{ id: 'patrol', label: 'Patrol' }],
+      subdivisions: [{ id: 'patrol', label: 'Patrol', colour: '#3b82f6' }, { id: 'k9', label: 'K-9 Unit', colour: '#60a5fa' }, { id: 'swat', label: 'SWAT', colour: '#7c5cd0' }] },
   ],
 };

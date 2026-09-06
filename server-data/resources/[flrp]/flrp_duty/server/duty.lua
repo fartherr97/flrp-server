@@ -138,13 +138,15 @@ function FLRPD.GetRoster()
     local lic = (tostring(row.license or ''):gsub('^license:', ''))
     local src = srcByLicense[lic]
     roster[#roster + 1] = {
-      src        = src,
-      online     = src ~= nil,
-      name       = src and GetPlayerName(src) or nil,
-      license    = lic,
-      entity     = row.entity and string.lower(tostring(row.entity)) or nil,
-      department = entityToDepartment(row.entity),
-      callsign   = row.callsign,
+      src         = src,
+      online      = src ~= nil,
+      name        = src and GetPlayerName(src) or nil,
+      license     = lic,
+      entity      = row.entity and string.lower(tostring(row.entity)) or nil,
+      department  = entityToDepartment(row.entity),
+      subdivision = row.subdivision,
+      blip        = row.blip ~= nil and tonumber(row.blip) or nil,   -- per-subdivision map colour
+      callsign    = row.callsign,
     }
   end
   return roster
