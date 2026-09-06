@@ -22,9 +22,9 @@ end
 
 local function name(src) return GetPlayerName(src) or ('Player ' .. src) end
 
-local function log(officer, target, what)
+local function log(officer, target, what, category)
   pcall(function()
-    exports.flrp_logs:Send('jail', {
+    exports.flrp_logs:Send(category or 'jail', {
       player = officer, title = 'LEO ' .. what:upper(),
       description = ('%s %s %s'):format(name(officer), what, name(target)),
     })
@@ -59,6 +59,7 @@ RegisterNetEvent('flrp_leotools:drag', function(target)
     dragged[target] = nil
     TriggerClientEvent('flrp_leotools:drag', target, nil, false)
     TriggerClientEvent('flrp_notify:toast', src, { title = 'LEO', kind = 'ok', body = 'Released ' .. name(target) })
+    log(src, target, 'released', 'grab')
     return
   end
   if not cuffed[target] then
@@ -70,7 +71,7 @@ RegisterNetEvent('flrp_leotools:drag', function(target)
   dragged[target] = src
   TriggerClientEvent('flrp_leotools:drag', target, src, true)
   TriggerClientEvent('flrp_notify:toast', src, { title = 'LEO', kind = 'ok', body = 'Escorting ' .. name(target) })
-  log(src, target, 'escorted')
+  log(src, target, 'grabbed', 'grab')
 end)
 
 -- ---- seat / unseat -------------------------------------------------------
