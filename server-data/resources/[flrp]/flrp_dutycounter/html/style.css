@@ -44,11 +44,11 @@ body.editing #counter {
 .row { display: flex; align-items: center; gap: 14px; padding: 4px 12px; }
 .row:last-child { padding-bottom: 7px; }
 .tag {
-  font-size: 11px; font-weight: 700; letter-spacing: .4px; color: hsl(var(--text));
+  font-size: 12px; font-weight: 700; letter-spacing: .4px; color: hsl(var(--text));
   min-width: 4.6em;
 }
 .num {
-  margin-left: auto; font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums;
+  margin-left: auto; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums;
   min-width: 1.2em; text-align: right;
   transition: transform .14s ease, color .14s ease;
 }
