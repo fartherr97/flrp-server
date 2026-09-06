@@ -304,32 +304,44 @@ function SetOffDuty(src) return (goOffInternal(tonumber(src), 'forced')) end
 -- flrp_duty_sessions, adds live time for anyone currently on duty, and carries
 -- each member's latest name / rank / subdivision / callsign, plus the dept's
 -- rank + subdivision lists so the site can group / filter / sort.
-function GetHoursReport()
+-- Optional fromTs/toTs (unix seconds) restrict the report to shifts that
+-- STARTED within that window — the site's custom date-range filter. Omit both
+-- for the all-time totals.
+function GetHoursReport(fromTs, toTs)
   local now = os.time()
-  local agg = FLRP.DB.Query([[
+  fromTs = tonumber(fromTs); toTs = tonumber(toTs)
+  local ranged = (fromTs ~= nil and toTs ~= nil)
+  local whereClause = ranged and 'WHERE `started_at` BETWEEN ? AND ?' or ''
+  local aggParams = ranged and { fromTs, toTs } or {}
+
+  local agg = FLRP.DB.Query(([[
     SELECT `license`,`entity`,
            SUM(COALESCE(`seconds`,0)) AS total,
            COUNT(*) AS sessions,
            MAX(`started_at`) AS lastOn
     FROM `flrp_duty_sessions`
+    %s
     GROUP BY `license`,`entity`
-  ]]) or {}
-  -- most recent session per (license, entity) → current name/rank/sub/callsign
-  local latest = FLRP.DB.Query([[
+  ]]):format(whereClause), aggParams) or {}
+  -- most recent session per (license, entity) IN WINDOW → current name/rank/sub
+  local latest = FLRP.DB.Query(([[
     SELECT s.`license`, s.`entity`, s.`name`, s.`rank`, s.`subdivision`, s.`callsign`
     FROM `flrp_duty_sessions` s
     JOIN (SELECT `license`,`entity`, MAX(`started_at`) AS mx
-          FROM `flrp_duty_sessions` GROUP BY `license`,`entity`) t
+          FROM `flrp_duty_sessions` %s GROUP BY `license`,`entity`) t
       ON s.`license`=t.`license` AND s.`entity`=t.`entity` AND s.`started_at`=t.`mx`
-  ]]) or {}
+  ]]):format(whereClause), aggParams) or {}
   local latestMap = {}
   for _, r in ipairs(latest) do latestMap[tostring(r.license) .. '|' .. tostring(r.entity)] = r end
 
-  -- live seconds for players currently on duty (their open session isn't in SUM)
+  -- live seconds for players currently on duty (their open session isn't in SUM).
+  -- In a ranged report only count the ones whose shift started inside the window.
   local live = {}
   for _, dd in pairs(onDuty) do
-    local k = tostring(dd.license) .. '|' .. tostring(dd.entity)
-    live[k] = (live[k] or 0) + (now - dd.since)
+    if (not ranged) or (dd.since >= fromTs and dd.since <= toTs) then
+      local k = tostring(dd.license) .. '|' .. tostring(dd.entity)
+      live[k] = (live[k] or 0) + (now - dd.since)
+    end
   end
 
   local byDept = {}
@@ -369,7 +381,7 @@ function GetHoursReport()
       members = members,
     }
   end
-  return { generatedAt = now, departments = depts }
+  return { generatedAt = now, from = ranged and fromTs or nil, to = ranged and toTs or nil, departments = depts }
 end
 
 -- ---- bridge --------------------------------------------------------------

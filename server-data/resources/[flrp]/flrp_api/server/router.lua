@@ -46,7 +46,7 @@ function FLRPI.Router.Authorized(headers)
   return true
 end
 
-function FLRPI.Router.Dispatch(method, path, headers, bodyStr)
+function FLRPI.Router.Dispatch(method, path, headers, bodyStr, query)
   local key = method .. ' ' .. path
   local fn = FLRPI.Router.routes[key]
   if not fn then return 404, { error = 'not_found' } end
@@ -63,7 +63,7 @@ function FLRPI.Router.Dispatch(method, path, headers, bodyStr)
     if pok then body = decoded end
   end
 
-  local sok, status, respBody = pcall(fn, { headers = headers, body = body })
+  local sok, status, respBody = pcall(fn, { headers = headers, body = body, query = query or {} })
   if not sok then
     FLRP.Logger.Error('api', 'Handler error', { key = key, err = tostring(status) })
     return 500, { error = 'internal_error' }

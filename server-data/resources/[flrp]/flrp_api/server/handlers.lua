@@ -82,9 +82,12 @@ end)
 -- GET /duty/hours -> per-department aggregated duty hours + rank/subdivision
 -- lists so /departments/<dept>/hub/hours can group, filter and sort. Live
 -- (includes anyone currently on duty). Built by flrp_onduty:GetHoursReport().
-FLRPI.Router.Add('GET', '/duty/hours', function()
+-- Optional ?from=<unix>&to=<unix> restricts to shifts started in that window.
+FLRPI.Router.Add('GET', '/duty/hours', function(ctx)
   if not exports.flrp_onduty then return 503, { error = 'duty_unavailable' } end
-  local ok, report = pcall(function() return exports.flrp_onduty:GetHoursReport() end)
+  local from = tonumber(ctx.query and ctx.query.from)
+  local to   = tonumber(ctx.query and ctx.query.to)
+  local ok, report = pcall(function() return exports.flrp_onduty:GetHoursReport(from, to) end)
   if not ok or type(report) ~= 'table' then return 502, { error = 'duty_report_failed' } end
   return 200, report
 end)

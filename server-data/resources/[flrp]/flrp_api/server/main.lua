@@ -19,13 +19,19 @@ end
 
 SetHttpHandler(function(req, res)
   local method = req.method
-  -- req.path includes a leading '/'; strip any query string.
-  local path = req.path or '/'
-  local q = path:find('?', 1, true)
-  if q then path = path:sub(1, q - 1) end
+  -- req.path includes a leading '/'; split off + parse any query string.
+  local raw = req.path or '/'
+  local path, query = raw, {}
+  local q = raw:find('?', 1, true)
+  if q then
+    path = raw:sub(1, q - 1)
+    for k, v in raw:sub(q + 1):gmatch('([^&=]+)=([^&]*)') do
+      query[k] = v
+    end
+  end
 
   local function handle(bodyStr)
-    local status, body = FLRPI.Router.Dispatch(method, path, req.headers, bodyStr)
+    local status, body = FLRPI.Router.Dispatch(method, path, req.headers, bodyStr, query)
     sendJson(res, status, body)
   end
 
