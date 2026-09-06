@@ -7,18 +7,33 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div id="counter">
-    <div class="head">ON DUTY</div>
-    <div class="row">
-      <span class="bar leo"></span>
-      <span class="tag">LEO</span>
-      <span class="num zero" id="leo">0</span>
+  <div id="wrap">
+    <div id="counter">
+      <div class="head">ON DUTY</div>
+      <div class="row">
+        <span class="tag">LEO</span>
+        <span class="num zero" id="leo">0</span>
+      </div>
+      <div class="row">
+        <span class="tag">FIRE/EMS</span>
+        <span class="num zero" id="fire">0</span>
+      </div>
+      <div class="row">
+        <span class="tag">STAFF</span>
+        <span class="num zero" id="staff">0</span>
+      </div>
     </div>
-    <div class="row">
-      <span class="bar staff"></span>
-      <span class="tag">STAFF</span>
-      <span class="num zero" id="staff">0</span>
+
+    <div id="tools" class="hidden">
+      <span class="grip">✥</span>
+      <button id="minus" title="Smaller">−</button>
+      <span id="pct">100%</span>
+      <button id="plus" title="Bigger">+</button>
+      <button id="reset" title="Reset position">⟲</button>
+      <button id="cancel" title="Cancel">✕</button>
+      <button id="save" class="save" title="Save">Save</button>
     </div>
+    <div id="hint" class="hidden">Drag the counter · +/- to resize</div>
   </div>
   <script src="script.js"></script>
 </body>

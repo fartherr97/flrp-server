@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
-import { Shield, Users, Clock, LogOut, Check, X, Circle, Plus, Trash2, Save, LoaderCircle } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Shield, Users, Clock, LogOut, Check, X, Circle, Plus, Trash2, Save, LoaderCircle,
+  Move, Minus, RotateCcw } from 'lucide-react';
 import {
   AppHeader, Tabs, Panel, Button, Badge, StatusIndicator, Input, Field,
   EmptyState, KeybindHint, fetchNui, useNuiEvent, useEscape, isBrowser, mockMessage,
@@ -14,7 +15,154 @@ const dur = (s: number) => {
 const req = <T,>(action: string, payload: Record<string, unknown> = {}, mock?: T) =>
   fetchNui<T>('req', { action, payload }, mock);
 
+/* The onduty NUI page hosts two things at once: the always-present duty status
+ * HUD, and the toggled duty MENU. The HUD ignores input unless you're editing
+ * its position, so the menu's focus handling is untouched. */
 export function App() {
+  return (
+    <>
+      <DutyHud />
+      <DutyMenu />
+    </>
+  );
+}
+
+type HudDuty = { dept: string; rank: string; callsign?: string; since?: number };
+type HudLayout = { x: number; y: number; scale: number };
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+const hhmm = (s: number) => {
+  s = Math.max(0, Math.floor(s));
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), sec = s % 60;
+  const p = (n: number) => (n < 10 ? '0' : '') + n;
+  return h ? `${h}:${p(m)}:${p(sec)}` : `${p(m)}:${p(sec)}`;
+};
+
+/* FLRP's own on-duty status card. Draggable + resizable via `/hud`. */
+function DutyHud() {
+  const [duty, setDuty] = useState<HudDuty | null>(null);
+  const [showTimer, setShowTimer] = useState(true);
+  const [layout, setLayout] = useState<HudLayout>({ x: 1.5, y: 22, scale: 1 });
+  const [editing, setEditing] = useState(false);
+  const [now, setNow] = useState(() => Math.floor(Date.now() / 1000));
+  const drag = useRef<{ dx: number; dy: number } | null>(null);
+
+  useNuiEvent<{ duty: HudDuty | false; showTimer?: boolean }>('hud', (d) => {
+    setDuty(d.duty ? d.duty : null);
+    if (typeof d.showTimer === 'boolean') setShowTimer(d.showTimer);
+  });
+  useNuiEvent<{ layout: HudLayout }>('hudLayout', (d) => { if (d.layout) setLayout(d.layout); });
+  useNuiEvent<{ on: boolean; layout?: HudLayout }>('hudEdit', (d) => {
+    if (d.layout) setLayout(d.layout);
+    setEditing(!!d.on);
+  });
+
+  // Live on-duty timer (only ticks while a shift is showing).
+  useEffect(() => {
+    if (!duty?.since || !showTimer) return;
+    const id = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000);
+    return () => clearInterval(id);
+  }, [duty?.since, showTimer]);
+
+  // Dragging (edit mode only) — position stored as % of the viewport.
+  const onDown = (e: React.MouseEvent) => {
+    if (!editing) return;
+    e.preventDefault();
+    const px = (layout.x / 100) * window.innerWidth;
+    const py = (layout.y / 100) * window.innerHeight;
+    drag.current = { dx: e.clientX - px, dy: e.clientY - py };
+  };
+  useEffect(() => {
+    if (!editing) return;
+    const move = (e: MouseEvent) => {
+      if (!drag.current) return;
+      const x = ((e.clientX - drag.current.dx) / window.innerWidth) * 100;
+      const y = ((e.clientY - drag.current.dy) / window.innerHeight) * 100;
+      setLayout((l) => ({ ...l, x: clamp(x, 0, 96), y: clamp(y, 0, 96) }));
+    };
+    const up = () => { drag.current = null; };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+    return () => { window.removeEventListener('mousemove', move); window.removeEventListener('mouseup', up); };
+  }, [editing]);
+
+  const resize = (delta: number) => setLayout((l) => ({ ...l, scale: clamp(+(l.scale + delta).toFixed(2), 0.6, 2) }));
+  const save = () => { setEditing(false); fetchNui('hudSave', layout); };
+  const cancel = useCallback(() => { setEditing(false); fetchNui('hudCancel'); }, []);
+  useEscape(cancel, editing);
+
+  // Dev harness: show a sample card in the browser.
+  useEffect(() => {
+    if (!isBrowser()) return;
+    mockMessage('hud', { duty: { dept: 'BSO', rank: 'Deputy', callsign: '1A-12', since: Math.floor(Date.now() / 1000) - 5030 }, showTimer: true });
+  }, []);
+
+  const shown = duty || editing;
+  if (!shown) return null;
+  const d: HudDuty = duty || { dept: 'BSO', rank: 'Deputy', callsign: '1A-12', since: now - 5030 };
+  const elapsed = d.since ? now - d.since : 0;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-[60]">
+      {editing && <div className="absolute inset-0 bg-black/45 backdrop-blur-[1px]" />}
+
+      <div
+        className="absolute select-none"
+        style={{ left: `${layout.x}vw`, top: `${layout.y}vh`, transform: `scale(${layout.scale})`, transformOrigin: 'top left' }}
+      >
+        <div
+          onMouseDown={onDown}
+          className={`w-[220px] overflow-hidden rounded-md border bg-bg/90 shadow-lg shadow-black/40 backdrop-blur-md transition-shadow ${
+            editing ? 'pointer-events-auto cursor-move border-primary ring-2 ring-primary/50' : 'border-border/80'
+          } ${duty || !editing ? 'border-l-[3px] border-l-success' : ''}`}
+        >
+          <div className="flex items-center gap-2.5 px-3 py-2">
+            <div className="grid size-8 shrink-0 place-items-center rounded bg-success/15 text-success">
+              <Shield size={17} strokeWidth={2.4} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-1.5">
+                <span className="truncate text-[13px] font-extrabold tracking-tight">{d.dept}</span>
+                {d.callsign ? (
+                  <span className="rounded-sm bg-panel px-1.5 py-px text-2xs font-bold tabular-nums text-fg-muted">{d.callsign}</span>
+                ) : null}
+              </div>
+              <div className="truncate text-2xs font-medium text-fg-muted">{d.rank}</div>
+            </div>
+          </div>
+          {showTimer && d.since ? (
+            <div className="flex items-center gap-1.5 border-t border-border-soft bg-panel/60 px-3 py-1 text-2xs font-semibold tabular-nums text-fg-muted">
+              <Clock size={11} className="text-success" />
+              <span>On duty</span>
+              <span className="ml-auto text-fg">{hhmm(elapsed)}</span>
+            </div>
+          ) : null}
+        </div>
+
+        {editing && (
+          <div className="pointer-events-auto mt-2 flex w-[220px] items-center gap-1 rounded-md border border-border bg-bg/95 p-1 shadow-lg shadow-black/40">
+            <span className="px-1.5 text-fg-faint"><Move size={13} /></span>
+            <button onClick={() => resize(-0.1)} className="grid size-7 place-items-center rounded hover:bg-panel-hover" title="Smaller"><Minus size={14} /></button>
+            <span className="w-9 text-center text-2xs font-bold tabular-nums text-fg-muted">{Math.round(layout.scale * 100)}%</span>
+            <button onClick={() => resize(0.1)} className="grid size-7 place-items-center rounded hover:bg-panel-hover" title="Bigger"><Plus size={14} /></button>
+            <button onClick={() => fetchNui('hudReset')} className="ml-0.5 grid size-7 place-items-center rounded text-fg-muted hover:bg-panel-hover" title="Reset position"><RotateCcw size={13} /></button>
+            <div className="ml-auto flex items-center gap-1">
+              <button onClick={cancel} className="grid size-7 place-items-center rounded text-fg-muted hover:bg-danger/20 hover:text-danger" title="Cancel"><X size={15} /></button>
+              <button onClick={save} className="flex h-7 items-center gap-1 rounded bg-success px-2 text-2xs font-bold text-black hover:brightness-110" title="Save"><Save size={13} /> Save</button>
+            </div>
+          </div>
+        )}
+
+        {editing && (
+          <div className="pointer-events-none mt-1.5 w-[220px] text-center text-2xs font-medium text-white/70">
+            Drag the card · +/- to resize
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DutyMenu() {
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<'duty' | 'units' | 'config'>('duty');
   const [state, setState] = useState<DutyState | null>(null);
