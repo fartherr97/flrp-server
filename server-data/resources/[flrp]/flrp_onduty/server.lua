@@ -299,6 +299,79 @@ function GetAll()
 end
 function SetOffDuty(src) return (goOffInternal(tonumber(src), 'forced')) end
 
+-- Aggregated duty-hours report per department, for the website department hubs
+-- (/departments/<dept>/hub/hours). Sums logged session time from
+-- flrp_duty_sessions, adds live time for anyone currently on duty, and carries
+-- each member's latest name / rank / subdivision / callsign, plus the dept's
+-- rank + subdivision lists so the site can group / filter / sort.
+function GetHoursReport()
+  local now = os.time()
+  local agg = FLRP.DB.Query([[
+    SELECT `license`,`entity`,
+           SUM(COALESCE(`seconds`,0)) AS total,
+           COUNT(*) AS sessions,
+           MAX(`started_at`) AS lastOn
+    FROM `flrp_duty_sessions`
+    GROUP BY `license`,`entity`
+  ]]) or {}
+  -- most recent session per (license, entity) → current name/rank/sub/callsign
+  local latest = FLRP.DB.Query([[
+    SELECT s.`license`, s.`entity`, s.`name`, s.`rank`, s.`subdivision`, s.`callsign`
+    FROM `flrp_duty_sessions` s
+    JOIN (SELECT `license`,`entity`, MAX(`started_at`) AS mx
+          FROM `flrp_duty_sessions` GROUP BY `license`,`entity`) t
+      ON s.`license`=t.`license` AND s.`entity`=t.`entity` AND s.`started_at`=t.`mx`
+  ]]) or {}
+  local latestMap = {}
+  for _, r in ipairs(latest) do latestMap[tostring(r.license) .. '|' .. tostring(r.entity)] = r end
+
+  -- live seconds for players currently on duty (their open session isn't in SUM)
+  local live = {}
+  for _, dd in pairs(onDuty) do
+    local k = tostring(dd.license) .. '|' .. tostring(dd.entity)
+    live[k] = (live[k] or 0) + (now - dd.since)
+  end
+
+  local byDept = {}
+  for _, a in ipairs(agg) do
+    local k = tostring(a.license) .. '|' .. tostring(a.entity)
+    local l = latestMap[k] or {}
+    byDept[a.entity] = byDept[a.entity] or {}
+    byDept[a.entity][#byDept[a.entity] + 1] = {
+      name = l.name or 'Unknown',
+      callsign = l.callsign,
+      rank = l.rank, subdivision = l.subdivision,
+      totalSeconds = math.floor(tonumber(a.total) or 0) + (live[k] or 0),
+      sessions = tonumber(a.sessions) or 0,
+      lastOn = tonumber(a.lastOn) or 0,
+      onDutyNow = live[k] ~= nil,
+    }
+  end
+
+  local function pluck(list)
+    local t = {}
+    for _, x in ipairs(list or {}) do t[#t + 1] = { id = x.id, label = x.label } end
+    return t
+  end
+
+  local depts = {}
+  for _, d in ipairs(CFG.Departments) do
+    local members = byDept[d.id] or {}
+    for _, m in ipairs(members) do
+      local r = rankOf(d, m.rank or '')
+      m.rankLabel = r and r.label or m.rank
+      local s = m.subdivision and subOf(d, m.subdivision) or nil
+      m.subLabel = s and s.label or nil
+    end
+    depts[#depts + 1] = {
+      id = d.id, label = d.label, short = d.short,
+      ranks = pluck(d.ranks), subdivisions = pluck(d.subdivisions),
+      members = members,
+    }
+  end
+  return { generatedAt = now, departments = depts }
+end
+
 -- ---- bridge --------------------------------------------------------------
 local H = {}
 

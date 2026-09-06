@@ -29,4 +29,5 @@ server_exports {
   'GetDuty',
   'GetAll',
   'SetOffDuty',
+  'GetHoursReport',
 }
