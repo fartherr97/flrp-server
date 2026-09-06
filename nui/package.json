@@ -9,7 +9,8 @@
     "build:onduty": "node build.mjs onduty",
     "build:reports": "node build.mjs reports",
     "build:gunstores": "node build.mjs gunstores",
-    "build:spawn": "node build.mjs spawn"
+    "build:spawn": "node build.mjs spawn",
+    "build:messages": "node build.mjs messages"
   },
   "dependencies": {
     "clsx": "^2.1.1",
