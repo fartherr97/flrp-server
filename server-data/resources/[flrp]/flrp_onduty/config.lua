@@ -27,6 +27,22 @@ FLRP_ONDUTY.ServerName   = 'Florida Roleplay'
 FLRP_ONDUTY.CallsignMax  = 8
 FLRP_ONDUTY.RemoveWeaponsOffDuty = true   -- strip the loadout when going off duty
 
+-- ---- Per-department duty logs (Discord) ----------------------------------
+-- Each department can have its OWN Discord webhook so its members' on/off-duty
+-- notifications land in that department's server. The webhook URL is read from
+-- a convar named `<ConvarPrefix><deptId>` in secrets.cfg, e.g.:
+--   set flrp_duty_webhook_bso "https://discord.com/api/webhooks/xxx/yyy"
+-- Add a department in /duty config and its convar is flrp_duty_webhook_<newid>.
+-- A department with no/blank webhook is simply skipped.
+FLRP_ONDUTY.DutyLog = {
+  Enabled      = true,
+  ConvarPrefix = 'flrp_duty_webhook_',
+  Colour       = 0x57F287,                 -- Discord green
+  Username     = 'FLRP Duty System',
+  Footer       = 'Florida Roleplay — Server Duty System',
+  Avatar       = FLRP_ONDUTY.Logo,         -- small footer/author icon
+}
+
 -- ---- Departments -----------------------------------------------------------
 -- Each department has:
 --   colour  : hex accent for the duty MENU (UI only)

@@ -49,6 +49,55 @@ local function toast(src, title, body, kind)
   TriggerClientEvent('flrp_notify:toast', src, { title = title, body = body, kind = kind or 'info' })
 end
 
+-- Human duration, SSRP-style ("15 minutes", "1h 20m", "8 seconds").
+local function humanDur(s)
+  s = math.max(0, math.floor(s or 0))
+  local h, m = math.floor(s / 3600), math.floor((s % 3600) / 60)
+  if h > 0 then return ('%dh %dm'):format(h, m) end
+  if m > 0 then return ('%d minute%s'):format(m, m == 1 and '' or 's') end
+  return ('%d second%s'):format(s, s == 1 and '' or 's')
+end
+
+-- Post a Start/End of Duty embed to a department's OWN webhook (if configured).
+-- Best-effort: never throws into the duty flow. Times use Discord's <t:unix:F>
+-- markup so they render in each viewer's local timezone.
+local function postDutyLog(kind, i)
+  local dl = CFG.DutyLog
+  if not dl or not dl.Enabled then return end
+  local url = GetConvar(dl.ConvarPrefix .. tostring(i.deptId or ''), '')
+  if url == '' or not url:find('discord') then return end
+
+  local fields = {
+    { name = 'Username',      value = i.name,                       inline = false },
+    { name = 'Department',    value = i.deptLabel,                  inline = false },
+    { name = 'Start of Duty', value = ('<t:%d:F>'):format(i.startTs), inline = false },
+  }
+  local title, desc
+  if kind == 'start' then
+    title = 'Start of Duty Notification'
+    desc  = ('**%s** has gone on duty as the %s.'):format(i.name, i.deptLabel)
+  else
+    title = 'End of Duty Notification'
+    desc  = ('**%s** was on duty for %s as the %s.'):format(i.name, humanDur(i.seconds), i.deptLabel)
+    fields[#fields + 1] = { name = 'End of Duty', value = ('<t:%d:F>'):format(i.endTs), inline = false }
+  end
+
+  local embed = {
+    title = title, description = desc, color = dl.Colour, fields = fields,
+    footer = { text = dl.Footer or 'Duty System', icon_url = (dl.Avatar and dl.Avatar ~= '') and dl.Avatar or nil },
+    timestamp = os.date('!%Y-%m-%dT%H:%M:%SZ'),
+  }
+  PerformHttpRequest(url, function(status, body)
+    if status ~= 200 and status ~= 204 then
+      print(('^3[flrp_onduty] duty-log webhook (%s) HTTP %s^0'):format(tostring(i.deptId), tostring(status)))
+    end
+  end, 'POST', json.encode({
+    username   = dl.Username,
+    avatar_url = (dl.Avatar and dl.Avatar ~= '') and dl.Avatar or nil,
+    embeds     = { embed },
+  }), { ['Content-Type'] = 'application/json' })
+end
+
 -- Which departments/ranks/subdivisions this player may join.
 local function available(src)
   local override = IsPlayerAceAllowed(src, CFG.OverrideAce)
@@ -204,6 +253,7 @@ local function goOn(src, entity, rankId, subId, callsign)
   local subTxt = sub and sub.id ~= (d.subdivisions and d.subdivisions[1] and d.subdivisions[1].id) and (' · ' .. sub.label) or ''
   toast(src, d.short .. ' · ON DUTY', ('%s%s%s — stay safe out there.'):format(r.label, subTxt, cs ~= '' and (' · ' .. cs) or ''), 'ok')
   pcall(function() exports.flrp_duty:Invalidate(src) end)
+  pcall(postDutyLog, 'start', { name = name, deptId = entity, deptLabel = d.label, startTs = t })
   return true
 end
 
@@ -223,6 +273,9 @@ function goOffInternal(src, why)
     TriggerClientEvent('flrp_onduty:changed', src, nil)
     hud(src, nil)
   end
+  local dd = dept(d.entity)
+  pcall(postDutyLog, 'end', { name = d.name, deptId = d.entity, deptLabel = dd and dd.label or d.entity,
+    startTs = d.since, endTs = t, seconds = t - d.since })
   TriggerEvent('flrp_onduty:server:off', src, d, why)
   pcall(function() exports.flrp_duty:Invalidate(src) end)
   return true, d
