@@ -139,12 +139,18 @@ local function callsignTaken(entity, cs, exceptSrc)
   return false
 end
 
--- Best-effort nex-hud job display (escrowed export; never fatal).
--- nex-hud's updateJobData shows its second argument verbatim as the "Job" text,
--- so it must be a plain string — a table renders in its NUI as "[object Object]".
--- Pass nil to clear the job line when someone goes off duty.
-local function hud(src, jobText)
-  pcall(function() exports['nex-hud']:updateJobData(src, jobText) end)
+-- Push on-duty status to the player's HUD. FLRP draws its own status card
+-- (flrp_onduty/client.lua), so this always fires our `flrp_onduty:hud` event.
+-- When FeedNexHud is on we ALSO mirror it into nex-hud's job line — that export
+-- shows its 2nd arg verbatim, so it must be a plain string (a table renders as
+-- "[object Object]"). Pass a table to show duty, nil to clear it. Never fatal.
+local function hud(src, duty)
+  TriggerClientEvent('flrp_onduty:hud', src, duty or nil)
+  if CFG.FeedNexHud then
+    local jobText = duty and ('%s · %s%s'):format(
+      duty.dept, duty.rank, duty.callsign ~= '' and (' · ' .. duty.callsign) or '') or nil
+    pcall(function() exports['nex-hud']:updateJobData(src, jobText) end)
+  end
 end
 
 -- ---- Duty push to the website (game -> site) -----------------------------
@@ -292,7 +298,7 @@ local function goOn(src, entity, rankId, subId, callsign)
                   license = lic, discord = discord, name = name, since = t, sessionId = sid }
   TriggerClientEvent('flrp_onduty:loadout', src, d.loadout and CFG.Loadouts[d.loadout] or nil)
   TriggerClientEvent('flrp_onduty:changed', src, onDuty[src])
-  hud(src, ('%s · %s%s'):format(d.short, r.label, cs ~= '' and (' · ' .. cs) or ''))
+  hud(src, { dept = d.short, rank = r.label, callsign = cs, since = t })
   TriggerEvent('flrp_onduty:server:on', src, onDuty[src])
   local subTxt = sub and sub.id ~= (d.subdivisions and d.subdivisions[1] and d.subdivisions[1].id) and (' · ' .. sub.label) or ''
   toast(src, d.short .. ' · ON DUTY', ('%s%s%s — stay safe out there.'):format(r.label, subTxt, cs ~= '' and (' · ' .. cs) or ''), 'ok')

@@ -27,6 +27,23 @@ FLRP_ONDUTY.ServerName   = 'Florida Roleplay'
 FLRP_ONDUTY.CallsignMax  = 8
 FLRP_ONDUTY.RemoveWeaponsOffDuty = true   -- strip the loadout when going off duty
 
+-- ---- On-duty status HUD ----------------------------------------------------
+-- FLRP draws its OWN duty status card (dept · rank · callsign + a live timer)
+-- so we don't depend on nex-hud's escrowed job line. Players reposition and
+-- resize it themselves with `/hud` (drag to move, +/- to size) and it saves
+-- per-player, per-machine — the defaults below are only the first-run spot.
+FLRP_ONDUTY.Hud = {
+  Enabled  = true,
+  Command  = 'hud',       -- /hud → move & resize the card
+  ShowTimer = true,       -- live "on duty for HH:MM" counter
+  Default  = { x = 1.5, y = 22.0, scale = 1.0 },  -- x/y are % of screen (top-left of card)
+}
+
+-- Also mirror the status into nex-hud's job line. Left ON so nex-hud's unit
+-- tracking keeps seeing duty changes; set false once you're happy with our own
+-- HUD and would rather nex-hud not draw a second (overlapping) job card.
+FLRP_ONDUTY.FeedNexHud = true
+
 -- ---- Per-department duty logs (Discord) ----------------------------------
 -- Each department can have its OWN Discord webhook so its members' on/off-duty
 -- notifications land in that department's server. The webhook URL is read from
