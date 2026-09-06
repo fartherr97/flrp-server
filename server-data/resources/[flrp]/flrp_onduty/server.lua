@@ -144,6 +144,47 @@ local function hud(src, data)
   pcall(function() exports['nex-hud']:updateJobData(src, data) end)
 end
 
+-- ---- Duty push to the website (game -> site) -----------------------------
+-- FiveM servers don't expose their HTTP port, so instead of the site pulling
+-- from us, WE push to the site — the same direction (and credentials) the
+-- config sync already uses. On each completed shift we POST the session; a
+-- heartbeat pushes who's on duty + department metadata; on boot we backfill
+-- recent history once. The site accumulates sessions and serves each hub's
+-- Hours page from them. Everything here is best-effort and never fatal.
+local function siteBase()   return (GetConvar('flrp_site_api_url', '') or ''):gsub('/+$', '') end
+local function siteSecret() return GetConvar('flrp_site_api_secret', '') end
+
+local function sitePush(path, body)
+  local base, sec = siteBase(), siteSecret()
+  if base == '' or sec == '' then return end
+  PerformHttpRequest(base .. path, function(status)
+    if status ~= 200 and status ~= 204 then
+      print(('^3[flrp_onduty] site push %s -> HTTP %s^0'):format(path, tostring(status)))
+    end
+  end, 'POST', json.encode(body), { ['Content-Type'] = 'application/json', ['X-FLRP-Secret'] = sec })
+end
+
+-- One completed session (rank/subdivision as ids; the site labels them via meta).
+local function sessionPayload(license, name, entity, rank, subdivision, callsign, startedAt, endedAt, seconds)
+  return {
+    license = license, name = name, entity = entity, rank = rank,
+    subdivision = subdivision, callsign = (callsign and callsign ~= '') and callsign or nil,
+    startedAt = tonumber(startedAt), endedAt = tonumber(endedAt), seconds = tonumber(seconds),
+  }
+end
+
+-- Department metadata (labels + rank/subdivision lists) for the site to group by.
+local function deptMeta()
+  local out = {}
+  for _, d in ipairs(CFG.Departments) do
+    local function pluck(list)
+      local t = {}; for _, x in ipairs(list or {}) do t[#t + 1] = { id = x.id, label = x.label } end; return t
+    end
+    out[#out + 1] = { id = d.id, label = d.label, short = d.short, ranks = pluck(d.ranks), subdivisions = pluck(d.subdivisions) }
+  end
+  return out
+end
+
 -- ---- DB ------------------------------------------------------------------
 -- Add a column only if it isn't already there (existing installs predate the
 -- subdivision/blip columns; MySQL has no portable ADD COLUMN IF NOT EXISTS).
@@ -276,6 +317,8 @@ function goOffInternal(src, why)
   local dd = dept(d.entity)
   pcall(postDutyLog, 'end', { name = d.name, deptId = d.entity, deptLabel = dd and dd.label or d.entity,
     startTs = d.since, endTs = t, seconds = t - d.since })
+  pcall(sitePush, '/api/fivem/duty/session',
+    { session = sessionPayload(d.license, d.name, d.entity, d.rank, d.subdivision, d.callsign, d.since, t, t - d.since) })
   TriggerEvent('flrp_onduty:server:off', src, d, why)
   pcall(function() exports.flrp_duty:Invalidate(src) end)
   return true, d
@@ -614,4 +657,42 @@ CreateThread(function()
   loadConfig()
   ready = true
   print(('[flrp_onduty] ready — %d department(s), /%s or %s'):format(#CFG.Departments, CFG.Command, CFG.Key))
+end)
+
+-- Live heartbeat: push who's on duty + department metadata to the site.
+CreateThread(function()
+  while not ready do Wait(500) end
+  while true do
+    if siteBase() ~= '' then
+      local onList = {}
+      for _, dd in pairs(onDuty) do
+        onList[#onList + 1] = {
+          license = dd.license, name = dd.name, entity = dd.entity, rank = dd.rank,
+          subdivision = dd.subdivision, callsign = (dd.callsign and dd.callsign ~= '') and dd.callsign or nil,
+          since = dd.since,
+        }
+      end
+      pcall(sitePush, '/api/fivem/duty/live', { generatedAt = os.time(), onDuty = onList, departments = deptMeta() })
+    end
+    Wait(60000)
+  end
+end)
+
+-- One-time backfill: send recent completed sessions so the site has history
+-- (idempotent — the site upserts by license+entity+started_at).
+CreateThread(function()
+  while not ready do Wait(500) end
+  if siteBase() == '' then return end
+  local cutoff = os.time() - 90 * 86400
+  local rows = FLRP.DB.Query(
+    'SELECT `license`,`name`,`entity`,`rank`,`subdivision`,`callsign`,`started_at`,`ended_at`,`seconds` ' ..
+    'FROM `flrp_duty_sessions` WHERE `started_at` >= ? AND `ended_at` IS NOT NULL ORDER BY `id`', { cutoff }) or {}
+  local chunk = {}
+  for _, r in ipairs(rows) do
+    chunk[#chunk + 1] = sessionPayload(r.license, r.name, r.entity, r.rank, r.subdivision, r.callsign,
+      r.started_at, r.ended_at, r.seconds)
+    if #chunk >= 200 then pcall(sitePush, '/api/fivem/duty/session_bulk', { sessions = chunk }); chunk = {}; Wait(1500) end
+  end
+  if #chunk > 0 then pcall(sitePush, '/api/fivem/duty/session_bulk', { sessions = chunk }) end
+  if #rows > 0 then print(('[flrp_onduty] backfilled %d duty sessions to the site'):format(#rows)) end
 end)
