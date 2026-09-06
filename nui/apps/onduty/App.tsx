@@ -92,7 +92,6 @@ export function App() {
             <>
               {state.onDuty && (
                 <Panel className="flex items-center gap-3 p-3.5">
-                  <span className="h-11 w-1.5 shrink-0 rounded" style={{ background: state.onDuty.colour }} />
                   <div className="min-w-0">
                     <StatusIndicator tone="success" label={`On Duty · ${state.onDuty.short}`} />
                     <div className="mt-1 text-[15px] font-bold">{state.onDuty.label}</div>
@@ -121,7 +120,6 @@ export function App() {
                 return (
                 <div key={d.id}>
                   <Panel className={`flex items-center gap-3 p-3.5 transition-colors ${isOn ? 'border-success/40' : sel === d.id ? 'border-primary/50 bg-panel-hover' : 'hover:bg-panel-hover'}`}>
-                    <span className="h-7 w-1 shrink-0 rounded" style={{ background: d.colour }} />
                     <div className="min-w-0">
                       <div className="font-bold leading-tight">{d.label}</div>
                       <div className="text-2xs text-fg-muted">{d.short} · {d.ranks.map((r) => r.label).join(' / ')}</div>
@@ -158,8 +156,8 @@ export function App() {
                           <div className="flex flex-wrap gap-1.5">
                             {d.subdivisions.map((s) => (
                               <button key={s.id} onClick={() => setSub(s.id)}
-                                className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${sub === s.id ? 'bg-primary/15 text-primary ring-1 ring-primary/40' : 'bg-panel-hover text-fg-muted hover:text-fg'}`}>
-                                <span className="size-2 rounded-full" style={{ background: s.colour }} />{s.label}
+                                className={`rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${sub === s.id ? 'bg-primary/15 text-primary ring-1 ring-primary/40' : 'bg-panel-hover text-fg-muted hover:text-fg'}`}>
+                                {s.label}
                               </button>
                             ))}
                           </div>
@@ -207,7 +205,6 @@ function UnitsBoard({ units }: { units: UnitsState | null }) {
       {units.depts.map((d) => (
         <Panel key={d.id} className="overflow-hidden">
           <div className="flex items-center gap-2.5 border-b border-border-soft px-3 py-2">
-            <span className="h-4 w-1 rounded" style={{ background: d.colour }} />
             <span className="font-bold">{d.short}</span>
             <span className="text-2xs text-fg-muted">{d.label}</span>
             <Badge tone={d.count ? 'primary' : 'neutral'} className="ml-auto">{d.count} on duty</Badge>
@@ -321,7 +318,6 @@ function ConfigEditor({ onDone }: { onDone: () => void }) {
       {depts.map((d, i) => (
         <Panel key={i} className="space-y-3 p-3">
           <div className="flex items-center gap-2">
-            <span className="h-6 w-1 shrink-0 rounded" style={{ background: d.colour }} />
             <input value={d.label} onChange={(e) => setDept(i, { label: e.target.value })}
               className="min-w-0 flex-1 bg-transparent text-sm font-bold outline-none" placeholder="Department name" />
             <Button variant="ghost" size="sm" className="text-danger" onClick={() => del(i)}><Trash2 />Remove</Button>
