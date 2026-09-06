@@ -22,6 +22,13 @@ end
 -- cancel and re-broadcast with the tier color so staff names are tinted.
 AddEventHandler('chatMessage', function(src, name, msg)
   if type(src) ~= 'number' or src <= 0 then return end
+
+  -- Slur filter FIRST: block the base broadcast AND our re-broadcast, then let
+  -- flrp_chatfilter kick + log. The message never reaches anyone's chat box.
+  local blocked = false
+  pcall(function() blocked = exports.flrp_chatfilter:Scan(src, msg) end)
+  if blocked then CancelEvent(); return end
+
   local key = tierOf(src)
   local color = (key and FLRP_CHAT.NameColors[key]) or FLRP_CHAT.NameColors.default
   CancelEvent()

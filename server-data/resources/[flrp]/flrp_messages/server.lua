@@ -136,6 +136,11 @@ local function doSend(src, targetId, text)
   if not targetId or not GetPlayerName(targetId) then return false, "That player isn't online." end
   if targetId == src then return false, "You can't message yourself." end
 
+  -- Slur filter: a prohibited slur in a DM is blocked + kicks the sender too.
+  local blocked = false
+  pcall(function() blocked = exports.flrp_chatfilter:Scan(src, text) end)
+  if blocked then return false, 'Message blocked.' end
+
   local m = {
     fromLic = licenseOf(src), fromName = pname(src),
     toLic   = licenseOf(targetId), toName = pname(targetId),
