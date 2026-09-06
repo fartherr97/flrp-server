@@ -99,7 +99,7 @@ export function App() {
                       <span className="text-fg-faint">·</span><Clock className="size-3" />{dur(Date.now() / 1000 - state.onDuty.since)}
                     </div>
                   </div>
-                  <Button variant="danger" className="ml-auto" onClick={goOff}><LogOut />Go Off Duty</Button>
+                  <Button variant="danger" size="md" className="ml-auto rounded-md px-4" onClick={goOff}><LogOut />Go Off Duty</Button>
                 </Panel>
               )}
 
@@ -112,18 +112,26 @@ export function App() {
                   hint="You don't hold a department role. Ask staff if that's wrong." />
               )}
 
-              {state.available.map((d) => (
+              {state.available.map((d) => {
+                const isOn = state.onDuty?.entity === d.id;
+                return (
                 <div key={d.id}>
-                  <Panel className={`flex items-center gap-3 p-3 transition-colors ${sel === d.id ? 'border-primary/50 bg-panel-hover' : 'hover:bg-panel-hover'}`}>
-                    <span className="h-6 w-1 shrink-0 rounded" style={{ background: d.colour }} />
+                  <Panel className={`flex items-center gap-3 p-3.5 transition-colors ${isOn ? 'border-success/40' : sel === d.id ? 'border-primary/50 bg-panel-hover' : 'hover:bg-panel-hover'}`}>
+                    <span className="h-7 w-1 shrink-0 rounded" style={{ background: d.colour }} />
                     <div className="min-w-0">
                       <div className="font-bold leading-tight">{d.label}</div>
                       <div className="text-2xs text-fg-muted">{d.short} · {d.ranks.map((r) => r.label).join(' / ')}</div>
                     </div>
                     <span className="ml-auto text-2xs tabular-nums text-fg-faint">{state.counts[d.id] || 0} on duty</span>
-                    <Button variant={sel === d.id ? 'secondary' : 'primary'} size="sm" onClick={() => pick(d)}>
-                      {sel === d.id ? 'Selected' : 'Go On Duty'}
-                    </Button>
+                    {isOn ? (
+                      <span className="inline-flex h-9 items-center gap-1.5 rounded-md border border-success/50 bg-success/10 px-4 text-[13px] font-semibold text-success">
+                        <span className="size-1.5 rounded-full bg-success" />On Duty
+                      </span>
+                    ) : (
+                      <Button variant={sel === d.id ? 'secondary' : 'outline'} size="md" className="rounded-md px-4" onClick={() => pick(d)}>
+                        {sel === d.id ? 'Selected' : 'Go On Duty'}
+                      </Button>
+                    )}
                   </Panel>
 
                   {sel === d.id && (
@@ -168,7 +176,8 @@ export function App() {
                     </Panel>
                   )}
                 </div>
-              ))}
+                );
+              })}
             </>
           ) : (
             <UnitsBoard units={units} />
@@ -216,7 +225,9 @@ function UnitsBoard({ units }: { units: UnitsState | null }) {
 }
 
 const MOCK: DutyState = {
-  ok: true, onDuty: null, logo: '', serverName: 'Florida Roleplay', key: 'F6', callsignMax: 8, now: Date.now() / 1000,
+  ok: true, logo: '', serverName: 'Florida Roleplay', key: 'F6', callsignMax: 8, now: Date.now() / 1000,
+  onDuty: { entity: 'bso', short: 'BSO', label: "Broward Sheriff's Office", colour: '#e0b341',
+    rank: 'patrol', rankLabel: 'Patrol', subdivision: 'k9', subLabel: 'K-9 Unit', callsign: '1A-12', since: Date.now() / 1000 - 3725 },
   counts: { bso: 2, mpd: 1 },
   available: [
     { id: 'bso', label: "Broward Sheriff's Office", short: 'BSO', colour: '#e0b341', requireCallsign: true,
