@@ -142,6 +142,16 @@ local function ensureTables()
   addColumn('flrp_duty_members',  'subdivision', '`subdivision` VARCHAR(32) NULL AFTER `rank`')
   addColumn('flrp_duty_members',  'blip',        '`blip` INT NULL AFTER `subdivision`')
   addColumn('flrp_duty_sessions', 'subdivision', '`subdivision` VARCHAR(32) NULL AFTER `rank`')
+  -- editable departments config (single JSON row, seeded from config.lua)
+  FLRP.DB.Query([[
+    CREATE TABLE IF NOT EXISTS `flrp_duty_config` (
+      `id`         INT UNSIGNED NOT NULL,
+      `json`       LONGTEXT     NOT NULL,
+      `updated_by` VARCHAR(100) NULL,
+      `updated_at` INT UNSIGNED NOT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+  ]])
   -- live registry: nobody is on duty at boot; close any dangling sessions
   FLRP.DB.Query('DELETE FROM `flrp_duty_members`')
   FLRP.DB.Query('UPDATE `flrp_duty_sessions` SET `ended_at`=`started_at`, `seconds`=0 WHERE `ended_at` IS NULL')
@@ -337,11 +347,133 @@ AddEventHandler('playerDropped', function()
   if onDuty[src] then goOffInternal(src, 'dropped') end
 end)
 
+-- ==========================================================================
+-- Editable departments config (DB-backed; config.lua is the seed/fallback)
+-- ==========================================================================
+-- The departments list can be edited live via /duty config (Ownership). It is
+-- persisted as one JSON row in flrp_duty_config and loaded over the config.lua
+-- defaults on boot. Every read (dept/available/etc.) already goes through
+-- CFG.Departments, so reassigning it hot-applies changes. If the DB row is
+-- missing or invalid we keep the config.lua defaults — the menu never breaks.
+
+local DEFAULT_DEPARTMENTS = CFG.Departments   -- the config.lua seed (kept as fallback)
+
+local function slug(s)
+  s = tostring(s or ''):lower():gsub('[^%w]+', '-'):gsub('^%-+', ''):gsub('%-+$', '')
+  return s
+end
+
+-- Coerce arbitrary editor input into a clean, safe departments array. Anything
+-- malformed is dropped rather than trusted; returns nil only if not a table.
+local function sanitizeDepartments(input)
+  if type(input) ~= 'table' then return nil end
+  local out, seen = {}, {}
+  for _, d in ipairs(input) do
+    if type(d) == 'table' then
+      local id = slug(d.id ~= '' and d.id or d.short or d.label)
+      if id ~= '' and not seen[id] then
+        seen[id] = true
+        local dept = {
+          id = id,
+          label = tostring(d.label or id):sub(1, 64),
+          short = tostring(d.short or id:upper()):sub(1, 8),
+          colour = tostring(d.colour or '#8a8f98'):sub(1, 9),
+          blip = tonumber(d.blip) or 0,
+          requireCallsign = d.requireCallsign and true or false,
+          loadout = (d.loadout ~= nil and d.loadout ~= '') and tostring(d.loadout) or nil,
+          ranks = {}, subdivisions = {},
+        }
+        local rseen = {}
+        for _, r in ipairs(d.ranks or {}) do
+          local rid = slug(r.id ~= '' and r.id or r.label)
+          if rid ~= '' and not rseen[rid] then
+            rseen[rid] = true
+            dept.ranks[#dept.ranks + 1] = { id = rid, label = tostring(r.label or rid):sub(1, 40),
+              ace = (r.ace ~= nil and r.ace ~= '') and tostring(r.ace):sub(1, 64) or nil }
+          end
+        end
+        if #dept.ranks == 0 then  -- a dept must have at least one rank to be joinable
+          dept.ranks[1] = { id = 'patrol', label = 'Patrol', ace = 'flrp.dept.' .. id }
+        end
+        local sseen = {}
+        for _, s in ipairs(d.subdivisions or {}) do
+          local sid = slug(s.id ~= '' and s.id or s.label)
+          if sid ~= '' and not sseen[sid] then
+            sseen[sid] = true
+            dept.subdivisions[#dept.subdivisions + 1] = { id = sid, label = tostring(s.label or sid):sub(1, 40),
+              blip = (s.blip ~= nil and s.blip ~= '') and tonumber(s.blip) or nil,
+              colour = (s.colour ~= nil and s.colour ~= '') and tostring(s.colour):sub(1, 9) or nil,
+              ace = (s.ace ~= nil and s.ace ~= '') and tostring(s.ace):sub(1, 64) or nil }
+          end
+        end
+        out[#out + 1] = dept
+      end
+    end
+  end
+  return out
+end
+
+local function loadConfig()
+  local ok, err = pcall(function()
+    local row = FLRP.DB.Single('SELECT `json` FROM `flrp_duty_config` WHERE `id`=1')
+    if row and row.json then
+      local decoded = json.decode(row.json)
+      local clean = sanitizeDepartments(decoded)
+      if clean and #clean > 0 then
+        CFG.Departments = clean
+        print(('[flrp_onduty] loaded %d department(s) from DB config'):format(#clean))
+        return
+      end
+    end
+    -- no/blank/invalid row: seed the DB from config.lua so the editor has data
+    FLRP.DB.Query('REPLACE INTO `flrp_duty_config` (`id`,`json`,`updated_by`,`updated_at`) VALUES (1,?,?,?)',
+      { json.encode(DEFAULT_DEPARTMENTS), 'seed', os.time() })
+    print('[flrp_onduty] seeded DB config from config.lua defaults')
+  end)
+  if not ok then
+    print('[flrp_onduty] config load failed, using config.lua defaults: ' .. tostring(err))
+    CFG.Departments = DEFAULT_DEPARTMENTS
+  end
+end
+
+local function saveConfig(depts, byName)
+  local clean = sanitizeDepartments(depts)
+  if not clean then return false, 'Invalid config payload.' end
+  if #clean == 0 then return false, 'You must keep at least one department.' end
+  local okEnc, encoded = pcall(json.encode, clean)
+  if not okEnc or not encoded then return false, 'Could not encode config.' end
+  FLRP.DB.Query('REPLACE INTO `flrp_duty_config` (`id`,`json`,`updated_by`,`updated_at`) VALUES (1,?,?,?)',
+    { encoded, tostring(byName or 'staff'):sub(1, 100), os.time() })
+  CFG.Departments = clean                                   -- hot-apply
+  TriggerClientEvent('flrp_onduty:changed', -1)             -- refresh any open menus
+  return true
+end
+
+-- ---- config editor handlers (Ownership) ---------------------------------
+local function canConfig(src) return IsPlayerAceAllowed(src, CFG.ConfigAce) end
+
+function H.configGet(src)
+  if not canConfig(src) then return { ok = false, error = 'Only Ownership can edit the duty config.' } end
+  return { ok = true, departments = CFG.Departments, loadouts = CFG.Loadouts and (function()
+    local names = {}; for k in pairs(CFG.Loadouts) do names[#names + 1] = k end; table.sort(names); return names
+  end)() or {} }
+end
+
+function H.configSave(src, p)
+  if not canConfig(src) then return { ok = false, error = 'Only Ownership can edit the duty config.' } end
+  local ok, err = saveConfig(p.departments, GetPlayerName(src))
+  if not ok then return { ok = false, error = err } end
+  pcall(function() exports.flrp_logs:Send('menu', { player = src, title = 'DUTY CONFIG',
+    description = ('%s updated the duty departments config'):format(GetPlayerName(src) or src) }) end)
+  return { ok = true, departments = CFG.Departments }
+end
+
 -- ---- boot ----------------------------------------------------------------
 CreateThread(function()
   while not (exports.flrp_core and exports.flrp_core:IsReady()) do Wait(500) end
   local ok, err = pcall(ensureTables)
   if not ok then print('[flrp_onduty] table setup failed: ' .. tostring(err)) end
+  loadConfig()
   ready = true
   print(('[flrp_onduty] ready — %d department(s), /%s or %s'):format(#CFG.Departments, CFG.Command, CFG.Key))
 end)

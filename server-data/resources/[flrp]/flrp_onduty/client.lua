@@ -34,11 +34,16 @@ RegisterCommand(FLRP_ONDUTY.Command, function(_, args)
     if isOpen then close() end
     return open('units')
   end
+  if a == 'config' or a == 'setup' or a == 'edit' then
+    if isOpen then close() end
+    return open('config')          -- Ownership editor (server gates access)
+  end
   if isOpen then close() else open() end
 end, false)
 RegisterKeyMapping(FLRP_ONDUTY.Command, 'FLRP: Duty menu', 'keyboard', FLRP_ONDUTY.Key)
 TriggerEvent('chat:addSuggestion', '/' .. FLRP_ONDUTY.Command, 'Open the department duty menu', {
   { name = 'units', help = "'units' — see who's on duty in every department" },
+  { name = 'config', help = "'config' — Ownership: add / edit / remove departments" },
 })
 
 RegisterNUICallback('close', function(_, cb) close(); cb({}) end)
