@@ -56,6 +56,7 @@ FLRP_LOGS.Categories = {
   music       = { convar = 'flrp_log_webhook_music',       color = 0x9b59b6, title = 'MUSIC' },
   repair      = { convar = 'flrp_log_webhook_repair',      color = 0x1abc9c, title = 'REPAIR' },
   hitch       = { convar = 'flrp_log_webhook_hitch',       color = 0x7f8c8d, title = 'HITCH / TOW' },
+  pm          = { convar = 'flrp_log_webhook_pm',          color = 0x5865f2, title = 'PRIVATE MESSAGE' },
 }
 
 -- Rank labels, highest first (used in the "[id] pid | rank | name" footer).
