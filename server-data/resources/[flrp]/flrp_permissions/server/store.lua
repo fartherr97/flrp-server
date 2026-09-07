@@ -41,11 +41,22 @@ local CONVAR_ROLE_MAP = {
   flrp_role_community_member = 'member',
   flrp_role_ownership        = 'ownership',
   flrp_role_director         = 'director',
-  flrp_role_administrator    = 'administrator',
+  -- Staff ranks (moderate tier: trial_mod, moderator, senior_mod;
+  --              administer tier: junior_admin, administrator, senior_admin, lead_admin)
+  flrp_role_trial_mod        = 'trial_mod',
   flrp_role_moderator        = 'moderator',
+  flrp_role_senior_mod       = 'senior_mod',
+  flrp_role_junior_admin     = 'junior_admin',
+  flrp_role_administrator    = 'administrator',
+  flrp_role_senior_admin     = 'senior_admin',
+  flrp_role_lead_admin       = 'lead_admin',
+  -- Certification / civilian tiers
   flrp_role_cert_civ_1       = 'cert_civ_1',
   flrp_role_cert_civ_2       = 'cert_civ_2',
   flrp_role_cert_civ_3       = 'cert_civ_3',
+  flrp_role_civ_supervisor   = 'civ_supervisor',
+  flrp_role_civ_manager      = 'civ_manager',
+  -- Departments
   flrp_role_bso             = 'bso',
   flrp_role_fhp              = 'fhp',
   flrp_role_mpd              = 'mpd',

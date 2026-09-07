@@ -18,6 +18,39 @@ function IsInGroup(source, roleKey) return FLRPP.IsInGroup(source, roleKey) end
 function GetEffectivePermissions(source) return FLRPP.GetEffectivePermissions(source) end
 function ApplyForSource(source) return FLRPP.ApplyForSource(source) end
 
+-- Resolve a list of raw Discord role IDs to a set of FLRP role keys, using the
+-- same discordMap the gate uses. Pure lookup (no source needed) — used by the
+-- connection gate to decide name-enforcement group/exemption before a player
+-- has a real server id. Returns { roleKey = true, ... }.
+function ResolveDiscordRoles(roleIds)
+  local out = {}
+  local map = (FLRPP.Store and FLRPP.Store.discordMap) or {}
+  for _, id in ipairs(roleIds or {}) do
+    local keys = map[tostring(id)]
+    if keys then for _, k in ipairs(keys) do out[k] = true end end
+  end
+  return out
+end
+
+-- Like ResolveDiscordRoles but returns each resolved role's KIND
+-- ('base' | 'staff' | 'certification' | 'department') as { [roleKey] = kind }.
+-- Lets callers act on categories instead of an exhaustive key list, so new
+-- cert tiers / staff ranks are covered automatically once they're mapped.
+function ResolveDiscordRoleKinds(roleIds)
+  local out = {}
+  local map   = (FLRPP.Store and FLRPP.Store.discordMap) or {}
+  local roles = (FLRPP.Store and FLRPP.Store.rolesByKey) or {}
+  for _, id in ipairs(roleIds or {}) do
+    local keys = map[tostring(id)]
+    if keys then
+      for _, k in ipairs(keys) do
+        out[k] = (roles[k] and roles[k].kind) or 'unknown'
+      end
+    end
+  end
+  return out
+end
+
 function ReloadPermissions()
   local ok = FLRPP.Store.Load()
   if ok then FLRPP.ReapplyAll() end

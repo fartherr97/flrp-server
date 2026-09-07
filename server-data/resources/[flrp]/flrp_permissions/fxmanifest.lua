@@ -41,6 +41,8 @@ server_exports {
   'HasPermission',
   'HasAnyPermission',
   'GetRoles',
+  'ResolveDiscordRoles',
+  'ResolveDiscordRoleKinds',
   'IsInGroup',
   'GetEffectivePermissions',
   'ReloadPermissions',

@@ -20,6 +20,13 @@ function FLRPA.Config.Reload()
   -- players in with base 'member' role only? Default FALSE (fail closed).
   FLRPA.Config.failOpen      = convarBool('flrp_access_fail_open', false)
 
+  -- Name enforcement: members of enforced groups (cert civ / staff / LEO) must
+  -- have their in-game name match their Discord guild display name. Director &
+  -- Ownership are exempt. Default OFF so it never kicks before you're ready —
+  -- map every enforced role's Discord id and warn members, THEN turn it on with
+  -- `set flrp_name_enforce true` in secrets.cfg.
+  FLRPA.Config.nameEnforce   = convarBool('flrp_name_enforce', false)
+
   FLRPA.Config.token         = convar('flrp_discord_token')
   FLRPA.Config.guildId       = convar('flrp_discord_guild_id')
   FLRPA.Config.inviteUrl     = convar('flrp_discord_invite_url', 'https://discord.gg/REPLACE_ME')
