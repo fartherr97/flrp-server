@@ -111,6 +111,20 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
   FLRP.Logger.Info('access', 'Player verified', {
     name = name, discordId = discordId, roleCount = #roleIds })
 
+  -- 5b. Name enforcement: cert civ / staff / LEO must match their Discord
+  --     display name (Director & Ownership exempt). Denied at the gate.
+  local nameOk, discordName = FLRPA.NameCheck.Evaluate(name, member)
+  if not nameOk then
+    logBlocked(name, discordId, ('name does not match Discord ("%s" =/= "%s")'):format(name, discordName))
+    deferrals.done(denyMessage(
+      ('your in-game name must match your Discord display name.\n\n' ..
+       '   Discord:  %s\n   In-game:  %s\n\n' ..
+       'Set your FiveM name (Settings > Game > "Name") to exactly match your Discord ' ..
+       'display name, then reconnect. Directors and Ownership are exempt.')
+        :format(discordName, name)))
+    return
+  end
+
   -- 6. Allow.
   deferrals.done()
 end)

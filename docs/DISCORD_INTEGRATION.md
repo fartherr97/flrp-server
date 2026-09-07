@@ -87,6 +87,21 @@ gate denies with instructions to link.
   unreachable/misconfigured, `true` lets players in with base `member` only,
   `false` denies. Default **fail-closed** (deny) for security.
 
+## Name enforcement
+
+`flrp_name_enforce` (default `true`) requires members of the enforced groups —
+**Cert Civ**, **Staff** (Moderator/Admin) and **LEO** (BSO/FHP/MPD) — to
+connect with an in-game name that **exactly** matches their Discord guild
+display name (server nickname → global name → username). The compare is
+case-insensitive with whitespace collapsed and FiveM colour codes stripped;
+otherwise it must match verbatim. **Director and Ownership are exempt.** On a
+mismatch the connection is denied at the gate with a message telling the player
+to fix their FiveM name, and the denial is logged (`blocked` category).
+
+It fails safe: if a player holds none of the enforced roles, or their Discord
+display name can't be read, or the role mappings aren't configured, no one is
+kicked. Set `flrp_name_enforce false` to disable entirely.
+
 ## Security
 
 - The bot token is a **private convar**, read only server-side, sent only to

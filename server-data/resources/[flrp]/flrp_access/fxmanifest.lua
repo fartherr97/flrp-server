@@ -30,5 +30,6 @@ server_scripts {
   '@flrp_core/server/identity.lua',
   'server/config.lua',
   'server/discord.lua',
+  'server/namecheck.lua',
   'server/main.lua',
 }
