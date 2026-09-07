@@ -22,8 +22,10 @@ function FLRPA.Config.Reload()
 
   -- Name enforcement: members of enforced groups (cert civ / staff / LEO) must
   -- have their in-game name match their Discord guild display name. Director &
-  -- Ownership are exempt. Default ON; set flrp_name_enforce false to disable.
-  FLRPA.Config.nameEnforce   = convarBool('flrp_name_enforce', true)
+  -- Ownership are exempt. Default OFF so it never kicks before you're ready —
+  -- map every enforced role's Discord id and warn members, THEN turn it on with
+  -- `set flrp_name_enforce true` in secrets.cfg.
+  FLRPA.Config.nameEnforce   = convarBool('flrp_name_enforce', false)
 
   FLRPA.Config.token         = convar('flrp_discord_token')
   FLRPA.Config.guildId       = convar('flrp_discord_guild_id')

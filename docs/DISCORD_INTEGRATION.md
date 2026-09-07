@@ -89,7 +89,9 @@ gate denies with instructions to link.
 
 ## Name enforcement
 
-`flrp_name_enforce` (default `true`) requires members of the enforced role
+`flrp_name_enforce` (default `false` — turn it on only after every enforced
+role's Discord id is mapped and members have been told to fix their names)
+requires members of the enforced role
 **kinds** — `certification` (every Cert Civ tier, incl. any Supervisor),
 `department` (BSO/FHP/MPD) and `staff` (every staff rank) — to connect with an
 in-game name that **exactly** matches their Discord guild display name (server
@@ -105,7 +107,7 @@ to fix their FiveM name, and the denial is logged (`blocked` category).
 
 It fails safe: if a player holds none of the enforced roles, or their Discord
 display name can't be read, or the role mappings aren't configured, no one is
-kicked. Set `flrp_name_enforce false` to disable entirely.
+kicked. It ships **disabled** — set `flrp_name_enforce true` to enable it.
 
 ## Security
 
