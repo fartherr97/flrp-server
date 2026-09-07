@@ -32,6 +32,25 @@ function ResolveDiscordRoles(roleIds)
   return out
 end
 
+-- Like ResolveDiscordRoles but returns each resolved role's KIND
+-- ('base' | 'staff' | 'certification' | 'department') as { [roleKey] = kind }.
+-- Lets callers act on categories instead of an exhaustive key list, so new
+-- cert tiers / staff ranks are covered automatically once they're mapped.
+function ResolveDiscordRoleKinds(roleIds)
+  local out = {}
+  local map   = (FLRPP.Store and FLRPP.Store.discordMap) or {}
+  local roles = (FLRPP.Store and FLRPP.Store.rolesByKey) or {}
+  for _, id in ipairs(roleIds or {}) do
+    local keys = map[tostring(id)]
+    if keys then
+      for _, k in ipairs(keys) do
+        out[k] = (roles[k] and roles[k].kind) or 'unknown'
+      end
+    end
+  end
+  return out
+end
+
 function ReloadPermissions()
   local ok = FLRPP.Store.Load()
   if ok then FLRPP.ReapplyAll() end

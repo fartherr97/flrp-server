@@ -15,12 +15,12 @@
 FLRPA = FLRPA or {}
 FLRPA.NameCheck = {}
 
--- Groups whose members must match; Director/Ownership override (exempt).
-local ENFORCE_KEYS = {
-  cert_civ_1 = true, cert_civ_2 = true, cert_civ_3 = true,
-  moderator = true, administrator = true,
-  bso = true, fhp = true, mpd = true,
-}
+-- Enforce by role KIND, not an exhaustive key list — so every certification
+-- tier (Cert Civ I/II/III, Supervisor, …), every department, and every staff
+-- rank is covered automatically as it's added, with no code change. `base`
+-- (plain community member) is never enforced.
+local ENFORCE_KINDS = { certification = true, department = true, staff = true }
+-- Staff-kind roles that are nonetheless EXEMPT (checked by key).
 local EXEMPT_KEYS = { director = true, ownership = true }
 
 -- Normalize for an exact, CASE-SENSITIVE compare: strip FiveM colour codes
@@ -50,13 +50,13 @@ function FLRPA.NameCheck.Evaluate(gameName, member)
   if not FLRPA.Config.nameEnforce then return true end
   if not member then return true end
 
-  local keys = {}
-  pcall(function() keys = exports.flrp_permissions:ResolveDiscordRoles(member.roles or {}) or {} end)
+  local kinds = {}   -- { [roleKey] = kind }
+  pcall(function() kinds = exports.flrp_permissions:ResolveDiscordRoleKinds(member.roles or {}) or {} end)
 
-  for k in pairs(EXEMPT_KEYS) do if keys[k] then return true end end   -- Director/Owner exempt
+  for key in pairs(kinds) do if EXEMPT_KEYS[key] then return true end end   -- Director/Owner exempt
 
   local enforced = false
-  for k in pairs(ENFORCE_KEYS) do if keys[k] then enforced = true break end end
+  for _, kind in pairs(kinds) do if ENFORCE_KINDS[kind] then enforced = true break end end
   if not enforced then return true end
 
   local discordName = displayNameOf(member)

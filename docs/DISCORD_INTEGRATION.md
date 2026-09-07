@@ -89,10 +89,14 @@ gate denies with instructions to link.
 
 ## Name enforcement
 
-`flrp_name_enforce` (default `true`) requires members of the enforced groups —
-**Cert Civ**, **Staff** (Moderator/Admin) and **LEO** (BSO/FHP/MPD) — to
-connect with an in-game name that **exactly** matches their Discord guild
-display name (server nickname → global name → username). The compare is
+`flrp_name_enforce` (default `true`) requires members of the enforced role
+**kinds** — `certification` (every Cert Civ tier, incl. any Supervisor),
+`department` (BSO/FHP/MPD) and `staff` (every staff rank) — to connect with an
+in-game name that **exactly** matches their Discord guild display name (server
+nickname → global name → username). Enforcing by kind means new cert tiers or
+staff ranks are covered automatically once they're mapped — no code change.
+**Director and Ownership are exempt** (by role key), and plain `base` members
+are never enforced. The compare is
 **case-sensitive** — whitespace runs are collapsed and FiveM colour codes
 stripped, but case must match exactly (so `123 | mod | jones` is rejected
 against `123 | Mod | Jones`). **Director and Ownership are exempt.** On a
