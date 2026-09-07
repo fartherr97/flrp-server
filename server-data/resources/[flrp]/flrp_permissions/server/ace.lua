@@ -23,6 +23,11 @@ local ACE_ROLE_KEYS = {
   member = true, moderator = true, administrator = true, director = true,
   ownership = true, cert_civ_1 = true, cert_civ_2 = true, cert_civ_3 = true,
   bso = true, fhp = true, mpd = true,
+  -- Extended staff ranks + civilian leadership (distinct roles; each inherits
+  -- its nearest tier's group in permissions.cfg).
+  trial_mod = true, senior_mod = true, junior_admin = true,
+  senior_admin = true, lead_admin = true,
+  civ_supervisor = true, civ_manager = true,
 }
 
 -- Track applied principals per license so we can cleanly remove them.
