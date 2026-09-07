@@ -7,9 +7,9 @@
 -- and Ownership are EXEMPT. On a mismatch the connection is denied at the gate
 -- with a fix-your-name message. Toggle with the flrp_name_enforce convar.
 --
--- Match rule: EXACT — case-insensitive, whitespace collapsed, FiveM colour
--- codes stripped. (So "1A-12 | Dep | Mike" must equal the Discord display name
--- verbatim apart from case/spacing.)
+-- Match rule: EXACT and CASE-SENSITIVE. FiveM colour codes are stripped and
+-- runs of whitespace are collapsed/trimmed, but case must match exactly — so
+-- "123 | mod | jones" is REJECTED against "123 | Mod | Jones".
 -- ==========================================================================
 
 FLRPA = FLRPA or {}
@@ -23,11 +23,10 @@ local ENFORCE_KEYS = {
 }
 local EXEMPT_KEYS = { director = true, ownership = true }
 
--- Normalize for an exact compare: strip FiveM colour codes (^1 etc.), collapse
--- whitespace, trim, lowercase.
+-- Normalize for an exact, CASE-SENSITIVE compare: strip FiveM colour codes
+-- (^1 etc.), collapse whitespace runs, trim. Case is preserved on purpose.
 local function norm(s)
-  s = tostring(s or ''):gsub('%^%d', ''):gsub('%s+', ' '):gsub('^%s+', ''):gsub('%s+$', '')
-  return s:lower()
+  return (tostring(s or ''):gsub('%^%d', ''):gsub('%s+', ' '):gsub('^%s+', ''):gsub('%s+$', ''))
 end
 
 -- Discord guild display name: nickname > global display name > username.

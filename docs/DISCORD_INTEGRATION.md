@@ -93,8 +93,9 @@ gate denies with instructions to link.
 **Cert Civ**, **Staff** (Moderator/Admin) and **LEO** (BSO/FHP/MPD) — to
 connect with an in-game name that **exactly** matches their Discord guild
 display name (server nickname → global name → username). The compare is
-case-insensitive with whitespace collapsed and FiveM colour codes stripped;
-otherwise it must match verbatim. **Director and Ownership are exempt.** On a
+**case-sensitive** — whitespace runs are collapsed and FiveM colour codes
+stripped, but case must match exactly (so `123 | mod | jones` is rejected
+against `123 | Mod | Jones`). **Director and Ownership are exempt.** On a
 mismatch the connection is denied at the gate with a message telling the player
 to fix their FiveM name, and the denial is logged (`blocked` category).
 
