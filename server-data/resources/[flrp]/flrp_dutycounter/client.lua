@@ -77,3 +77,17 @@ CreateThread(function()
   pushLayout()
   TriggerServerEvent('flrp_dutycounter:request')
 end)
+
+-- Hide the counter while the pause menu / map / settings screen is open — it
+-- shouldn't float over the Esc menu or the expanded map.
+CreateThread(function()
+  local hidden = nil
+  while true do
+    local pause = IsPauseMenuActive()
+    if pause ~= hidden then
+      hidden = pause
+      SendNUIMessage({ type = 'vis', show = not pause })
+    end
+    Wait(200)
+  end
+end)
