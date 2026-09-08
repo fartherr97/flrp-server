@@ -200,6 +200,60 @@ FLRPI.Router.Add('POST', '/vehicles', function(ctx)
   return 200, { ok = true }
 end)
 
+-- ---- Access: bypass kick (for the Discord bot) --------------------------
+-- POST /kick  body: { target, reason?, bypass? }
+--   target : FiveM server id (number) OR an identifier the player is online
+--            with — a Discord id ("discord:123..." or the bare "123..."),
+--            license, steam, etc.
+--   reason : message shown to the player (default "Kicked by staff").
+--   bypass : default TRUE — kick WITHOUT the 30-min tempkick lockout. Send
+--            false for a normal kick that DOES apply the lockout.
+-- Auth is the shared secret (X-FLRP-Secret header), same as every other
+-- endpoint, so the bot calls it exactly like the website does:
+--   POST http(s)://<host>:<port>/flrp_api/kick
+--   X-FLRP-Secret: <flrp_api_shared_secret>
+--   {"target":"<discordId>","reason":"..."}
+local function resolveOnlineSrc(target)
+  if target == nil then return nil end
+  local players = GetPlayers()
+  local asNum = tonumber(target)
+  if asNum then
+    for _, p in ipairs(players) do if tonumber(p) == asNum then return asNum end end
+  end
+  local needle = tostring(target):lower()
+  local hasPrefix = needle:find(':', 1, true) ~= nil
+  for _, p in ipairs(players) do
+    for _, id in ipairs(GetPlayerIdentifiers(p) or {}) do
+      local low = id:lower()
+      if hasPrefix then
+        if low == needle then return tonumber(p) end
+      elseif low:gsub('^%w+:', '') == needle then
+        return tonumber(p)
+      end
+    end
+  end
+  return nil
+end
+
+FLRPI.Router.Add('POST', '/kick', function(ctx)
+  local b = ctx.body or {}
+  if b.target == nil then return 400, { error = 'missing_target' } end
+  local src = resolveOnlineSrc(b.target)
+  if not src then return 404, { error = 'player_not_online', target = tostring(b.target) } end
+  local reason = (type(b.reason) == 'string' and b.reason ~= '') and b.reason or 'Kicked by staff'
+  local bypass = (b.bypass ~= false)   -- default: no lockout
+  local name = GetPlayerName(src)
+  if bypass then
+    if not exports.flrp_access then return 503, { error = 'access_unavailable' } end
+    exports.flrp_access:KickBypass(src, reason)
+  else
+    DropPlayer(src, reason)             -- normal kick — tempkick lockout applies
+  end
+  audit(ctx, 'access', bypass and 'bypass_kick' or 'kick', 'player', tostring(b.target),
+    nil, { reason = reason, name = name })
+  return 200, { ok = true, kicked = name, id = src, bypass = bypass }
+end)
+
 -- ---- Audit log (read; append-only, never writable via API) --------------
 FLRPI.Router.Add('GET', '/audit', function(ctx)
   local limit = 50
