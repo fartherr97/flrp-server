@@ -28,6 +28,8 @@ local ACE_ROLE_KEYS = {
   trial_mod = true, senior_mod = true, junior_admin = true,
   senior_admin = true, lead_admin = true,
   civ_supervisor = true, civ_manager = true,
+  -- Capability roles (ACE group only): SWAT -> full-auto.
+  swat = true,
 }
 
 -- Track applied principals per license so we can cleanly remove them.
