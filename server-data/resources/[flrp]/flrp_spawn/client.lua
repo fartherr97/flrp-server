@@ -71,6 +71,15 @@ local function openSelector()
   selecting = true
 
   local ped = PlayerPedId()
+  -- If we opened because the player died, revive them where they fell first
+  -- (they're hidden + frozen below) so the engine's wasted → hospital respawn
+  -- doesn't race the selector. On a normal join the ped isn't dead → no-op.
+  if IsEntityDead(ped) then
+    local c = GetEntityCoords(ped)
+    NetworkResurrectLocalPlayer(c.x, c.y, c.z, GetEntityHeading(ped), true, false)
+    ClearPedBloodDamage(ped)
+    ped = PlayerPedId()
+  end
   SetEntityVisible(ped, false, false)
   FreezeEntityPosition(ped, true)
   SetPlayerControl(PlayerId(), false, 0)
@@ -167,6 +176,26 @@ AddEventHandler('onClientResourceStart', function(resource)
   exports.spawnmanager:setAutoSpawnCallback(openSelector)
   exports.spawnmanager:setAutoSpawn(true)
   exports.spawnmanager:forceRespawn()
+end)
+
+-- Respawn flow: when the player dies, reopen the selector instead of the
+-- vanilla hospital respawn. openSelector() revives them in place first, so
+-- picking a point cleanly moves them there.
+CreateThread(function()
+  while true do
+    Wait(500)
+    if Config.RespawnToSelector and not selecting and NetworkIsSessionStarted() then
+      if IsEntityDead(PlayerPedId()) then
+        local waited, delay = 0, (Config.RespawnDelay or 3000)
+        while IsEntityDead(PlayerPedId()) and waited < delay do
+          Wait(200); waited = waited + 200
+        end
+        if not selecting and IsEntityDead(PlayerPedId()) then
+          openSelector()
+        end
+      end
+    end
+  end
 end)
 
 -- ---- Setup helper: /coords -----------------------------------------------
