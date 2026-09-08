@@ -131,6 +131,7 @@ end
 
 RegisterCommand(FLRP_GZ.Command, function() open() end, false)
 RegisterCommand('gz', function() open() end, false)
+RegisterCommand('greenzone', function() open() end, false)   -- singular alias
 
 -- create injects the caller's current coords; tp teleports locally.
 RegisterNUICallback('create', function(data, cb)
