@@ -10,7 +10,11 @@
 local cuffed  = {}  -- [targetSrc] = true
 local dragged = {}  -- [targetSrc] = officerSrc
 
-local function isLeo(src) return IsPlayerAceAllowed(src, FLRP_LEO.Ace) end
+-- Director & Ownership (flrp.staff.direct; ownership inherits) get full LEO
+-- tool access alongside actual law enforcement.
+local function isLeo(src)
+  return IsPlayerAceAllowed(src, FLRP_LEO.Ace) or IsPlayerAceAllowed(src, 'flrp.staff.direct')
+end
 
 -- Server-side distance between two players (OneSync gives us coords).
 local function within(a, b, max)

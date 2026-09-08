@@ -58,7 +58,9 @@ CreateThread(function()
       if #(pc - vector3(z.x, z.y, z.z)) <= z.radius then inZone = z; break end
     end
 
-    if inZone and (not currentZone or currentZone.id ~= inZone.id) then
+    -- Compare by NAME, not id, so overlapping same-name zones (e.g. a duplicate
+    -- "Mission Row PD") don't fire the enter/leave toast twice.
+    if inZone and (not currentZone or currentZone.name ~= inZone.name) then
       currentZone = inZone
       TriggerEvent('flrp_notify:toast', { title = inZone.name or 'Safe Zone', body = FLRP_GZ.EnterText, kind = 'ok' })
     elseif not inZone and currentZone then
