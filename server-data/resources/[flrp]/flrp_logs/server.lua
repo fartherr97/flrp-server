@@ -92,10 +92,23 @@ end)
 
 -- ---- Built-in wiring: joins / leaves ------------------------------------
 -- Name goes in the description; no Player field (the FiveM name already carries
--- the full ID | rank | name, so the field was redundant here).
+-- the full ID | rank | name, so the field was redundant here). The join log
+-- also carries the player's Discord ID for identification.
+local function discordIdOf(src)
+  for _, id in ipairs(GetPlayerIdentifiers(src) or {}) do
+    if id:sub(1, 8) == 'discord:' then return id:sub(9) end
+  end
+  return nil
+end
+
 AddEventHandler('playerJoining', function()
-  local name = GetPlayerName(source) or ('Player ' .. source)
-  Send('join', { description = ('**%s** connected.'):format(name) })
+  local src  = source
+  local name = GetPlayerName(src) or ('Player ' .. src)
+  local did  = discordIdOf(src)
+  Send('join', {
+    description = ('**%s** connected.'):format(name),
+    fields = did and { { name = 'Discord', value = ('<@%s> `%s`'):format(did, did), inline = false } } or nil,
+  })
 end)
 
 AddEventHandler('playerDropped', function(reason)
