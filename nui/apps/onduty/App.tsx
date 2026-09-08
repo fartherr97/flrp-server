@@ -43,6 +43,7 @@ function DutyHud() {
   const [showTimer, setShowTimer] = useState(true);
   const [layout, setLayout] = useState<HudLayout>({ x: 1.5, y: 22, scale: 1 });
   const [editing, setEditing] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const [now, setNow] = useState(() => Math.floor(Date.now() / 1000));
   const drag = useRef<{ dx: number; dy: number } | null>(null);
 
@@ -50,9 +51,13 @@ function DutyHud() {
     setDuty(d.duty ? d.duty : null);
     if (typeof d.showTimer === 'boolean') setShowTimer(d.showTimer);
   });
-  useNuiEvent<{ layout: HudLayout }>('hudLayout', (d) => { if (d.layout) setLayout(d.layout); });
+  useNuiEvent<{ layout: HudLayout; hidden?: boolean }>('hudLayout', (d) => {
+    if (d.layout) setLayout(d.layout);
+    if (typeof d.hidden === 'boolean') setHidden(d.hidden);
+  });
   useNuiEvent<{ on: boolean; layout?: HudLayout }>('hudEdit', (d) => {
     if (d.layout) setLayout(d.layout);
+    if (d.on) setHidden(false);   // editing implies visible
     setEditing(!!d.on);
   });
 
@@ -96,7 +101,7 @@ function DutyHud() {
     mockMessage('hud', { duty: { dept: 'BSO', rank: 'Deputy', callsign: '1A-12', since: Math.floor(Date.now() / 1000) - 5030 }, showTimer: true });
   }, []);
 
-  const shown = duty || editing;
+  const shown = (duty || editing) && !hidden;
   if (!shown) return null;
   const d: HudDuty = duty || { dept: 'BSO', rank: 'Deputy', callsign: '1A-12', since: now - 5030 };
   const elapsed = d.since ? now - d.since : 0;
@@ -111,29 +116,30 @@ function DutyHud() {
       >
         <div
           onMouseDown={onDown}
-          className={`w-[220px] overflow-hidden rounded-md border bg-bg/90 shadow-lg shadow-black/40 backdrop-blur-md transition-shadow ${
-            editing ? 'pointer-events-auto cursor-move border-primary ring-2 ring-primary/50' : 'border-border/80'
-          } ${duty || !editing ? 'border-l-[3px] border-l-success' : ''}`}
+          style={{ textShadow: '0 1px 3px rgba(0,0,0,.95)' }}
+          className={`w-[220px] select-none rounded-md transition-colors ${
+            editing ? 'pointer-events-auto cursor-move bg-black/25 ring-2 ring-primary/60' : ''
+          }`}
         >
-          <div className="flex items-center gap-2.5 px-3 py-2">
-            <div className="grid size-8 shrink-0 place-items-center rounded bg-success/15 text-success">
+          <div className="flex items-center gap-2.5 px-2 py-1.5">
+            <div className="grid size-8 shrink-0 place-items-center rounded bg-success/20 text-success [filter:drop-shadow(0_1px_2px_rgba(0,0,0,.6))]">
               <Shield size={17} strokeWidth={2.4} />
             </div>
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <span className="truncate text-[13px] font-extrabold tracking-tight">{d.dept}</span>
+                <span className="truncate text-[13px] font-extrabold tracking-tight text-white">{d.dept}</span>
                 {d.callsign ? (
-                  <span className="rounded-sm bg-panel px-1.5 py-px text-2xs font-bold tabular-nums text-fg-muted">{d.callsign}</span>
+                  <span className="text-2xs font-bold tabular-nums text-white/75">{d.callsign}</span>
                 ) : null}
               </div>
-              <div className="truncate text-2xs font-medium text-fg-muted">{d.rank}</div>
+              <div className="truncate text-2xs font-medium text-white/75">{d.rank}</div>
             </div>
           </div>
           {showTimer && d.since ? (
-            <div className="flex items-center gap-1.5 border-t border-border-soft bg-panel/60 px-3 py-1 text-2xs font-semibold tabular-nums text-fg-muted">
+            <div className="flex items-center gap-1.5 px-2 pb-1.5 text-2xs font-semibold tabular-nums text-white/75">
               <Clock size={11} className="text-success" />
               <span>On duty</span>
-              <span className="ml-auto text-fg">{hhmm(elapsed)}</span>
+              <span className="ml-auto text-white">{hhmm(elapsed)}</span>
             </div>
           ) : null}
         </div>

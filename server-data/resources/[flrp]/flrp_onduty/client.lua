@@ -92,8 +92,12 @@ local function hudLayout()
   return { x = f('x', d.x), y = f('y', d.y), scale = f('scale', d.scale) }
 end
 
+local function hudHidden()
+  return GetResourceKvpInt('flrp_onduty:hud:hidden') == 1
+end
+
 local function pushLayout()
-  SendNUIMessage({ action = 'hudLayout', layout = hudLayout() })
+  SendNUIMessage({ action = 'hudLayout', layout = hudLayout(), hidden = hudHidden() })
 end
 
 local function endHudEdit()
@@ -108,15 +112,25 @@ RegisterNetEvent('flrp_onduty:hud', function(duty)
   SendNUIMessage({ action = 'hud', duty = duty or false, showTimer = HUD.ShowTimer ~= false })
 end)
 
--- /hud — enter layout edit mode (drag to move, +/- to resize, save/reset).
-RegisterCommand(HUD.Command or 'hud', function()
+-- /hud            -> edit mode (drag / resize / save)
+-- /hud hide|show  -> hide or show the status card (saved per player)
+RegisterCommand(HUD.Command or 'hud', function(_, args)
   if HUD.Enabled == false then return end
+  local sub = (args and args[1] or ''):lower()
+  if sub == 'hide' then
+    SetResourceKvpInt('flrp_onduty:hud:hidden', 1); pushLayout(); return
+  elseif sub == 'show' then
+    SetResourceKvpInt('flrp_onduty:hud:hidden', 0); pushLayout(); return
+  end
+  SetResourceKvpInt('flrp_onduty:hud:hidden', 0)   -- editing implies visible
   if isOpen then close() end          -- the menu and HUD-edit both want NUI focus
   hudEditing = true
   SetNuiFocus(true, true)
   SendNUIMessage({ action = 'hudEdit', on = true, layout = hudLayout() })
 end, false)
-TriggerEvent('chat:addSuggestion', '/' .. (HUD.Command or 'hud'), 'Move & resize your on-duty status card')
+TriggerEvent('chat:addSuggestion', '/' .. (HUD.Command or 'hud'), 'Duty card: move & resize; /hud hide or /hud show', {
+  { name = 'hide|show', help = 'hide or show the on-duty status card' },
+})
 
 -- NUI: player saved a new layout (persist it and leave edit mode).
 RegisterNUICallback('hudSave', function(data, cb)
