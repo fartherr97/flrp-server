@@ -60,3 +60,12 @@ Config.Preview = {
 -- Banner logo (top-left). Bundled locally so it never depends on the website
 -- being up; swap the file in img/ or point this at any https URL instead.
 Config.LogoUrl = '../img/flrp-logo.png'
+
+-- ---- Respawn behaviour ----------------------------------------------------
+-- When a player dies, bring them back to THIS selector instead of the vanilla
+-- "wasted" → nearest-hospital respawn. The selector revives them in place
+-- (hidden) first so the engine's own respawn doesn't fight it. Set false to
+-- restore default GTA respawn (e.g. once an EMS/downed system is added).
+Config.RespawnToSelector = true
+-- How long (ms) to let the death play out before the selector reopens.
+Config.RespawnDelay = 3000
