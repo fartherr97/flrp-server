@@ -157,10 +157,17 @@ end
 local function doAdvert(kind)  -- 'civ' | 'leo'
   FLRPMenu.Close()
   Wait(50)
+  -- Civilian ads can be branded to a business first (optional).
+  local business
+  if kind == 'civ' then
+    business = keyboard('Business name (optional — leave blank to skip)', 48)
+    if business then business = business:gsub('^%s+', ''):gsub('%s+$', '') end
+    Wait(50)
+  end
   local title = (kind == 'leo') and 'Department advisory' or 'Advertisement text'
   local msg = keyboard(title, FLRP_INTERACT.Ads.MaxLength)
   if not msg or msg:gsub('%s', '') == '' then return end
-  request(kind == 'leo' and 'leoAd' or 'civAd', { text = msg }, function(r)
+  request(kind == 'leo' and 'leoAd' or 'civAd', { text = msg, business = business }, function(r)
     if not r then return end
     if r.ok then toast(r.msg or 'Advertisement sent.', 'ok')
     else toast(r.error or 'Could not send.', 'error') end

@@ -49,9 +49,12 @@ end
 local H = {}
 
 function H.open(src)
+  -- Director & Ownership (flrp.staff.direct; ownership inherits) get every
+  -- category — full interaction access regardless of their own aces.
+  local staff = IsPlayerAceAllowed(src, 'flrp.staff.direct')
   return {
-    leo     = IsPlayerAceAllowed(src, 'flrp.leo'),
-    donator = IsPlayerAceAllowed(src, FLRP_INTERACT.DonatorAce) or false,
+    leo     = staff or IsPlayerAceAllowed(src, 'flrp.leo'),
+    donator = staff or IsPlayerAceAllowed(src, FLRP_INTERACT.DonatorAce) or false,
     vehicles = donatorVehicles(src),
   }
 end
@@ -65,14 +68,21 @@ function H.civAd(src, p)
   end
   local text = clean(p.text)
   if #text < 3 then return { ok = false, error = 'Advertisement too short.' } end
+  local business = clean(p.business or ''):sub(1, 48)
   lastCivAd[lic] = now
-  broadcast(Ads.CivLabel, Ads.CivColor, text)
-  pcall(function() exports.flrp_logs:Send('chat', { player = src, title = 'ADVERTISEMENT', description = text }) end)
+  local body = (business ~= '') and ('[%s] %s'):format(business, text) or text
+  broadcast(Ads.CivLabel, Ads.CivColor, body)
+  pcall(function()
+    exports.flrp_logs:Send('chat', { player = src, title = 'ADVERTISEMENT',
+      description = (business ~= '' and ('**' .. business .. '** — ') or '') .. text })
+  end)
   return { ok = true, msg = 'Advertisement broadcast.' }
 end
 
 function H.leoAd(src, p)
-  if not IsPlayerAceAllowed(src, 'flrp.leo') then return { ok = false, error = 'Law enforcement only.' } end
+  if not (IsPlayerAceAllowed(src, 'flrp.leo') or IsPlayerAceAllowed(src, 'flrp.staff.direct')) then
+    return { ok = false, error = 'Law enforcement only.' }
+  end
   local lic = licenseOf(src)
   local now = os.time()
   local last = lastLeoAd[lic]
