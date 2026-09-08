@@ -60,6 +60,8 @@ local CONVAR_ROLE_MAP = {
   flrp_role_bso             = 'bso',
   flrp_role_fhp              = 'fhp',
   flrp_role_mpd              = 'mpd',
+  -- Capability roles (ACE-only; not ranks, not name-enforced)
+  flrp_role_swat            = 'swat',   -- SWAT Permission -> full-auto access
 }
 
 local function addDiscordMap(discordRoleId, roleKey)
