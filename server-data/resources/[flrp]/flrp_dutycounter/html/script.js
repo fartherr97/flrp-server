@@ -91,6 +91,9 @@
       if (d.layout) { layout = { x: +d.layout.x, y: +d.layout.y, scale: +d.layout.scale }; }
       apply();
       setEditing(!!d.on);
+    } else if (d.type === 'vis') {
+      // Hide the whole card while the pause menu / map is open.
+      wrap.classList.toggle('hidden', !d.show);
     }
   });
 
