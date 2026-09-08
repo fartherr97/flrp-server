@@ -97,3 +97,19 @@ for cmd, ch in pairs(FLRP_CHAT.Channels) do
     { name = 'message', help = 'what to say' },
   })
 end
+
+-- ---- /clearchat (staff): wipe the chat box for everyone -------------------
+RegisterCommand('clearchat', function(src)
+  if type(src) == 'number' and src > 0 and not IsPlayerAceAllowed(src, 'flrp.staff.moderate') then
+    TriggerClientEvent('chat:addMessage', src, { color = { 200, 60, 60 }, args = { 'SYSTEM', 'You do not have access to /clearchat.' } })
+    return
+  end
+  TriggerClientEvent('chat:clear', -1)
+  TriggerClientEvent('chat:addMessage', -1, { color = { 120, 180, 240 }, args = { 'SYSTEM', 'Chat was cleared by staff.' } })
+  local who = (type(src) == 'number' and src > 0) and (GetPlayerName(src) or ('Player ' .. src)) or 'Console'
+  pcall(function()
+    exports.flrp_logs:Send('staffchat', { title = 'CHAT CLEARED',
+      description = ('**%s** cleared the in-game chat.'):format(who) })
+  end)
+end, false)
+TriggerEvent('chat:addSuggestion', '/clearchat', 'Staff: clear the in-game chat for everyone')
