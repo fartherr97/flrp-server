@@ -112,9 +112,14 @@ AddEventHandler('playerJoining', function()
 end)
 
 AddEventHandler('playerDropped', function(reason)
-  local name = GetPlayerName(source) or ('Player ' .. source)
-  Send('leave', { description = reason and ('**%s** disconnected — %s'):format(name, reason)
-                                        or ('**%s** disconnected.'):format(name) })
+  local src  = source
+  local name = GetPlayerName(src) or ('Player ' .. src)
+  local did  = discordIdOf(src)
+  Send('leave', {
+    description = reason and ('**%s** disconnected — %s'):format(name, reason)
+                          or ('**%s** disconnected.'):format(name),
+    fields = did and { { name = 'Discord', value = ('<@%s> `%s`'):format(did, did), inline = false } } or nil,
+  })
 end)
 
 -- Only these labels are accepted from the client; anything else -> 'Unknown'.
