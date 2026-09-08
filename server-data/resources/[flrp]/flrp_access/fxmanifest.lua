@@ -31,5 +31,6 @@ server_scripts {
   'server/config.lua',
   'server/discord.lua',
   'server/namecheck.lua',
+  'server/tempkick.lua',
   'server/main.lua',
 }
