@@ -62,6 +62,7 @@ local CONVAR_ROLE_MAP = {
   flrp_role_mpd              = 'mpd',
   -- Capability roles (ACE-only; not ranks, not name-enforced)
   flrp_role_swat            = 'swat',   -- SWAT Permission -> full-auto access
+  flrp_role_dev             = 'dev',    -- Dev Team -> jg-handling editor access
 }
 
 local function addDiscordMap(discordRoleId, roleKey)
