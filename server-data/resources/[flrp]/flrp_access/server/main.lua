@@ -50,6 +50,20 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
     deferrals.done(denyMessage('could not read your FiveM license'))
     return
   end
+
+  -- Temp-kick cooldown: a recently-kicked player can't rejoin for a window
+  -- (default 30 min). Checked before Discord so it fails fast and takes
+  -- priority over other denial reasons.
+  local rem = FLRPA.TempKick and FLRPA.TempKick.Remaining(source) or 0
+  if rem > 0 then
+    local mins = math.ceil(rem / 60)
+    logBlocked(name, discordId, ('temp-kick cooldown (%d min left)'):format(mins))
+    deferrals.done(denyMessage(
+      ('you were recently kicked from the server. You can rejoin in about %d minute%s.')
+        :format(mins, mins == 1 and '' or 's')))
+    return
+  end
+
   if not discordId then
     logBlocked(name, nil, 'no Discord account linked to FiveM client')
     deferrals.done(denyMessage(
