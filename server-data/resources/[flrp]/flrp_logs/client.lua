@@ -70,3 +70,26 @@ end
 
 AddEventHandler('baseevents:onPlayerDied',   report)
 AddEventHandler('baseevents:onPlayerKilled', report)
+
+-- ---- Non-fatal damage: who hit me, and with what --------------------------
+-- Each client reports damage it TAKES (so the attacker is known reliably), only
+-- when a real player is the attacker, debounced per-attacker so a burst of fire
+-- is a single log line rather than one per bullet.
+local dmgLast = {}   -- [attackerServerId] = last GetGameTimer()
+AddEventHandler('gameEventTriggered', function(name, args)
+  if name ~= 'CEventNetworkEntityDamage' then return end
+  local me = PlayerPedId()
+  local victim, attacker = args[1], args[2]
+  if victim ~= me then return end                      -- only our own damage
+  if not attacker or attacker == 0 or attacker == me then return end
+  if not IsEntityAPed(attacker) or not IsPedAPlayer(attacker) then return end
+  local pl = NetworkGetPlayerIndexFromPed(attacker)
+  if not pl or pl == -1 then return end
+  local sid = GetPlayerServerId(pl)
+
+  local now = GetGameTimer()
+  if dmgLast[sid] and now - dmgLast[sid] < 5000 then return end   -- one log per attacker / 5s
+  dmgLast[sid] = now
+
+  TriggerServerEvent('flrp_logs:damage', sid, classify(GetSelectedPedWeapon(attacker), false))
+end)
