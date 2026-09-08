@@ -43,6 +43,10 @@
     el.classList.remove('bump');
     void el.offsetWidth;
     el.classList.add('bump');
+    // Remove it after the pop so the number settles back to its normal size
+    // (leaving it on kept the value stuck at scale(1.25) → looked oversized).
+    clearTimeout(el._bumpT);
+    el._bumpT = setTimeout(() => el.classList.remove('bump'), 200);
   }
 
   // ---- edit mode ------------------------------------------------------------
