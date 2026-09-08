@@ -116,9 +116,10 @@ function DutyHud() {
       >
         <div
           onMouseDown={onDown}
-          style={{ textShadow: '0 1px 3px rgba(0,0,0,.95)' }}
-          className={`w-[220px] select-none rounded-md transition-colors ${
-            editing ? 'pointer-events-auto cursor-move bg-black/25 ring-2 ring-primary/60' : ''
+          style={{ textShadow: '0 1px 2px rgba(0,0,0,.55)' }}
+          className={`w-[220px] select-none rounded-lg shadow-md shadow-black/30 backdrop-blur-sm transition-colors ${
+            editing ? 'pointer-events-auto cursor-move bg-panel ring-2 ring-primary/60'
+                    : 'bg-panel/80 ring-1 ring-white/10'
           }`}
         >
           <div className="flex items-center gap-2.5 px-2 py-1.5">
