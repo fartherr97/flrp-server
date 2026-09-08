@@ -168,3 +168,17 @@ AddEventHandler('onClientResourceStart', function(resource)
   exports.spawnmanager:setAutoSpawn(true)
   exports.spawnmanager:forceRespawn()
 end)
+
+-- ---- Setup helper: /coords -----------------------------------------------
+-- Stand where you want a spawn/jail/hospital point, face the direction players
+-- should face, and run /coords. It prints a ready-to-paste vector4 to chat AND
+-- the F8 console (select + copy there). Use it to fill Config.Points here, or
+-- flrp_jail / flrp_death coord configs.
+RegisterCommand('coords', function()
+  local ped = PlayerPedId()
+  local c = GetEntityCoords(ped)
+  local line = ('vector4(%.2f, %.2f, %.2f, %.1f)'):format(c.x, c.y, c.z, GetEntityHeading(ped))
+  print('[flrp_spawn] ' .. line)
+  TriggerEvent('chat:addMessage', { color = { 120, 220, 160 }, multiline = true, args = { 'COORDS', line } })
+end, false)
+TriggerEvent('chat:addSuggestion', '/coords', 'Print your current vector4(x, y, z, heading) — for wiring spawn / jail / hospital points')

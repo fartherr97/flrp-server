@@ -34,8 +34,28 @@ CreateThread(function()
   local rows = FLRP.DB.Query('SELECT * FROM `greenzones`') or {}
   zones = {}
   for _, r in ipairs(rows) do zones[r.id] = r end
+
+  -- Seed default zones once (by name), so the station/hospital safezones exist
+  -- without hand-creating them. Existing names are never touched.
+  local have = {}
+  for _, r in ipairs(rows) do have[tostring(r.name):lower()] = true end
+  for _, z in ipairs(FLRP_GZ.DefaultZones or {}) do
+    if not have[tostring(z.name):lower()] then
+      local id = FLRP.DB.Insert(
+        'INSERT INTO `greenzones` (`name`,`x`,`y`,`z`,`radius`,`opt_weapons`,`opt_damage`,`opt_vehicles`,`created_by`) VALUES (?,?,?,?,?,?,?,?,?)',
+        { z.name, z.x, z.y, z.z, clampRadius(z.radius),
+          z.weapons ~= false and 1 or 0, z.damage ~= false and 1 or 0, z.vehicles == true and 1 or 0, 'seed' })
+      if id then
+        zones[id] = { id = id, name = z.name, x = z.x, y = z.y, z = z.z, radius = clampRadius(z.radius),
+          opt_weapons = z.weapons ~= false and 1 or 0, opt_damage = z.damage ~= false and 1 or 0,
+          opt_vehicles = z.vehicles == true and 1 or 0 }
+      end
+    end
+  end
+
   ready = true
-  print(('[flrp_greenzone] ready — %d zone(s).'):format(#rows))
+  local n = 0; for _ in pairs(zones) do n = n + 1 end
+  print(('[flrp_greenzone] ready — %d zone(s).'):format(n))
 end)
 
 -- The list every client keeps + enforces.

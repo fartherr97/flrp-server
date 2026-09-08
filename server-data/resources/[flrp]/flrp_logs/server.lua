@@ -139,3 +139,22 @@ RegisterNetEvent('flrp_logs:death', function(cause, killerSid)
 
   Send('death', { description = desc, fields = fields })
 end)
+
+-- Non-fatal damage: the victim's client reports who hit them and with what.
+RegisterNetEvent('flrp_logs:damage', function(attackerSid, cause)
+  local src  = source
+  local name = GetPlayerName(src) or ('Player ' .. src)
+  if not DEATH_CAUSES[cause] then cause = 'Unknown' end   -- same classifier as deaths
+
+  attackerSid = tonumber(attackerSid)
+  local attackerName
+  if attackerSid and attackerSid ~= src then attackerName = GetPlayerName(attackerSid) end
+
+  local desc = attackerName
+    and ('**%s** was damaged by **%s** by **%s**.'):format(name, cause, attackerName)
+    or  ('**%s** took **%s** damage.'):format(name, cause)
+
+  Send('damage', { player = src, description = desc,
+    fields = attackerName and { { name = 'Cause', value = cause, inline = true },
+                                { name = 'By', value = attackerName, inline = true } } or nil })
+end)

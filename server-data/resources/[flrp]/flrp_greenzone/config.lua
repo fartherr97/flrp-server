@@ -22,6 +22,16 @@ FLRP_GZ.DefaultRadius = 30.0
 FLRP_GZ.MinRadius     = 5.0
 FLRP_GZ.MaxRadius     = 300.0
 
+-- Zones auto-created on first boot (matched by name, so they seed once — after
+-- that, move/resize/delete them freely in /greenzones and it won't re-add them).
+-- Radii are generous so each fully encompasses its station / hospital.
+FLRP_GZ.DefaultZones = {
+  { name = 'Mission Row PD',    x = 440.83,  y = -984.53, z = 22.85, radius = 75.0, weapons = true, damage = true, vehicles = false },
+  { name = 'BSO Sandy Station', x = 1850.71, y = 3700.96, z = 33.76, radius = 60.0, weapons = true, damage = true, vehicles = false },
+  { name = 'FHP HQ',            x = 2821.90, y = 4763.21, z = 47.37, radius = 60.0, weapons = true, damage = true, vehicles = false },
+  { name = 'Sandy Hospital',    x = 1741.63, y = 3637.54, z = 44.86, radius = 55.0, weapons = true, damage = true, vehicles = false },
+}
+
 -- Map blip for each zone.
 FLRP_GZ.Blip = { colour = 2, alpha = 80, sprite = 492 }  -- 2 = green
 
