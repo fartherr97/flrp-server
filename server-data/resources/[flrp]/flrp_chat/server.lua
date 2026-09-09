@@ -3,6 +3,8 @@
 -- ==========================================================================
 -- 1. Recolors normal chat display names by the sender's highest staff tier
 --    (Discord role colors, from config.lua).
+-- 1b. /ooc /gooc (out-of-character, local/global) and /me /gme (emotes).
+--    Global lines are relayed to Discord through flrp_chatbridge.
 -- 2. Adds ACE-gated channels: /sc (staff), /ac (admin), /dc (director). Each
 --    message is prefixed "(LABEL) Name" in the channel color and delivered
 --    ONLY to players who hold that channel's ACE.
@@ -38,7 +40,66 @@ AddEventHandler('chatMessage', function(src, name, msg)
     args = { name, msg },
   })
   pcall(function() exports.flrp_logs:Send('chat', { player = src, description = msg }) end)
+  pcall(function() exports.flrp_chatbridge:Relay(src, name, msg, 'chat') end)   -- -> Discord #ingame-chat
 end)
+
+-- ---- 1b. /ooc /gooc /me /gme ---------------------------------------------
+local RP = FLRP_CHAT.RP
+
+local function pname(src) return GetPlayerName(src) or ('Player ' .. src) end
+
+-- Server ids within `radius` metres of `src` (always includes `src`).
+local function nearby(src, radius)
+  local out = { src }
+  local ped = GetPlayerPed(src)
+  if not ped or ped == 0 then return out end
+  local origin = GetEntityCoords(ped)
+  for _, pid in ipairs(GetPlayers()) do
+    local s = tonumber(pid)
+    if s and s ~= src then
+      local p = GetPlayerPed(s)
+      if p and p ~= 0 and #(GetEntityCoords(p) - origin) <= radius then out[#out + 1] = s end
+    end
+  end
+  return out
+end
+
+local function usage(src, cmd, what)
+  TriggerClientEvent('chat:addMessage', src, { color = { 120, 180, 240 }, args = { 'SYSTEM', ('usage: /%s <%s>'):format(cmd, what) } })
+end
+
+-- Shared guts: validate, filter, build the line, deliver, log, relay.
+local function rpCommand(cmd, opts)
+  RegisterCommand(cmd, function(src, args)
+    if type(src) ~= 'number' or src <= 0 then return end
+    local message = table.concat(args, ' ')
+    message = message:gsub('^%s+', ''):gsub('%s+$', '')
+    if message == '' then return usage(src, cmd, opts.what) end
+    if #message > 256 then message = message:sub(1, 256) end
+    local blocked = false
+    pcall(function() blocked = exports.flrp_chatfilter:Scan(src, message) end)
+    if blocked then return end
+    local name = pname(src)
+    local line = { color = opts.color, multiline = true, args = opts.args(name, message) }
+    if opts.radius then
+      for _, pid in ipairs(nearby(src, opts.radius)) do TriggerClientEvent('chat:addMessage', pid, line) end
+    else
+      TriggerClientEvent('chat:addMessage', -1, line)
+    end
+    pcall(function() exports.flrp_logs:Send('chat', { player = src, description = ('/%s %s'):format(cmd, message) }) end)
+    if opts.relay then pcall(function() exports.flrp_chatbridge:Relay(src, name, message, opts.relay) end) end
+  end, false)
+  TriggerEvent('chat:addSuggestion', '/' .. cmd, opts.help, { { name = opts.what, help = opts.help } })
+end
+
+rpCommand('ooc',  { what = 'message', help = 'Local out-of-character chat (nearby players)', color = RP.Colors.ooc,  radius = RP.OOCRadius,
+  args = function(name, msg) return { ('OOC | %s'):format(name), msg } end })
+rpCommand('gooc', { what = 'message', help = 'Global out-of-character chat (everyone)', color = RP.Colors.gooc, relay = 'gooc',
+  args = function(name, msg) return { ('GOOC | %s'):format(name), msg } end })
+rpCommand('me',   { what = 'action', help = 'Local emote: * Name does something (nearby players)', color = RP.Colors.me, radius = RP.MeRadius,
+  args = function(name, msg) return { ('* %s %s'):format(name, msg) } end })
+rpCommand('gme',  { what = 'action', help = 'Global emote: * Name does something (everyone)', color = RP.Colors.gme, relay = 'gme',
+  args = function(name, msg) return { ('* %s %s'):format(name, msg) } end })
 
 -- ---- 2. Gated channels ----------------------------------------------------
 -- May this player use / receive a channel? (its ACE, or an optional bypass ACE)

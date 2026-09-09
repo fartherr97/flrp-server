@@ -49,3 +49,19 @@ FLRP_CHAT.Tiers = {
   { ace = 'flrp.staff.administer', key = 'admin' },
   { ace = 'flrp.staff.moderate',   key = 'staff' },
 }
+
+-- ---- RP / OOC chat commands ----------------------------------------------
+-- /ooc  <msg>  local out-of-character (players within OOCRadius metres)
+-- /gooc <msg>  global out-of-character (everyone; streamed to Discord)
+-- /me   <msg>  local emote  "* Name does something" (players within MeRadius)
+-- /gme  <msg>  global emote (everyone; streamed to Discord)
+FLRP_CHAT.RP = {
+  OOCRadius = 20.0,
+  MeRadius  = 20.0,
+  Colors = {
+    ooc  = hex('#95a5a6'),   -- grey
+    gooc = hex('#3498db'),   -- blue
+    me   = hex('#c39bd3'),   -- lilac
+    gme  = hex('#9b59b6'),   -- purple
+  },
+}

@@ -22,6 +22,20 @@ FLRPI.Router.Add('GET', '/health', function()
   return 200, { ok = true, ready = exports.flrp_core:IsReady() == true, service = 'flrp_api' }
 end)
 
+-- ---- Discord -> in-game chat (called by the FLRP Discord bot) -------------
+-- POST body: { name: 'Display Name', message: 'text' }. Renders in every
+-- player's chatbox as "[Discord] Display Name: text" via flrp_chatbridge.
+FLRPI.Router.Add('POST', '/chat/discord', function(ctx)
+  local b = ctx.body or {}
+  local name, message = tostring(b.name or ''), tostring(b.message or '')
+  if name == '' or message == '' then return 400, { error = 'bad_input' } end
+  local ok, res, n
+  ok = pcall(function() res, n = exports.flrp_chatbridge:FromDiscord(name, message) end)
+  if not ok then return 503, { error = 'chatbridge_unavailable' } end
+  if not res then return 400, { error = tostring(n or 'rejected') } end
+  return 200, { ok = true, delivered = n }
+end)
+
 -- ---- Live config sync webhook (called by florida-roleplay-site on save) ---
 -- POST body: { scope: 'all'|'permissions'|'mappings'|'vehicles'|'weapons'|'payrates' }
 -- Pulls the authoritative config for that scope from the site read API and
