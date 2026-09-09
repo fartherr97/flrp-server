@@ -29,18 +29,18 @@ Config.Header = {
 -- Leave `image` nil to fall back to a glass card showing the live in-game
 -- location behind it.
 Config.Points = {
-  { name = 'Legion Square',  area = 'Los Santos',     image = '../img/legion.webp',     desc = 'Downtown core — banks, shops and the busiest civilian hub.',        coords = vector4(197.94, -932.4, 30.69, 320.0) },
-  { name = 'Pillbox Hill',   area = 'Los Santos',     image = '../img/pillbox.jpg',     desc = 'Central medical district next to Pillbox Hospital.',                coords = vector4(298.98, -584.45, 43.26, 70.0) },
-  { name = 'LS Airport',     area = 'Los Santos',     image = '../img/airport.webp',    desc = 'Los Santos International — air ops and the southern highway.',      coords = vector4(-1037.74, -2738.04, 20.17, 330.0) },
-  { name = 'Mission Row PD', area = 'MPD — LEO only',  image = '../img/missionrow.webp', desc = 'Mission Row police station. Sworn law enforcement only.',           coords = vector4(440.83, -984.53, 22.85, 268.2), ace = 'flrp.leo' },
-  { name = 'BSO Sandy Station', area = 'BSO — LEO only', image = '../img/sandyshores.webp', desc = 'Broward SO substation in Sandy Shores. Sworn law enforcement only.', coords = vector4(1850.71, 3700.96, 33.76, 291.4), ace = 'flrp.leo' },
-  { name = 'FHP HQ', area = 'FHP — LEO only', image = '../img/grapeseed.webp', desc = 'Florida Highway Patrol headquarters. Sworn law enforcement only.', coords = vector4(2821.90, 4763.21, 47.37, 78.8), ace = 'flrp.leo' },
-  { name = 'Sandy Shores',   area = 'Blaine County',  image = '../img/sandyshores.webp',desc = 'Desert town in the county — Sandy SO and the trailer parks.',       coords = vector4(1884.41, 3714.45, 32.93, 210.0) },
-  { name = 'Paleto Bay',     area = 'Blaine County',  image = '../img/paleto.jpg',      desc = 'The far-north coastal town, Paleto SO and the bank.',               coords = vector4(-134.20, 6212.20, 31.21, 47.09) },
-  { name = 'Grapeseed',      area = 'Blaine County',  image = '../img/grapeseed.webp',  desc = 'Quiet farming community east of the Alamo Sea.',                    coords = vector4(1654.72, 4825.46, 42.08, 280.0) },
-  { name = 'Vinewood',       area = 'Los Santos',     image = '../img/vinewood.webp',   desc = 'The hills above the city — clubs, mansions and the sign.',          coords = vector4(436.64, 218.38, 103.62, 160.0) },
-  { name = 'Del Perro',      area = 'Los Santos',     image = '../img/delperro.jpg',    desc = 'West-side beachfront, the pier and the boardwalk.',                 coords = vector4(-1341.27, -1298.66, 4.84, 292.0) },
-  { name = 'Mirror Park',    area = 'Los Santos',     image = '../img/mirrorpark.webp', desc = 'East-side residential neighbourhood around the lake.',              coords = vector4(1130.21, -645.9, 56.58, 272.0) },
+  { name = 'Downtown Miami', area = 'Miami-Dade',     image = '../img/legion.webp',     desc = 'Bayfront core — banks, shops and the busiest civilian hub.',        coords = vector4(197.94, -932.4, 30.69, 320.0) },
+  { name = 'Jackson Memorial', area = 'Miami-Dade',   image = '../img/pillbox.jpg',     desc = 'Civic Center medical district beside Jackson Memorial Hospital.',                coords = vector4(298.98, -584.45, 43.26, 70.0) },
+  { name = 'Miami International', area = 'Miami-Dade', image = '../img/airport.webp',   desc = 'MIA — air ops, cargo and the Dolphin Expressway.',      coords = vector4(-1037.74, -2738.04, 20.17, 330.0) },
+  { name = 'Miami PD Headquarters', area = 'MPD — LEO only', image = '../img/missionrow.webp', desc = 'Miami Police Department headquarters. Sworn law enforcement only.',           coords = vector4(440.83, -984.53, 22.85, 268.2), ace = 'flrp.leo' },
+  { name = 'BSO Davie District', area = 'BSO — LEO only', image = '../img/sandyshores.webp', desc = 'Broward Sheriff\'s Office district station in Davie. Sworn law enforcement only.', coords = vector4(1850.71, 3700.96, 33.76, 291.4), ace = 'flrp.leo' },
+  { name = 'FHP Troop E', area = 'FHP — LEO only', image = '../img/grapeseed.webp', desc = 'Florida Highway Patrol Troop E station. Sworn law enforcement only.', coords = vector4(2821.90, 4763.21, 47.37, 78.8), ace = 'flrp.leo' },
+  { name = 'Davie',          area = 'Broward County', image = '../img/sandyshores.webp',desc = 'Western Broward town — ranches, the rodeo grounds and the BSO district.',       coords = vector4(1884.41, 3714.45, 32.93, 210.0) },
+  { name = 'Deerfield Beach', area = 'Broward County', image = '../img/paleto.jpg',     desc = 'The far-north coastal town — the pier, the beach and the bank.',               coords = vector4(-134.20, 6212.20, 31.21, 47.09) },
+  { name = 'Homestead',      area = 'South Dade',     image = '../img/grapeseed.webp',  desc = 'Quiet farming community in the Redland — nurseries and packing houses.',                    coords = vector4(1654.72, 4825.46, 42.08, 280.0) },
+  { name = 'Coral Gables',   area = 'Miami-Dade',     image = '../img/vinewood.webp',   desc = 'Tree-lined estates, Miracle Mile and old-money mansions.',          coords = vector4(436.64, 218.38, 103.62, 160.0) },
+  { name = 'South Beach',    area = 'Miami Beach',    image = '../img/delperro.jpg',    desc = 'Ocean Drive — the beachfront, the pier and the boardwalk.',                 coords = vector4(-1341.27, -1298.66, 4.84, 292.0) },
+  { name = 'Coconut Grove',  area = 'Miami-Dade',     image = '../img/mirrorpark.webp', desc = 'Leafy bayside neighbourhood — marinas, cafés and quiet streets.',              coords = vector4(1130.21, -645.9, 56.58, 272.0) },
 }
 
 -- Preview camera: when a card is focused, the camera flies to that spawn and
