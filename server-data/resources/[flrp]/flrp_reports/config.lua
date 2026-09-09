@@ -29,6 +29,10 @@ FLRP_REPORTS.Categories = {
   { id = 'other',   label = 'Other',             colour = '#9aa7b2' },
 }
 
+-- "Send players near you?" on the report form attaches every player within this
+-- many metres (server-measured) to the report for staff.
+FLRP_REPORTS.NearbyDistance   = 20.0
+
 -- Anti-spam
 FLRP_REPORTS.CooldownSeconds  = 60     -- between submissions per player
 FLRP_REPORTS.MaxOpenPerPlayer = 3      -- open/claimed reports a player may have at once

@@ -13,4 +13,14 @@ export function dur(sec?: number | null) {
 export const ago = (ts?: number) => (ts ? dur(Date.now() / 1000 - ts) + ' ago' : '—');
 export const clock = (ts?: number | null) =>
   ts ? new Date(ts * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '—';
-export const statusTone = (s: string) => (s === 'open' ? 'warning' : s === 'claimed' ? 'primary' : 'success') as const;
+/** vReports-style stamp: "14:05 9/9/2026" */
+export const stamp = (ts?: number | null) => {
+  if (!ts) return '—';
+  const d = new Date(ts * 1000);
+  const mm = d.getMinutes();
+  return `${d.getHours()}:${mm < 10 ? '0' : ''}${mm} ${d.getMonth() + 1}/${d.getDate()}/${d.getFullYear()}`;
+};
+export const statusTone = (s: string): 'warning' | 'primary' | 'success' => (s === 'open' ? 'warning' : s === 'claimed' ? 'primary' : 'success');
+const KEY = 'flrp_reports_notifications';
+export const notificationsEnabled = () => { try { return localStorage.getItem(KEY) !== 'off'; } catch { return true; } };
+export const setNotificationsEnabled = (on: boolean) => { try { localStorage.setItem(KEY, on ? 'on' : 'off'); } catch { /* ignore */ } };

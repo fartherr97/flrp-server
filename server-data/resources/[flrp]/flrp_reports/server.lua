@@ -62,6 +62,30 @@ local function catInfo(id)
   return FLRP_REPORTS.Categories[#FLRP_REPORTS.Categories]
 end
 
+-- Players within FLRP_REPORTS.NearbyDistance of `src` (server-side coords, so
+-- the client can't fabricate the list). Sorted nearest first.
+local function nearbyPlayers(src)
+  local ped = GetPlayerPed(src)
+  if not ped or ped == 0 then return nil end
+  local origin = GetEntityCoords(ped)
+  local maxD = tonumber(FLRP_REPORTS.NearbyDistance) or 20.0
+  local out = {}
+  for _, pid in ipairs(GetPlayers()) do
+    local s = tonumber(pid)
+    if s and s ~= src then
+      local p = GetPlayerPed(s)
+      if p and p ~= 0 then
+        local d = #(GetEntityCoords(p) - origin)
+        if d <= maxD then
+          out[#out + 1] = { id = s, name = GetPlayerName(s) or ('Player ' .. s), distance = math.floor(d * 10 + 0.5) / 10 }
+        end
+      end
+    end
+  end
+  table.sort(out, function(a, b) return a.distance < b.distance end)
+  return out
+end
+
 local function trim(s, max)
   s = tostring(s or '')
   s = (s:gsub('^%s+', ''))
@@ -149,6 +173,15 @@ local function ensureTables()
       KEY `idx_report` (`report_id`)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
   ]])
+  -- Additive migration: `nearby` (JSON list of players near the reporter at
+  -- submit time). CREATE TABLE IF NOT EXISTS never alters an existing table.
+  local has = FLRP.DB.Scalar([[
+    SELECT COUNT(*) FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'reports' AND COLUMN_NAME = 'nearby'
+  ]]) or 0
+  if tonumber(has) == 0 then
+    FLRP.DB.Query('ALTER TABLE `reports` ADD COLUMN `nearby` TEXT NULL AFTER `description`')
+  end
 end
 
 local function loadWorkingSet()
@@ -161,6 +194,10 @@ local function loadWorkingSet()
   local ids = {}
   for _, r in ipairs(rows) do
     r.messages = {}
+    if type(r.nearby) == 'string' then
+      local ok, list = pcall(json.decode, r.nearby)
+      r.nearby = (ok and type(list) == 'table') and list or nil
+    end
     reports[r.id] = r
     ids[#ids + 1] = r.id
   end
@@ -218,6 +255,7 @@ local function view(r, viewerSrc)
     resolvedAt     = r.resolved_at,
     resolution     = r.resolution,
     messages       = r.messages,
+    nearby         = (type(r.nearby) == 'table' and #r.nearby > 0) and r.nearby or nil,
     canReturn      = (staff and r.broughtFrom ~= nil) or nil, -- a previous spot is saved
   }
 end
@@ -248,6 +286,7 @@ local function stateFor(src)
     maxDesc      = FLRP_REPORTS.MaxDescription,
     maxMsg       = FLRP_REPORTS.MaxMessage,
     maxOpen      = FLRP_REPORTS.MaxOpenPerPlayer,
+    nearbyDistance = FLRP_REPORTS.NearbyDistance,
     now          = os.time(),
   }
 end
@@ -277,15 +316,17 @@ function H.submit(src, p)
   local cat    = catInfo(p.category).id
   local target = trim(p.target or '', 100); if target == '' then target = nil end
   local name   = GetPlayerName(src) or ('Player ' .. src)
+  local nearby = (p.nearby == true or p.nearby == 'true') and nearbyPlayers(src) or nil
+  if nearby and #nearby == 0 then nearby = nil end
 
   local id = FLRP.DB.Insert(
-    'INSERT INTO `reports` (`reporter_license`,`reporter_name`,`target_name`,`category`,`description`,`status`,`created_at`) VALUES (?,?,?,?,?,?,?)',
-    { lic, name, target, cat, desc, 'open', t })
+    'INSERT INTO `reports` (`reporter_license`,`reporter_name`,`target_name`,`category`,`description`,`nearby`,`status`,`created_at`) VALUES (?,?,?,?,?,?,?,?)',
+    { lic, name, target, cat, desc, nearby and json.encode(nearby) or nil, 'open', t })
   if not id then return { ok = false, error = 'Database error — try again in a moment.' } end
 
   reports[id] = {
     id = id, reporter_license = lic, reporter_name = name, target_name = target,
-    category = cat, description = desc, status = 'open', created_at = t, messages = {},
+    category = cat, description = desc, nearby = nearby, status = 'open', created_at = t, messages = {},
   }
   lastSubmit[lic] = t
 
@@ -300,6 +341,12 @@ function H.submit(src, p)
     { name = 'Category', value = label, inline = true },
     { name = 'Against',  value = target or '—', inline = true },
     { name = 'Staff online', value = tostring(#staffSrcs()), inline = true },
+    nearby and { name = ('Nearby players (%d)'):format(#nearby), value = (function()
+      local parts = {}
+      for i = 1, math.min(#nearby, 12) do parts[#parts + 1] = ('[%d] %s (%.0fm)'):format(nearby[i].id, nearby[i].name, nearby[i].distance) end
+      if #nearby > 12 then parts[#parts + 1] = ('… +%d more'):format(#nearby - 12) end
+      return table.concat(parts, ', ')
+    end)(), inline = false } or nil,
   }, {
     -- plain text ABOVE the embed: just the staff-team ping (embed carries the rest)
     content      = role and ('<@&' .. role .. '>') or nil,

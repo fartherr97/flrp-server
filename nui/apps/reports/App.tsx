@@ -1,14 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Inbox, PencilLine, CheckCircle2, BarChart3, Plus, FileText, ListChecks } from 'lucide-react';
-import { AppHeader, Badge, StatusIndicator, EmptyState, KeybindHint, cn, fetchNui, useNuiEvent, useEscape, isBrowser, mockMessage } from '@flrp/components';
-import { req, ago, statusTone } from './lib';
+import { BarChart3, CheckCircle2, FileText, Inbox, PencilLine, Plus, Search, ShieldCheck, X } from 'lucide-react';
+import { cn, fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/components';
+import { req } from './lib';
 import type { State, Report } from './types';
 import { Toasts } from './components/Toasts';
 import { NewReport } from './components/NewReport';
 import { ReportDetail } from './components/ReportDetail';
+import { ReportCard } from './components/ReportCard';
 import { Analytics } from './components/Analytics';
+import { SettingsMenu } from './components/Settings';
 
-type View = 'queue' | 'mine' | 'resolved' | 'analytics' | 'new' | 'myreports';
+const VERSION = 'v2.0';
+type View = 'queue' | 'mine' | 'resolved' | 'analytics' | 'myreports';
+type OpenView = View | 'new';
 const rank = (s: string) => (s === 'open' ? 0 : s === 'claimed' ? 1 : 2);
 
 export function App() {
@@ -16,116 +20,142 @@ export function App() {
   const [state, setState] = useState<State | null>(null);
   const [view, setView] = useState<View>('queue');
   const [sel, setSel] = useState<number | null>(null);
+  const [composing, setComposing] = useState(false);
+  const [query, setQuery] = useState('');
+  const [flash, setFlash] = useState<string | null>(null);
 
-  const close = () => { setOpen(false); fetchNui('close'); };
-  useEscape(close, open);
+  const close = () => { setOpen(false); setComposing(false); setSel(null); fetchNui('close'); };
   const refresh = () => req<State>('state').then((s) => s.ok && setState(s));
 
-  useNuiEvent<{ state: State; view?: View; reportId?: number }>('open', (d) => {
-    setState(d.state); setOpen(true);
-    let v: View = d.view || (d.state.isStaff ? 'queue' : 'new');
-    if (d.reportId != null) { setSel(d.reportId); v = d.state.isStaff ? 'queue' : 'myreports'; }
-    setView(v);
+  useNuiEvent<{ state: State; view?: OpenView; reportId?: number }>('open', (d) => {
+    setState(d.state); setOpen(true); setQuery('');
+    const v: OpenView = d.view || (d.state.isStaff ? 'queue' : 'myreports');
+    if (d.reportId != null) { setSel(d.reportId); setView(d.state.isStaff ? 'queue' : 'myreports'); setComposing(false); return; }
+    if (v === 'new') { setView('myreports'); setComposing(true); return; }
+    setView(v); setComposing(false);
   });
   useNuiEvent<{ state: State }>('state', (d) => setState(d.state));
   useNuiEvent('close', () => setOpen(false));
   useEffect(() => { if (isBrowser()) mockMessage('open', { state: MOCK }); }, []);
 
+  // ESC closes the innermost layer first: detail modal → submit dialog → menu.
+  useEffect(() => {
+    if (!open) return;
+    const h = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return;
+      if (sel != null) return setSel(null);
+      if (composing) return setComposing(false);
+      close();
+    };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [open, sel, composing]);
+
   const list = useMemo<Report[]>(() => {
     if (!state) return [];
     const all = state.reports;
     const sort = (a: Report[]) => [...a].sort((x, y) => rank(x.status) - rank(y.status) || y.createdAt - x.createdAt);
-    if (view === 'queue') return sort(all.filter((r) => r.status !== 'resolved'));
-    if (view === 'mine') return sort(all.filter((r) => r.claimedByMe && r.status !== 'resolved'));
-    if (view === 'resolved') return [...all.filter((r) => r.status === 'resolved')].sort((a, b) => (b.resolvedAt || 0) - (a.resolvedAt || 0));
-    if (view === 'myreports') return sort(all);
-    return [];
-  }, [state, view]);
+    let out: Report[] = [];
+    if (view === 'queue') out = sort(all.filter((r) => r.status !== 'resolved'));
+    else if (view === 'mine') out = sort(all.filter((r) => r.claimedByMe && r.status !== 'resolved'));
+    else if (view === 'resolved') out = [...all.filter((r) => r.status === 'resolved')].sort((a, b) => (b.resolvedAt || 0) - (a.resolvedAt || 0));
+    else if (view === 'myreports') out = sort(all);
+    const q = query.trim().toLowerCase();
+    if (!q) return out;
+    return out.filter((r) => [String(r.id), r.reporter.name, r.target || '', r.categoryLabel, r.description, r.status, r.claimedBy || '']
+      .some((v) => v.toLowerCase().includes(q)));
+  }, [state, view, query]);
 
   if (!open || !state) return <Toasts hintKey={state?.key || 'J'} />;
   const report = sel != null ? state.reports.find((r) => r.id === sel) || null : null;
   const count = (f: (r: Report) => boolean) => state.reports.filter(f).length;
+  const logo = state.logo
+    ? <img src={state.logo} alt="" className="size-5 rounded-sm object-cover" />
+    : <ShieldCheck className="size-[18px] text-primary" />;
 
-  const nav: { id: View; label: string; icon: JSX.Element; n?: number; hot?: boolean }[] = state.isStaff
-    ? [{ id: 'queue', label: 'Queue', icon: <Inbox />, n: count((r) => r.status === 'open'), hot: true },
+  const tabs: { id: View; label: string; icon: JSX.Element; n?: number }[] = state.isStaff
+    ? [{ id: 'queue', label: 'Reports', icon: <Inbox />, n: count((r) => r.status === 'open') },
        { id: 'mine', label: 'My Claims', icon: <PencilLine />, n: count((r) => r.claimedByMe && r.status !== 'resolved') },
-       { id: 'resolved', label: 'Resolved', icon: <CheckCircle2 />, n: count((r) => r.status === 'resolved') },
+       { id: 'resolved', label: 'Resolved', icon: <CheckCircle2 /> },
        { id: 'analytics', label: 'Analytics', icon: <BarChart3 /> }]
-    : [{ id: 'new', label: 'New Report', icon: <Plus /> },
-       { id: 'myreports', label: 'My Reports', icon: <FileText />, n: count((r) => r.status !== 'resolved'), hot: true }];
+    : [{ id: 'myreports', label: 'My Reports', icon: <FileText />, n: count((r) => r.status !== 'resolved') }];
 
-  const showList = view !== 'analytics' && view !== 'new';
+  const emptyText = view === 'queue' ? 'No Reports available.' : view === 'mine' ? 'You have not claimed any reports.'
+    : view === 'resolved' ? 'No concluded reports yet.' : 'You have no active reports.';
 
   return (
     <>
       <Toasts hintKey={state.key} />
       <div className="absolute inset-0 flex items-center justify-center animate-flrp-in">
-        <div className="flex h-[660px] max-h-[92vh] w-[1060px] max-w-[95vw] flex-col overflow-hidden rounded-lg border border-border bg-bg shadow-xl shadow-black/50 animate-flrp-rise">
-          <AppHeader title="FLRP Reports" subtitle={state.isStaff ? 'Staff Console' : 'Player Support'} logo={state.logo} onClose={close}
-            right={<Badge tone="neutral">{state.staffOnline} staff online</Badge>} />
-          <div className="flex min-h-0 flex-1">
-            <nav className="flex w-[200px] flex-col gap-1 border-r border-border-soft bg-panel p-3">
-              {nav.map((it) => (
-                <button key={it.id} onClick={() => { setView(it.id); setSel(view !== it.id ? null : sel); }}
-                  className={cn('flex items-center gap-2.5 rounded px-3 py-2 text-left text-[13px] font-semibold transition-colors [&_svg]:size-4',
-                    view === it.id ? 'bg-primary/15 text-fg shadow-[inset_2px_0_0] shadow-primary' : 'text-fg-muted hover:bg-panel-hover hover:text-fg')}>
-                  {it.icon}<span>{it.label}</span>
-                  {it.n != null && <span className={cn('ml-auto min-w-[22px] rounded-full px-1.5 text-center text-2xs font-bold tabular-nums',
-                    it.n > 0 && it.hot ? 'bg-primary text-primary-fg' : it.n > 0 && it.id === 'queue' ? 'bg-warning text-black' : 'bg-panel-hover text-fg-muted')}>{it.n}</span>}
+        <div className="flex w-[62dvw] min-w-[900px] max-w-[1180px] flex-col rounded-[2px] bg-bg v-shadow animate-flrp-rise">
+          {/* header */}
+          <div className="flex items-center gap-2 m-2">
+            <h1 className="v-chip px-4 text-base">{logo}Report Menu</h1>
+            <span className="v-chip ml-auto text-xs font-medium text-fg-muted"><span className="size-1.5 rounded-full bg-success" />{state.staffOnline} staff online</span>
+            {!state.isStaff && <button className="v-btn v-btn-panel h-9 rounded" onClick={() => setComposing(true)}><Plus />New Report</button>}
+            <SettingsMenu />
+            <button className="v-btn v-btn-panel h-9 w-9 rounded px-0" onClick={close} aria-label="Close"><X className="size-4" /></button>
+          </div>
+          <div className="h-px bg-border" />
+
+          {/* segmented control + search */}
+          <div className="relative m-5 flex items-center justify-center">
+            <div className="v-seg">
+              {tabs.map((t) => (
+                <button key={t.id} className="v-seg-item" data-active={view === t.id} onClick={() => { setView(t.id); setQuery(''); }}>
+                  {t.icon}{t.label}
+                  {t.n != null && t.n > 0 && <span className={cn('ml-0.5 min-w-[18px] rounded-[2px] px-1 text-center text-xs font-bold tabular-nums', t.id === 'queue' ? 'bg-primary text-primary-fg' : 'bg-bg text-fg-muted')}>{t.n}</span>}
                 </button>
               ))}
-              <div className="mt-auto px-1 text-2xs leading-relaxed text-fg-faint">
-                {state.isStaff ? <>New reports pop a toast — press <b>{state.key}</b> while it shows to jump to it.</> : <>Type <b>/report</b> or <b>/calladmin</b> any time.</>}
+            </div>
+            {view !== 'analytics' && (
+              <div className="absolute right-0 top-0 flex h-full items-center">
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-fg-faint" />
+                  <input className="v-input h-[34px] w-[220px] rounded-[8px] border bg-panel text-sm" style={{ paddingLeft: 32 }} placeholder="Search..." value={query} onChange={(e) => setQuery(e.target.value)} />
+                </div>
               </div>
-            </nav>
-
-            <main className="flex min-w-0 flex-1">
-              {showList && (
-                <section className="flex w-[380px] flex-col gap-2 overflow-y-auto border-r border-border-soft p-3">
-                  <div className="px-1 pt-0.5 text-2xs font-bold uppercase tracking-wider text-fg-faint">
-                    {({ queue: 'Live queue', mine: 'Claimed by you', resolved: 'Recently resolved', myreports: 'Your reports' } as any)[view]} · {list.length}
-                  </div>
-                  {list.length === 0
-                    ? <EmptyState icon={view === 'queue' ? <CheckCircle2 /> : <ListChecks />} title={view === 'queue' ? 'Queue is clear' : view === 'mine' ? 'Nothing claimed' : view === 'resolved' ? 'No resolved reports yet' : 'You have no reports'} />
-                    : list.map((r) => (
-                      <button key={r.id} onClick={() => setSel(r.id)}
-                        className={cn('flex flex-col gap-1.5 rounded-lg border p-3 text-left transition-colors',
-                          sel === r.id ? 'border-primary/40 bg-primary/10' : 'border-transparent bg-panel hover:bg-panel-hover')}>
-                        <div className="flex items-center gap-2">
-                          <span className="text-2xs font-bold tabular-nums text-fg-muted">#{r.id}</span>
-                          <Badge tone="neutral"><span className="size-1.5 rounded-full" style={{ background: r.categoryColour }} />{r.categoryLabel}</Badge>
-                          <span className="ml-auto text-2xs tabular-nums text-fg-faint">{ago(r.createdAt)}</span>
-                        </div>
-                        <div className="font-semibold">{r.reporter.name}{r.target && <span className="font-medium text-fg-faint"> vs {r.target}</span>}</div>
-                        <div className="line-clamp-2 text-xs leading-snug text-fg-muted">{r.description}</div>
-                        <div className="flex items-center gap-2 text-2xs text-fg-faint">
-                          <StatusIndicator tone={statusTone(r.status)} label={r.status} />
-                          {r.claimedBy && <span>{r.claimedByMe ? 'you' : r.claimedBy}</span>}
-                          {r.messages.length > 0 && <span className="ml-auto">✉ {r.messages.length}</span>}
-                        </div>
-                      </button>
-                    ))}
-                </section>
-              )}
-              {view === 'new' ? <div className="flex-1 overflow-y-auto p-5"><NewReport state={state} onDone={(s) => { setState(s); setView('myreports'); }} /></div>
-                : view === 'analytics' ? <div className="flex-1 overflow-y-auto p-5"><Analytics /></div>
-                : <ReportDetail state={state} report={report} onChange={refresh} />}
-            </main>
+            )}
           </div>
-          <footer className="flex items-center border-t border-border-soft bg-panel px-4 py-2.5">
-            <KeybindHint keys={state.key}>Toggle</KeybindHint><KeybindHint keys="Esc" className="ml-3">Close</KeybindHint>
-            <span className="ml-auto text-2xs font-medium text-fg-muted">{state.serverName}</span>
-          </footer>
+
+          {/* content box */}
+          <div className="mx-5 mb-2 h-[55dvh] overflow-y-auto rounded-[8px] border border-border">
+            {view === 'analytics'
+              ? <div className="p-5"><Analytics /></div>
+              : list.length === 0
+                ? <div className="flex h-full items-center justify-center text-sm text-fg-muted">{query ? 'Nothing matches your search.' : emptyText}</div>
+                : <div className="grid grid-cols-2 gap-4 p-5 md:grid-cols-3 lg:grid-cols-4">
+                    {list.map((r) => <ReportCard key={r.id} r={r} staff={state.isStaff} onClick={() => setSel(r.id)} />)}
+                  </div>}
+          </div>
+
+          <div className="m-2 flex items-center px-1 text-xs text-fg-muted">
+            {flash && <span className="font-medium text-success">{flash}</span>}
+            <span className="ml-auto flex items-center gap-2">
+              <span className="text-fg-faint">Press <kbd className="rounded-[2px] border border-border bg-panel px-1 font-bold text-fg-muted">{state.key}</kbd> to toggle</span>
+              <span>{state.serverName} · {VERSION}</span>
+            </span>
+          </div>
         </div>
       </div>
+
+      <ReportDetail state={state} report={report} onClose={() => setSel(null)} onChange={refresh} />
+      <NewReport state={state} open={composing} logo={logo} onClose={() => setComposing(false)}
+        onDone={(s, id) => { setState(s); setComposing(false); setView('myreports'); setFlash(`Report #${id} submitted — staff have been notified.`); setTimeout(() => setFlash(null), 8000); }} />
     </>
   );
 }
 
 const MOCK: State = {
-  ok: true, isStaff: true, canSelfClaim: false, me: { src: 1, name: 'Owner | Mike' }, staffOnline: 1,
-  logo: '', serverName: 'Florida Roleplay', key: 'J', toastSeconds: 12, maxDesc: 600, maxMsg: 400, maxOpen: 3, now: Date.now() / 1000,
+  ok: true, isStaff: true, canSelfClaim: false, me: { src: 1, name: 'Owner | Mike' }, staffOnline: 2,
+  logo: '', serverName: 'Florida Roleplay', key: 'J', toastSeconds: 12, maxDesc: 600, maxMsg: 400, maxOpen: 3, now: Date.now() / 1000, nearbyDistance: 20,
   categories: [{ id: 'player', label: 'Player Report', colour: '#ff6b6b' }, { id: 'bug', label: 'Bug', colour: '#f5b342' }, { id: 'question', label: 'Question', colour: '#00bfc4' }],
-  reports: [{ id: 1, category: 'player', categoryLabel: 'Player Report', categoryColour: '#ff6b6b', description: 'RDM at Legion Square, id 42 shot me on sight.', target: '42', status: 'open',
-    reporter: { name: '100 | Owner | Mike', src: 1, online: true }, claimedByMe: false, own: false, createdAt: Date.now() / 1000 - 320, messages: [] }],
+  reports: [
+    { id: 12, category: 'player', categoryLabel: 'Player Report', categoryColour: '#ff6b6b', description: 'RDM at Legion Square, id 42 shot me on sight while I was in a traffic stop.', target: '42', status: 'open',
+      reporter: { name: '770 | Officer | N. Ducky', src: 7, online: true }, claimedByMe: false, own: false, createdAt: Date.now() / 1000 - 320, messages: [],
+      nearby: [{ id: 42, name: 'John Doe', distance: 4.2 }, { id: 9, name: 'Trooper Smith', distance: 12.8 }] },
+    { id: 11, category: 'bug', categoryLabel: 'Bug', categoryColour: '#f5b342', description: 'Fell through the map near Sandy Shores gas station.', status: 'claimed',
+      reporter: { name: 'Civ | Jane', src: 3, online: false }, claimedBy: 'Owner | Mike', claimedByMe: true, own: false, createdAt: Date.now() / 1000 - 1900, claimedAt: Date.now() / 1000 - 1700,
+      messages: [{ name: 'Owner | Mike', staff: true, body: 'Looking into it now.', at: Date.now() / 1000 - 1600 }] },
+  ],
 };

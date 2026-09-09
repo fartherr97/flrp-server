@@ -1,0 +1,4 @@
+Geist (Geist-Regular/Medium/SemiBold/Bold .woff2) — Copyright (c) Vercel, Inc.
+Licensed under the SIL Open Font License, Version 1.1.
+https://github.com/vercel/geist-font/blob/main/LICENSE.TXT
+Bundled (inlined) into flrp_reports/html/index.html at build time.
