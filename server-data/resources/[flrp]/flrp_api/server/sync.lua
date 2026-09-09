@@ -50,7 +50,16 @@ function FLRPI.Sync.Pull(scope)
   end
   local ok, decoded = pcall(json.decode, res.body)
   if not ok or type(decoded) ~= 'table' then return nil, 'bad_json' end
-  return decoded
+  return decoded, nil, res.body
+end
+
+-- Cheap fingerprint of a pulled config body so the reconcile loop can tell
+-- "nothing changed since last apply" without re-writing the DB cache and
+-- re-resolving every player (which spams the console with reload lines).
+local lastSig = nil
+local function signature(raw)
+  if type(raw) ~= 'string' then return nil end
+  return ('%d:%d'):format(#raw, GetHashKey(raw))
 end
 
 -- ---- Cache writers (idempotent upserts into the FLRP MySQL cache) ---------
@@ -180,9 +189,18 @@ function FLRPI.Sync.ReapplyLive()
 end
 
 -- Pull a scope from the site and apply it. Returns ok, appliedOrErr.
-function FLRPI.Sync.PullAndApply(scope)
-  local config, err = FLRPI.Sync.Pull(scope or 'all')
+-- skipIfUnchanged: when true (background reconcile), a body identical to the
+-- last applied 'all' pull is a no-op — no DB writes, no reloads, no log spam.
+-- Webhook-driven calls leave it false so an explicit "changed" always applies.
+function FLRPI.Sync.PullAndApply(scope, skipIfUnchanged)
+  scope = scope or 'all'
+  local config, err, raw = FLRPI.Sync.Pull(scope)
   if not config then return false, err end
+  local sig = signature(raw)
+  if scope == 'all' then
+    if skipIfUnchanged and sig and sig == lastSig then return true, 'unchanged' end
+    lastSig = sig
+  end
   return true, FLRPI.Sync.Apply(config)
 end
 
@@ -196,8 +214,12 @@ function FLRPI.Sync.StartReconcile()
   CreateThread(function()
     while true do
       Wait(mins * 60000)
-      local ok, res = FLRPI.Sync.PullAndApply('all')
-      FLRP.Logger.Debug('sync', 'Reconcile pull', { ok = ok, result = res })
+      local ok, res = FLRPI.Sync.PullAndApply('all', true)
+      if ok and res ~= 'unchanged' then
+        FLRP.Logger.Info('sync', 'Reconcile: site config changed, re-applied', { onlinePlayers = res })
+      else
+        FLRP.Logger.Debug('sync', 'Reconcile pull', { ok = ok, result = res })
+      end
     end
   end)
   FLRP.Logger.Info('sync', 'Live config sync enabled', { reconcileMinutes = mins })
