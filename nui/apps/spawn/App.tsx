@@ -276,10 +276,23 @@ const MOCK_MENU: Menu = {
   about: { title: 'A higher standard', paragraphs: ["Here at Florida Roleplay we've been playing FiveM for almost ten years."], stats: [{ n: '10 Yrs', l: 'Experience' }, { n: 'Miami', l: 'Based' }, { n: 'BSO·FHP·MPD', l: 'Departments' }, { n: 'Est. 2026', l: 'Florida Roleplay' }] },
   leadership: { subtitle: 'The people keeping the standard higher.', groups: [{ label: 'Ownership', people: [{ n: 'Jordan', t: 'Owner' }, { n: 'Mike', t: 'Owner' }, { n: 'Johnson', t: 'Owner' }] }, { label: 'Directorship', people: [{ n: 'Juan', t: 'Executive Director' }] }] },
 };
+const CIV = [
+  ['Downtown Miami','Miami-Dade','legion.webp','Bayfront core — banks and the busiest civilian hub.'],
+  ['South Beach','Miami Beach','delperro.jpg','Ocean Drive — the boardwalk and the pier.'],
+  ['Coral Gables','Miami-Dade','vinewood.webp','Tree-lined estates and Miracle Mile.'],
+  ['Coconut Grove','Miami-Dade','mirrorpark.webp','Leafy bayside neighbourhood and marinas.'],
+  ['Jackson Memorial','Miami-Dade','pillbox.jpg','Civic Center medical district.'],
+  ['Miami International','Miami-Dade','airport.webp','MIA — air ops and the Dolphin Expressway.'],
+  ['Deerfield Beach','Broward County','paleto.jpg','Far-north coastal town and the pier.'],
+  ['Davie','Broward County','sandyshores.webp','Western Broward ranches and open road.'],
+  ['Homestead','South Dade','grapeseed.webp','Quiet Redland farming community.'],
+] as const;
 const MOCK_POINTS: Point[] = [
-  { index: 1, name: 'Downtown Miami', area: 'Miami-Dade', category: 'civ', allowed: true, image: '../img/legion.webp', desc: 'Bayfront core — banks and the busiest civilian hub.' },
-  { index: 2, name: 'South Beach', area: 'Miami Beach', category: 'civ', allowed: true, image: '../img/delperro.jpg', desc: 'Ocean Drive — the boardwalk and the pier.' },
-  { index: 3, name: 'Coral Gables', area: 'Miami-Dade', category: 'civ', allowed: true, image: '../img/vinewood.webp', desc: 'Tree-lined estates and Miracle Mile.' },
+  ...CIV.map((c, i) => ({ index: i + 1, name: c[0], area: c[1], category: 'civ', allowed: true, image: `../img/${c[2]}`, desc: c[3] })),
   { index: 10, name: 'Miami PD Headquarters', area: 'Miami-Dade · MPD', category: 'leo', restricted: true, allowed: false, image: '../img/missionrow.webp', desc: 'City police HQ.' },
+  { index: 11, name: 'BSO Davie District', area: 'Broward County · BSO', category: 'leo', restricted: true, allowed: false, image: '../img/sandyshores.webp', desc: 'Broward SO district station.' },
+  { index: 12, name: 'FHP Troop E', area: 'Florida Turnpike · FHP', category: 'leo', restricted: true, allowed: false, image: '../img/grapeseed.webp', desc: 'Highway Patrol Troop E.' },
   { index: 13, name: 'Miami Fire Rescue HQ', area: 'Miami-Dade · MFR', category: 'fire', allowed: true, image: '../img/pillbox.jpg', desc: 'EXAMPLE — replace coords. Rescue 1 and the EOC.' },
+  { index: 14, name: 'Station 4 — South Beach', area: 'Miami Beach', category: 'fire', allowed: true, image: '../img/delperro.jpg', desc: 'EXAMPLE — replace coords. Beachfront ALS.' },
+  { index: 15, name: 'BSO Fire — Davie', area: 'Broward County', category: 'fire', allowed: true, image: '../img/sandyshores.webp', desc: 'EXAMPLE — replace coords. County ALS.' },
 ];
