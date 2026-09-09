@@ -43,8 +43,10 @@ local function unitLabel(u)
   end
   local callsign = u.callsign or u.callSign or u.call_sign or u.badge
                 or u.badgeNumber or u.unit or u.unitId or u.unit_id
-  if callsign and name then return ('`%s` %s'):format(tostring(callsign), tostring(name)) end
-  return tostring(name or callsign or 'Unit')
+  -- FLRP names already carry the callsign ("568 | Deputy I | B. Davis"), so
+  -- show the name on its own; the callsign is only a fallback when no name.
+  if name then return tostring(name) end
+  return tostring(callsign or 'Unit')
 end
 
 -- Live roster from flrp_onduty's flrp_duty_members table (via flrp_duty), grouped by
