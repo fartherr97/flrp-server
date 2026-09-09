@@ -65,6 +65,7 @@ local CONVAR_ROLE_MAP = {
   flrp_role_dev             = 'dev',    -- Dev Team -> jg-handling editor access
   flrp_role_media           = 'media',  -- Media Team -> vMenu time & weather
 }
+FLRPP.Store.ConvarRoleMap = CONVAR_ROLE_MAP  -- read-only view for diagnostics (flrp_perms)
 
 local function addDiscordMap(discordRoleId, roleKey)
   if not discordRoleId or discordRoleId == '' or discordRoleId == 'REPLACE_ME' then return end

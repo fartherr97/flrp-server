@@ -62,6 +62,58 @@ AddEventHandler('playerDropped', function()
   if rec and rec.license then FLRPP.PendingDiscordRoles[rec.license] = nil end
 end)
 
+-- Console diagnostic: flrp_perms <serverId>
+-- Prints everything the permission pipeline knows about ONE connected player
+-- (Discord role IDs the gate saw, which convar role mappings matched, the
+-- resolved FLRP roles, the ACE groups attached, and live IsPlayerAceAllowed
+-- results for the vMenu time/weather aces). Console-only, or permissions.manage.
+RegisterCommand('flrp_perms', function(source, args)
+  if source ~= 0 and not FLRPP.HasPermission(source, 'permissions.manage') then return end
+  local target = tonumber(args[1] or '')
+  if not target or GetPlayerName(target) == nil then
+    print('[flrp_perms] usage: flrp_perms <serverId>  (player must be connected)')
+    return
+  end
+  local rec = exports.flrp_core:GetPlayer(target)
+  local license = (rec and rec.license) or FLRP.Identity.GetLicense(target)
+  local roleIds = license and FLRPP.PendingDiscordRoles[license] or nil
+  local out = {}
+  local function line(fmt, ...) out[#out + 1] = fmt:format(...) end
+
+  line('== flrp_perms: [%s] %s ==', tostring(target), tostring(GetPlayerName(target)))
+  line('license: %s   core record: %s', tostring(license), rec and 'yes' or 'NO')
+  line('discord role ids seen at connect: %s', roleIds and tostring(#roleIds) or 'NONE (gate never published)')
+
+  -- Which configured convar roles does this player actually hold?
+  local held, missing = {}, {}
+  local seen = {}
+  for _, id in ipairs(roleIds or {}) do seen[tostring(id)] = true end
+  for convar, key in pairs(FLRPP.Store.ConvarRoleMap or {}) do
+    local id = GetConvar(convar, '')
+    if id ~= '' and id ~= 'REPLACE_ME' then
+      if seen[id] then held[#held + 1] = key .. '=' .. id else missing[#missing + 1] = key end
+    end
+  end
+  table.sort(held); table.sort(missing)
+  line('mapped roles HELD: %s', #held > 0 and table.concat(held, ', ') or '(none)')
+  line('mapped roles not held: %s', table.concat(missing, ', '))
+
+  local p = FLRPP.Players[target]
+  line('resolved flrp roles: %s', p and table.concat(p.roleList or {}, ', ') or '(not resolved yet)')
+  local groups = {}
+  for g in pairs((license and FLRPP.Ace.applied[license]) or {}) do groups[#groups + 1] = g end
+  table.sort(groups)
+  line('ACE groups attached: %s', #groups > 0 and table.concat(groups, ', ') or '(none)')
+
+  local aces = { 'vMenu.Everything', 'vMenu.TimeOptions.Menu', 'vMenu.TimeOptions.All',
+                 'vMenu.WeatherOptions.Menu', 'vMenu.WeatherOptions.All' }
+  for _, a in ipairs(aces) do
+    line('  IsPlayerAceAllowed %-28s player=%s  group.flrp.media=%s', a,
+      tostring(IsPlayerAceAllowed(target, a)), tostring(IsPrincipalAceAllowed('group.flrp.media', a)))
+  end
+  print(table.concat(out, '\n'))
+end, true)
+
 -- Console/admin reload command.
 RegisterCommand('flrp_reload_perms', function(source)
   if source ~= 0 then
