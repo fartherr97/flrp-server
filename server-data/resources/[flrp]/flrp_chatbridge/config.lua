@@ -15,16 +15,17 @@ FLRP_CHATBRIDGE.Avatar        = ''            -- optional avatar URL
 FLRP_CHATBRIDGE.FlushMs   = 2500
 FLRP_CHATBRIDGE.MaxChars  = 1900
 
--- Which tags reach Discord. `chat` = normal T-chat, `gooc` = /gooc, `gme` = /gme.
--- Local /ooc and /me never leave the game.
-FLRP_CHATBRIDGE.Relay = { chat = true, gooc = true, gme = true }
+-- Which tags reach Discord. `chat` = normal T-chat, `ooc` = /ooc, `gooc` = /gooc.
+-- /me and /gme are emotes and stay in-game (they still go to the chat-logs
+-- channel through flrp_logs like everything else).
+FLRP_CHATBRIDGE.Relay = { chat = true, ooc = true, gooc = true }
 
 -- How each tag is rendered in Discord. {id} = server id, {name} = player name,
 -- {msg} = message. Bold the sender like SSRP's "[12] GOOC | Name: msg" style.
 FLRP_CHATBRIDGE.Format = {
   chat = '**[{id}] {name}**: {msg}',
+  ooc  = '**[{id}] OOC | {name}**: {msg}',
   gooc = '**[{id}] GOOC | {name}**: {msg}',
-  gme  = '**[{id}] {name}** *{msg}*',
 }
 
 -- Inbound (Discord -> game) rendering.

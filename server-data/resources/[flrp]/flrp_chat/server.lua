@@ -4,7 +4,8 @@
 -- 1. Recolors normal chat display names by the sender's highest staff tier
 --    (Discord role colors, from config.lua).
 -- 1b. /ooc /gooc (out-of-character, local/global) and /me /gme (emotes).
---    Global lines are relayed to Discord through flrp_chatbridge.
+--    Chat, /ooc and /gooc are relayed to Discord through flrp_chatbridge;
+--    /me and /gme stay in-game (all four still hit the chat-logs webhook).
 -- 2. Adds ACE-gated channels: /sc (staff), /ac (admin), /dc (director). Each
 --    message is prefixed "(LABEL) Name" in the channel color and delivered
 --    ONLY to players who hold that channel's ACE.
@@ -92,13 +93,13 @@ local function rpCommand(cmd, opts)
   TriggerEvent('chat:addSuggestion', '/' .. cmd, opts.help, { { name = opts.what, help = opts.help } })
 end
 
-rpCommand('ooc',  { what = 'message', help = 'Local out-of-character chat (nearby players)', color = RP.Colors.ooc,  radius = RP.OOCRadius,
+rpCommand('ooc',  { what = 'message', help = 'Local out-of-character chat (nearby players)', color = RP.Colors.ooc,  radius = RP.OOCRadius, relay = 'ooc',
   args = function(name, msg) return { ('OOC | %s'):format(name), msg } end })
 rpCommand('gooc', { what = 'message', help = 'Global out-of-character chat (everyone)', color = RP.Colors.gooc, relay = 'gooc',
   args = function(name, msg) return { ('GOOC | %s'):format(name), msg } end })
 rpCommand('me',   { what = 'action', help = 'Local emote: * Name does something (nearby players)', color = RP.Colors.me, radius = RP.MeRadius,
   args = function(name, msg) return { ('* %s %s'):format(name, msg) } end })
-rpCommand('gme',  { what = 'action', help = 'Global emote: * Name does something (everyone)', color = RP.Colors.gme, relay = 'gme',
+rpCommand('gme',  { what = 'action', help = 'Global emote: * Name does something (everyone)', color = RP.Colors.gme,
   args = function(name, msg) return { ('* %s %s'):format(name, msg) } end })
 
 -- ---- 2. Gated channels ----------------------------------------------------
