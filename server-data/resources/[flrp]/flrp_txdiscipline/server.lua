@@ -62,11 +62,40 @@ local function post(spec, fields)
   end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
 end
 
+-- ---- public live-bans line -------------------------------------------------
+local function md(s)
+  s = tostring(s == nil and '' or s)
+  if s == '' then return '—' end
+  s = s:gsub('[%*_~`|\\>]', '\\%0'):gsub('@', '@\u{200B}'):gsub('[\r\n]+', ' ')
+  return s
+end
+
+local function liveBans(line)
+  local lb = FLRP_TXD.LiveBans
+  if not lb then return end
+  local url = GetConvar(lb.WebhookConvar, '')
+  if url == '' or not url:find('discord') then return end
+  local payload = { username = lb.Username, content = line, allowed_mentions = { parse = {} } }
+  local av = avatar(); if av then payload.avatar_url = av end
+  PerformHttpRequest(url, function(status)
+    if status ~= 200 and status ~= 204 then
+      print(('[flrp_txdiscipline] live-bans webhook POST failed: HTTP %s'):format(tostring(status)))
+    end
+  end, 'POST', json.encode(payload), { ['Content-Type'] = 'application/json' })
+end
+
+local function fill(fmt, vars)
+  return (fmt:gsub('{(%w+)}', function(k) return vars[k] or '—' end))
+end
+
 -- ---- ban ------------------------------------------------------------------
 AddEventHandler('txAdmin:events:playerBanned', function(d)
   if not FLRP_TXD.Log.ban or type(d) ~= 'table' then return end
   local dur = (d.expiration == false) and 'Permanent'
               or (d.durationTranslated or d.durationInput or 'Temporary')
+  liveBans(fill(FLRP_TXD.LiveBans.Format, {
+    admin = md(d.author), player = md(d.targetName), reason = md(d.reason), duration = md(dur),
+  }))
   post(FLRP_TXD.Ban, {
     field('Player',      d.targetName, true),
     field('Admin',       d.author,     true),
@@ -110,6 +139,9 @@ end)
 AddEventHandler('txAdmin:events:actionRevoked', function(d)
   if not FLRP_TXD.Log.revoke or type(d) ~= 'table' then return end
   local player = (d.playerName == false or d.playerName == nil) and 'Unknown' or d.playerName
+  if FLRP_TXD.LiveBans and FLRP_TXD.LiveBans.Revokes and tostring(d.actionType):lower() == 'ban' then
+    liveBans(('**%s** unbanned **%s**'):format(md(d.revokedBy), md(player)))
+  end
   post(FLRP_TXD.Revoke, {
     field('Type',           d.actionType,   true),
     field('Revoked By',     d.revokedBy,    true),

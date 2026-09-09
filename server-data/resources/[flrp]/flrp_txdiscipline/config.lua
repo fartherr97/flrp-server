@@ -27,3 +27,15 @@ FLRP_TXD.Revoke = { color = 0x2ECC71, title = '♻️ Action Revoked' }
 
 -- Identifier prefixes worth showing on ban/warn embeds (for offline targets).
 FLRP_TXD.ShowIds = { license = true, license2 = true, discord = true, fivem = true, steam = true, live = true }
+
+-- ---- Public "live bans" feed ---------------------------------------------
+-- A second, member-facing channel that gets ONE plain line per ban, SSRP-style:
+--   **OwnerDoir** banned **259 | Trial Mod | R. Dickson** | Reason: LTAP | Duration: 2 days
+-- No identifiers, no ping. Set the webhook in secrets.cfg:
+--   set flrp_livebans_webhook "https://discord.com/api/webhooks/..."
+FLRP_TXD.LiveBans = {
+  WebhookConvar = 'flrp_livebans_webhook',
+  Username      = 'FLRP Banmaster',
+  Format        = '**{admin}** banned **{player}** | Reason: {reason} | Duration: {duration}',
+  Revokes       = true,   -- also post "**{admin}** unbanned **{player}**" when a ban is revoked
+}
