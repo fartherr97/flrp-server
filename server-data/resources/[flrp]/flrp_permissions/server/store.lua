@@ -64,6 +64,13 @@ local CONVAR_ROLE_MAP = {
   flrp_role_swat            = 'swat',   -- SWAT Permission -> full-auto access
   flrp_role_dev             = 'dev',    -- Dev Team -> jg-handling editor access
   flrp_role_media           = 'media',  -- Media Team -> vMenu time & weather
+  -- LEO spawn access (ACE-only): these Discord roles grant flrp.leo so their
+  -- holders can use LEO spawn points without holding a department role. Three
+  -- convars all map to the same 'leo_access' key; set each to a Discord role ID
+  -- in secrets.cfg. Adding more? Just point another convar at 'leo_access'.
+  flrp_role_leo_access_1    = 'leo_access',
+  flrp_role_leo_access_2    = 'leo_access',
+  flrp_role_leo_access_3    = 'leo_access',
 }
 FLRPP.Store.ConvarRoleMap = CONVAR_ROLE_MAP  -- read-only view for diagnostics (flrp_perms)
 

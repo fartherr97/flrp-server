@@ -105,11 +105,20 @@ RegisterCommand('flrp_perms', function(source, args)
   table.sort(groups)
   line('ACE groups attached: %s', #groups > 0 and table.concat(groups, ', ') or '(none)')
 
-  local aces = { 'vMenu.Everything', 'vMenu.TimeOptions.Menu', 'vMenu.TimeOptions.All',
-                 'vMenu.WeatherOptions.Menu', 'vMenu.WeatherOptions.All' }
+  -- ace -> a reference group we expect to grant it, printed alongside the
+  -- player's live result so you can see BOTH that the player is (or isn't)
+  -- allowed AND that the grant chain in permissions.cfg is intact.
+  local aces = {
+    { 'flrp.leo',                  'group.flrp.leo_access' },
+    { 'vMenu.Everything',          'group.flrp.media' },
+    { 'vMenu.TimeOptions.Menu',    'group.flrp.media' },
+    { 'vMenu.TimeOptions.All',     'group.flrp.media' },
+    { 'vMenu.WeatherOptions.Menu', 'group.flrp.media' },
+    { 'vMenu.WeatherOptions.All',  'group.flrp.media' },
+  }
   for _, a in ipairs(aces) do
-    line('  IsPlayerAceAllowed %-28s player=%s  group.flrp.media=%s', a,
-      tostring(IsPlayerAceAllowed(target, a)), tostring(IsPrincipalAceAllowed('group.flrp.media', a)))
+    line('  IsPlayerAceAllowed %-28s player=%s  %s=%s', a[1],
+      tostring(IsPlayerAceAllowed(target, a[1])), a[2], tostring(IsPrincipalAceAllowed(a[2], a[1])))
   end
   print(table.concat(out, '\n'))
 end, true)
