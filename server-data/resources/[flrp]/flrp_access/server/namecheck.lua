@@ -4,7 +4,8 @@
 -- Members of the ENFORCED groups (Cert Civ, Staff = Mod/Admin, LEO = BSO/FHP/
 -- MPD) must connect with an in-game name that matches their Discord guild
 -- display name (server nickname, else global name, else username). Director
--- and Ownership are EXEMPT. On a mismatch the connection is denied at the gate
+-- and Ownership are EXEMPT, as is any role id listed in flrp_name_exempt_roles
+-- (Department Heads by default). On a mismatch the connection is denied at the gate
 -- with a fix-your-name message. Toggle with the flrp_name_enforce convar.
 --
 -- Match rule: EXACT and CASE-SENSITIVE. FiveM colour codes are stripped and
@@ -54,6 +55,9 @@ function FLRPA.NameCheck.Evaluate(gameName, member)
   pcall(function() kinds = exports.flrp_permissions:ResolveDiscordRoleKinds(member.roles or {}) or {} end)
 
   for key in pairs(kinds) do if EXEMPT_KEYS[key] then return true end end   -- Director/Owner exempt
+  for _, rid in ipairs(member.roles or {}) do                               -- configured exempt roles (dept heads)
+    if FLRPA.Config.nameExemptRoles[tostring(rid)] then return true end
+  end
 
   local enforced = false
   for _, kind in pairs(kinds) do if ENFORCE_KINDS[kind] then enforced = true break end end

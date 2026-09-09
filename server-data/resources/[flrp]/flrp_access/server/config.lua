@@ -26,6 +26,14 @@ function FLRPA.Config.Reload()
   -- map every enforced role's Discord id and warn members, THEN turn it on with
   -- `set flrp_name_enforce true` in secrets.cfg.
   FLRPA.Config.nameEnforce   = convarBool('flrp_name_enforce', false)
+  -- Extra Discord role ids (comma-separated) whose holders are EXEMPT from
+  -- name enforcement on top of Director/Ownership, e.g. department heads who
+  -- run callsign-style names. Override with `set flrp_name_exempt_roles "id,id"`
+  -- in secrets.cfg; the default is the Department Head role.
+  FLRPA.Config.nameExemptRoles = {}
+  for id in convar('flrp_name_exempt_roles', '1534380750173110282'):gmatch('[^,%s]+') do
+    FLRPA.Config.nameExemptRoles[id] = true
+  end
 
   FLRPA.Config.token         = convar('flrp_discord_token')
   FLRPA.Config.guildId       = convar('flrp_discord_guild_id')
