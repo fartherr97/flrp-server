@@ -98,6 +98,8 @@ local function openSelector()
     action     = 'open',
     logo       = Config.LogoUrl,
     header     = Config.Header,
+    categories = Config.Categories,
+    menu       = Config.Menu,
     playerName = GetPlayerName(PlayerId()),
   })
   -- Ask the server which gated points this player may use.
@@ -108,16 +110,16 @@ end
 RegisterNetEvent('flrp_spawn:points', function(allowed)
   local list = {}
   for i, p in ipairs(Config.Points) do
-    if allowed[i] then
-      list[#list + 1] = {
-        index  = i,
-        name   = p.name,
-        area   = p.area or '',
-        desc   = p.desc or '',
-        image  = p.image or nil,
-        locked = p.ace ~= nil,
-      }
-    end
+    list[#list + 1] = {
+      index      = i,
+      name       = p.name,
+      area       = p.area or '',
+      desc       = p.desc or '',
+      image      = p.image or nil,
+      category   = p.category or 'civ',
+      restricted = p.ace ~= nil,        -- this point needs an ace
+      allowed    = allowed[i] == true,  -- whether THIS player may use it
+    }
   end
   SendNUIMessage({ action = 'points', points = list })
 end)

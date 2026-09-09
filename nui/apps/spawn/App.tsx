@@ -1,203 +1,285 @@
-import { useEffect, useRef, useState } from 'react';
-import { Play, ChevronLeft, ChevronRight, LoaderCircle } from 'lucide-react';
-import { cn, fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/components';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Play, ScrollText, Info, ShieldCheck, Shield, Users, HeartPulse,
+  Lock, MapPin, ArrowRight, ChevronLeft, ListChecks, AlignLeft,
+} from 'lucide-react';
+import { fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/components';
 
-interface Point { index: number; name: string; area?: string; desc?: string; image?: string; locked?: boolean }
-interface Header { title?: string; subtitle?: string; blurb?: string; tagline?: string }
+interface Header { title?: string; subtitle?: string; blurb?: string; tagline?: string; welcome?: string; welcomeA?: string; welcomeB?: string; flourish?: string }
+interface Cat { id: string; label: string; tag?: string; blurb?: string; accent?: string; icon?: string }
+interface Point { index: number; name: string; area?: string; desc?: string; image?: string; category: string; restricted?: boolean; allowed?: boolean }
+interface UpdateItem { tag: string; color: string; title: string; hash?: string; by?: string; when?: string; body?: string }
+interface Menu {
+  updates?: { note?: string; items?: UpdateItem[] };
+  about?: { title?: string; paragraphs?: string[]; stats?: { n: string; l: string }[] };
+  leadership?: { subtitle?: string; groups?: { label: string; people: { n: string; t: string }[] }[] };
+}
+type View = 'play' | 'updates' | 'about' | 'leadership';
 
+const CAT_ICON: Record<string, typeof Shield> = { shield: Shield, people: Users, cross: HeartPulse };
+const ACCENT: Record<string, [string, string]> = { cyan: ['#33e1ff', '#12a8ff'], magenta: ['#ff2e95', '#ff5cc8'], ember: ['#ff7a3a', '#ff3b3b'] };
+const hex2rgb = (h: string) => { h = h.replace('#', ''); return `${parseInt(h.slice(0, 2), 16)},${parseInt(h.slice(2, 4), 16)},${parseInt(h.slice(4, 6), 16)}`; };
+const cvar = (o: Record<string, string>) => o as React.CSSProperties;
 
 export function App() {
   const [open, setOpen] = useState(false);
   const [logo, setLogo] = useState('');
   const [header, setHeader] = useState<Header>({});
-  const [playerName, setPlayerName] = useState('');
+  const [player, setPlayer] = useState('');
+  const [cats, setCats] = useState<Cat[]>([]);
+  const [menu, setMenu] = useState<Menu>({});
   const [points, setPoints] = useState<Point[] | null>(null);
-  const [picking, setPicking] = useState<number | null>(null);
-  const [focused, setFocused] = useState<number | null>(null);
-  const [denied, setDenied] = useState<string | null>(null);
-  const scroller = useRef<HTMLDivElement>(null);
+  const [view, setView] = useState<View>('play');
+  const [catId, setCatId] = useState<string | null>(null);
+  const [sel, setSel] = useState<number | null>(null);
+  const [spawning, setSpawning] = useState(false);
+  const focusedRef = useRef<number | null>(null);
+  const toastRef = useRef<HTMLDivElement>(null);
+  const toastTimer = useRef<number | undefined>(undefined);
 
-  useNuiEvent<{ logo: string; header: Header; playerName: string }>('open', (d) => {
-    setLogo(d.logo || ''); setHeader(d.header || {}); setPlayerName(d.playerName || '');
-    setOpen(true); setPoints(null); setPicking(null); setFocused(null); setDenied(null);
+  useNuiEvent<{ logo: string; header: Header; categories: Cat[]; menu: Menu; playerName: string }>('open', (d) => {
+    setLogo(d.logo || ''); setHeader(d.header || {}); setCats(d.categories || []); setMenu(d.menu || {}); setPlayer(d.playerName || '');
+    setOpen(true); setPoints(null); setView('play'); setCatId(null); setSel(null); setSpawning(false);
+    focusedRef.current = null;
   });
   useNuiEvent<{ points: Point[] }>('points', (d) => setPoints(d.points || []));
-  useNuiEvent('denied', () => { setDenied('That location isn’t available to you.'); setPicking(null); });
+  useNuiEvent('denied', () => { permToast(); setSel(null); setSpawning(false); });
   useNuiEvent('close', () => setOpen(false));
 
   useEffect(() => {
     if (!isBrowser()) return;
-    mockMessage('open', { logo: '../img/flrp-logo.png', header: MOCK_HEADER, playerName: 'Furkan Yücel' });
-    mockMessage('points', { points: MOCK });
+    mockMessage('open', { logo: '../img/flrp-logo.png', header: MOCK_HEADER, categories: MOCK_CATS, menu: MOCK_MENU, playerName: '100 | Owner | Mike' });
+    mockMessage('points', { points: MOCK_POINTS });
   }, []);
 
-  // Fly the in-game camera to the first card as soon as the list arrives.
-  useEffect(() => { if (points && points.length) focus(points[0].index); /* eslint-disable-line */ }, [points]);
+  const byCat = useMemo(() => {
+    const m: Record<string, Point[]> = {};
+    (points || []).forEach((p) => { (m[p.category] ||= []).push(p); });
+    return m;
+  }, [points]);
 
-  if (!open) return null;
+  const cat = cats.find((c) => c.id === catId) || null;
+  const accentName = view === 'play' && cat ? (cat.accent || 'cyan') : 'cyan';
+  useEffect(() => {
+    document.documentElement.dataset.accent = view === 'play' && cat ? (cat.accent || '') : '';
+  }, [view, cat]);
 
-  const focus = (index: number) => {
-    setFocused((cur) => { if (cur !== index) fetchNui('focus', { index }); return index; });
+  const focus = (index: number) => { if (focusedRef.current !== index) { focusedRef.current = index; fetchNui('focus', { index }); } };
+  const permToast = () => {
+    const t = toastRef.current; if (!t) return;
+    t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
+    window.clearTimeout(toastTimer.current); toastTimer.current = window.setTimeout(() => t.classList.remove('show'), 1700);
   };
-  const select = (p: Point) => { setPicking(p.index); setDenied(null); fetchNui('select', { index: p.index }); };
-  const page = (dir: number) => scroller.current?.scrollBy({ left: dir * 360, behavior: 'smooth' });
+  const catLocked = (c: Cat) => { const ps = byCat[c.id] || []; return ps.length > 0 && ps.every((p) => p.restricted && !p.allowed); };
+  const openCat = (c: Cat) => { if (catLocked(c)) return permToast(); setCatId(c.id); setSel(null); const first = (byCat[c.id] || [])[0]; if (first) focus(first.index); };
+  const goPlay = () => { setView('play'); setCatId(null); setSel(null); };
+  const selectLoc = (p: Point) => { if (p.restricted && !p.allowed) return permToast(); setSel(p.index); focus(p.index); };
+  const deploy = () => { if (sel == null) return; setSpawning(true); fetchNui('select', { index: sel }); };
 
-  // The backdrop is the focused location's own art, heavily blurred + darkened,
-  // so it drifts as you move across cards without ever crowding them.
-  const bgImage = (points?.find((p) => p.index === focused) || points?.[0])?.image;
+  if (!open) return <div ref={toastRef} className="perm-toast"><Lock />Insufficient Permissions!</div>;
+
+  const NAV: { id: View; label: string; icon: typeof Play }[] = [
+    { id: 'play', label: 'Play', icon: Play },
+    { id: 'updates', label: 'Updates', icon: ScrollText },
+    { id: 'about', label: 'About Us', icon: Info },
+    { id: 'leadership', label: 'Leadership', icon: ShieldCheck },
+  ];
 
   return (
-    <div className="absolute inset-0 flex flex-col animate-flrp-in">
-      {/* solid base so backdrop cross-fades never flash to nothing */}
-      <div className="absolute inset-0 -z-30 bg-[#05070b]" />
-      {/* blurred backdrop of the focused location (re-mounts + fades per focus) */}
-      {bgImage && (
-        <div key={bgImage} className="absolute inset-0 -z-20 bg-cover bg-center animate-flrp-in"
-          style={{ backgroundImage: `url("${bgImage}")`, filter: 'blur(22px) brightness(.52) saturate(1.25)', transform: 'scale(1.12)' }} />
-      )}
+    <>
+      <div className="bg" aria-hidden><div className="scrim" /><div className="tint" /><div className="btm" /></div>
+      <div className="topbar">
+        <div className="brandline">{header.title === 'FLRP' ? 'Florida Roleplay' : header.title || 'Florida Roleplay'}<small>A Higher Standard</small></div>
+        <div className="whoami"><div className="n">{player || 'Player'}</div><div className="t">{header.tagline || 'Florida Roleplay'}</div></div>
+      </div>
 
-      {/* top + bottom scrim keeps header / footer text readable over the backdrop */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/70 via-black/25 to-black/70" />
-
-      {/* ---- header ---- */}
-      <header className="relative flex items-start justify-between px-[6vw] pt-[5vh] [text-shadow:0_1px_6px_rgba(0,0,0,.6)]">
-        <div className="flex items-center gap-4">
-          {logo && <img src={logo} alt="FLRP" className="size-[68px] object-contain drop-shadow-[0_2px_10px_rgba(0,0,0,.6)]" />}
-          <span className="w-[3px] self-stretch rounded bg-primary/90" />
-          <div>
-            <h1 className="text-3xl font-extrabold uppercase tracking-tight leading-none">
-              <span className="text-white">{header.title || 'FLRP'}</span>{' '}
-              <span className="text-primary">{header.subtitle || 'SPAWN SELECTOR'}</span>
-            </h1>
-            <p className="mt-2 max-w-sm text-[13px] leading-snug text-white/70">
-              {header.blurb || 'Choose where to drop in, or return to where you last logged off.'}
-            </p>
+      <main className="app">
+        <aside className="rail">
+          {logo && <div className="badge"><img src={logo} alt="FLRP" /></div>}
+          <div className="welcome">
+            <div className="w1">{header.welcome || 'Welcome to FLRP'}</div>
+            <div className="w2">{header.welcomeA || 'Active Community, '}<b>{header.welcomeB || 'Hybrid vMenu'}</b></div>
           </div>
-        </div>
-        <div className="text-right">
-          <div className="text-sm font-semibold text-white">{playerName || 'Player'}</div>
-          <div className="text-xs text-primary/90">{header.tagline || 'Florida Roleplay'}</div>
-        </div>
-      </header>
-
-      {denied && (
-        <div className="relative mx-[6vw] mt-3 w-fit rounded-md border border-danger/50 bg-danger/20 px-3 py-1.5 text-xs font-medium text-white backdrop-blur">
-          {denied}
-        </div>
-      )}
-
-      {/* ---- carousel ---- */}
-      <div className="relative flex flex-1 items-center gap-3 px-[3vw] min-h-0">
-        <NavBtn onClick={() => page(-1)}><ChevronLeft className="size-7" /></NavBtn>
-
-        {!points ? (
-          <div className="flex flex-1 items-center justify-center gap-2 text-white/70">
-            <LoaderCircle className="size-5 animate-spin" /> Loading locations…
-          </div>
-        ) : points.length === 0 ? (
-          <div className="flex flex-1 items-center justify-center text-white/70">
-            No spawn points available — contact staff.
-          </div>
-        ) : (
-          <div ref={scroller}
-            className="flex flex-1 gap-5 overflow-x-auto scroll-smooth py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-            style={{ scrollSnapType: 'x mandatory' }}>
-            {points.map((p) => (
-              <Card key={p.index} p={p} isFocused={focused === p.index} picking={picking}
-                onFocus={() => focus(p.index)} onPlay={() => select(p)} />
+          <nav className="menu">
+            {NAV.map((n) => (
+              <button key={n.id} className={view === n.id ? 'active' : ''} onClick={() => { setView(n.id); if (n.id === 'play') goPlay(); }}>
+                <n.icon className="ico" /> {n.label}
+                <ChevronRightIcon />
+              </button>
             ))}
-          </div>
-        )}
+          </nav>
+          {header.flourish && <div className="flourish"><span>{header.flourish}</span></div>}
+        </aside>
 
-        <NavBtn onClick={() => page(1)}><ChevronRight className="size-7" /></NavBtn>
-      </div>
+        <section className="stage">
+          {view === 'play' && !catId && <Categories cats={cats} byCat={byCat} catLocked={catLocked} catImage={(id) => (byCat[id] || [])[0]?.image} onOpen={openCat} />}
+          {view === 'play' && cat && <Locations cat={cat} pts={byCat[cat.id] || []} sel={sel} onBack={() => setCatId(null)} onHover={(p) => focus(p.index)} onPick={selectLoc} />}
+          {view === 'updates' && <Updates data={menu.updates} />}
+          {view === 'about' && <About data={menu.about} />}
+          {view === 'leadership' && <Leadership data={menu.leadership} />}
+        </section>
+      </main>
 
-      <div className="h-[5vh]" />
-    </div>
-  );
-}
-
-function NavBtn({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
-  return (
-    <button onClick={onClick}
-      className="relative grid size-11 shrink-0 place-items-center rounded-full text-white/60 backdrop-blur transition-colors hover:bg-white/10 hover:text-primary">
-      {children}
-    </button>
-  );
-}
-
-function Card({ p, isFocused, picking, onFocus, onPlay }:
-  { p: Point; isFocused: boolean; picking: number | null; onFocus: () => void; onPlay: () => void }) {
-  const isPicking = picking === p.index;
-  const dimmed = picking != null && !isPicking;
-
-  return (
-    <div onMouseEnter={onFocus}
-      style={{ scrollSnapAlign: 'center' }}
-      className={cn(
-        'group relative flex h-[62vh] max-h-[520px] min-h-[400px] w-[300px] shrink-0 flex-col overflow-hidden rounded-2xl border transition-all duration-200',
-        isPicking || isFocused ? 'border-primary ring-1 ring-primary/50' : 'border-white/15 hover:border-primary/60',
-        dimmed && 'opacity-45',
-      )}>
-
-      {/* background: bundled location art if provided, else glass onto the live world */}
-      {p.image ? (
-        <div className="absolute inset-0 -z-10 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
-          style={{ backgroundImage: `url("${p.image}")` }} />
-      ) : (
-        <div className={cn('absolute inset-0 -z-10 backdrop-blur-[2px] transition-colors',
-          isFocused ? 'bg-white/[0.02]' : 'bg-black/35')} />
+      {view === 'play' && cat && (
+        <div className={'deploy' + (sel != null ? ' show' : '')}>
+          <div><div className="k">Deploy to</div><div className="v">{(byCat[cat.id] || []).find((p) => p.index === sel)?.name || '—'}</div></div>
+          <button className="go" onClick={deploy} disabled={spawning}>
+            {spawning ? 'Spawning…' : 'Spawn Here'}<ArrowRight width={18} height={18} />
+          </button>
+        </div>
       )}
-      {/* top scrim so the title + area read over bright photos/skies */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/75 via-black/25 to-transparent" />
-      {/* the art already carries its own bottom vignette; glass cards need one added */}
-      {!p.image && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/85 via-black/45 to-transparent" />
-      )}
-
-      {/* title */}
-      <div className="relative p-5 leading-tight [text-shadow:0_1px_6px_rgba(0,0,0,.7)]">
-        <div className="text-xl font-bold uppercase tracking-tight text-white">{p.name}</div>
-        {p.area && <div className="text-[11px] font-medium uppercase tracking-widest text-primary/90">{p.area}</div>}
-      </div>
-
-      {/* information + play */}
-      <div className="relative mt-auto space-y-3 p-5">
-        {p.desc && (
-          <div className="rounded-md border-l-2 border-primary/70 bg-black/45 px-3 py-2 backdrop-blur-sm">
-            <div className="text-[10px] font-semibold uppercase tracking-widest text-primary/80">Information</div>
-            <p className="mt-0.5 text-[12px] leading-snug text-white/80">{p.desc}</p>
-          </div>
-        )}
-        <button onClick={onPlay} disabled={picking != null}
-          className={cn(
-            'flex w-full items-center justify-center gap-2 rounded-md py-2.5 text-sm font-semibold backdrop-blur transition-colors',
-            isPicking
-              ? 'bg-primary text-primary-fg'
-              : 'bg-white/15 text-white hover:bg-primary hover:text-primary-fg disabled:hover:bg-white/15 disabled:hover:text-white',
-          )}>
-          {isPicking ? <><LoaderCircle className="size-4 animate-spin" /> Spawning…</>
-                     : <><Play className="size-4" /> Play</>}
-        </button>
-      </div>
-    </div>
+      <div ref={toastRef} className="perm-toast"><Lock />Insufficient Permissions!</div>
+    </>
   );
+
+  function Categories({ cats, byCat, catLocked, catImage, onOpen }:
+    { cats: Cat[]; byCat: Record<string, Point[]>; catLocked: (c: Cat) => boolean; catImage: (id: string) => string | undefined; onOpen: (c: Cat) => void }) {
+    const shown = cats.filter((c) => (byCat[c.id] || []).length > 0);
+    return (
+      <>
+        <div className="stage-head">
+          <div className="eyebrow">Select your spawn</div>
+          <h1>{header.subtitle ? 'Choose your path' : 'Choose your path'}</h1>
+          <p>{header.blurb || 'Same state, different stories. Pick a lane, then a location — the world reshapes around you.'}</p>
+        </div>
+        <div className="cards cats">
+          {shown.map((c, i) => {
+            const [c1, c2] = ACCENT[c.accent || 'cyan'] || ACCENT.cyan;
+            const rgb = hex2rgb(c1); const Icon = CAT_ICON[c.icon || 'people'] || Users;
+            const lk = catLocked(c); const n = (byCat[c.id] || []).length;
+            return (
+              <div key={c.id} className={'card' + (lk ? ' locked' : '')} style={cvar({ '--i': String(i) })} onClick={() => onOpen(c)}>
+                <div className="art">
+                  <img className="photo" src={catImage(c.id)} alt="" />
+                  <div className="wash" style={{ background: `linear-gradient(160deg, rgba(${rgb},.4), transparent 60%), linear-gradient(0deg, rgba(6,9,20,.55), transparent 55%)` }} />
+                  <div className="grad" /><span className="rail-glow" style={cvar({ '--c1': c1, '--c2': c2 })} />
+                  <Icon className="cico" />
+                  {lk && <div className="lockover"><Lock /><span>{c.label.split(' ')[0]} access required</span></div>}
+                </div>
+                <div className="body">
+                  <h3>{c.label}</h3><div className="tag">{c.tag}</div>
+                  <div className="desc">{c.blurb}</div>
+                  <div className="foot"><MapPin className="pin" />{n} location{n === 1 ? '' : 's'}<ArrowRight className="arrow" width={18} height={18} /></div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </>
+    );
+  }
+
+  function Locations({ cat, pts, sel, onBack, onHover, onPick }:
+    { cat: Cat; pts: Point[]; sel: number | null; onBack: () => void; onHover: (p: Point) => void; onPick: (p: Point) => void }) {
+    const [c1, c2] = ACCENT[cat.accent || 'cyan'] || ACCENT.cyan; const rgb = hex2rgb(c1);
+    const example = pts.some((p) => (p.desc || '').startsWith('EXAMPLE'));
+    return (
+      <>
+        <button className="back" onClick={onBack}><ChevronLeft width={16} height={16} />All categories</button>
+        <div className="stage-head"><div className="eyebrow">{cat.tag}</div><h1>{cat.label}</h1><p>{cat.blurb}</p></div>
+        <div className="cards locs">
+          {pts.map((p, i) => {
+            const lk = !!(p.restricted && !p.allowed);
+            return (
+              <div key={p.index} className={'card' + (lk ? ' locked' : '') + (sel === p.index ? ' selected' : '')}
+                style={cvar({ '--i': String(i) })} onMouseEnter={() => !lk && onHover(p)} onClick={() => onPick(p)}>
+                <div className="art">
+                  <img className="photo" src={p.image} alt="" />
+                  <div className="wash" style={{ background: `linear-gradient(160deg, rgba(${rgb},.34), transparent 60%), linear-gradient(0deg, rgba(6,9,20,.55), transparent 55%)` }} />
+                  <div className="grad" /><span className="rail-glow" style={cvar({ '--c1': c1, '--c2': c2 })} />
+                  {lk && <div className="lockover"><Lock /><span>Access required</span></div>}
+                </div>
+                <div className="body">
+                  <h3>{p.name}</h3><div className="tag">{p.area}</div>
+                  <div className="desc">{(p.desc || '').replace(/^EXAMPLE — replace coords\.\s*/, '')}</div>
+                  <div className="foot"><MapPin className="pin" />Spawn point<ArrowRight className="arrow" width={16} height={16} /></div>
+                </div>
+              </div>
+            );
+          })}
+          {example && <div className="note"><Info />Example stations — wire these to real coordinates in flrp_spawn.</div>}
+        </div>
+      </>
+    );
+  }
+
+  function Updates({ data }: { data?: Menu['updates'] }) {
+    const items = data?.items || [];
+    return (
+      <>
+        <div className="stage-head"><div className="eyebrow">Updates</div><h1>Patch notes</h1>
+          {data?.note && <div className="feed-src"><AlignLeft />{data.note}</div>}</div>
+        <div className="feed">
+          {items.map((u, i) => (
+            <div key={i} className="fitem" style={cvar({ '--i': String(i), '--fc': u.color })}>
+              <span className="frail" />
+              <div className="fmain">
+                <div className="ftop"><span className="ftag">{u.tag}</span><h4>{u.title}</h4>{u.hash && <span className="fhash">{u.hash}</span>}</div>
+                {u.body && <div className="fbody">{u.body}</div>}
+                <div className="fmeta">{u.by} · {u.when}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </>
+    );
+  }
+
+  function About({ data }: { data?: Menu['about'] }) {
+    return (
+      <>
+        <div className="stage-head"><div className="eyebrow">About Us</div><h1>{data?.title || 'A higher standard'}</h1></div>
+        <div className="about">
+          {(data?.paragraphs || []).map((t, i) => <p key={i} dangerouslySetInnerHTML={{ __html: t.replace(/Florida Roleplay/g, '<b>Florida Roleplay</b>').replace(/ten years/g, '<b>ten years</b>') }} />)}
+          <div className="stats">{(data?.stats || []).map((s, i) => <div key={i} className="stat"><div className="n">{s.n}</div><div className="l">{s.l}</div></div>)}</div>
+        </div>
+      </>
+    );
+  }
+
+  function Leadership({ data }: { data?: Menu['leadership'] }) {
+    const initials = (n: string) => n.split(' ').map((x) => x[0]).join('').slice(0, 2).toUpperCase();
+    return (
+      <>
+        <div className="stage-head"><div className="eyebrow">Leadership</div><h1>Command team</h1><p>{data?.subtitle || 'The people keeping the standard higher.'}</p></div>
+        {(data?.groups || []).map((g, gi) => (
+          <div key={gi} className="lead-sec">
+            <div className="lead-label">{g.label}</div>
+            <div className="leaders">{g.people.map((pn, i) => (
+              <div key={i} className="lcard" style={cvar({ '--i': String(i) })}>
+                <div className="lava">{initials(pn.n)}</div><div className="lname">{pn.n}</div><div className="lrole">{pn.t}</div>
+              </div>
+            ))}</div>
+          </div>
+        ))}
+      </>
+    );
+  }
 }
 
-const MOCK_HEADER: Header = {
-  title: 'FLRP', subtitle: 'SPAWN SELECTOR',
-  blurb: 'Choose where to drop in, or return to where you last logged off.',
-  tagline: 'Florida Roleplay',
+function ChevronRightIcon() {
+  return <svg className="chev" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}><path d="M9 6l6 6-6 6" /></svg>;
+}
+
+// ---------------- dev mocks (browser only) ----------------
+const MOCK_HEADER: Header = { title: 'FLRP', subtitle: 'SPAWN SELECTOR', blurb: 'Same state, different stories. Pick a lane, then a location — the world reshapes around you.', tagline: 'Florida Roleplay', welcome: 'Welcome to FLRP', welcomeA: 'Active Community, ', welcomeB: 'Hybrid vMenu', flourish: 'Miami' };
+const MOCK_CATS: Cat[] = [
+  { id: 'leo', label: 'LEO Spawn Points', tag: 'Serve · Protect · Florida', accent: 'cyan', icon: 'shield', blurb: 'Sworn law enforcement only. Report on duty at your agency, gear up and hit the road.' },
+  { id: 'civ', label: 'Civilian Spawn Points', tag: 'Live · Work · Explore', accent: 'magenta', icon: 'people', blurb: 'Same state, different stories. Drop into the city, the suburbs or the coast.' },
+  { id: 'fire', label: 'Fire / EMS Spawn Points', tag: 'Care · Respond · Save Lives', accent: 'ember', icon: 'cross', blurb: 'Fire Rescue and EMS. Post up at your station and run calls across the county.' },
+];
+const MOCK_MENU: Menu = {
+  updates: { note: 'Live feed — mirrors the #updates Discord channel where Gitea posts every commit.', items: [
+    { tag: 'New', color: '#33e1ff', title: 'Spawn selector — reimagined', hash: 'a1b2c3d', by: 'Dev Team', when: 'just now', body: 'Brand-new Miami spawn screen with role-gated lanes and live previews.' },
+    { tag: 'Added', color: '#ff2e95', title: 'Sonoran Radio is live', hash: '6e8f3d8', by: 'Dev Team', when: 'today', body: 'In-game radio is back — channels, tones and the mobile repeater.' },
+  ] },
+  about: { title: 'A higher standard', paragraphs: ["Here at Florida Roleplay we've been playing FiveM for almost ten years."], stats: [{ n: '10 Yrs', l: 'Experience' }, { n: 'Miami', l: 'Based' }, { n: 'BSO·FHP·MPD', l: 'Departments' }, { n: 'Est. 2026', l: 'Florida Roleplay' }] },
+  leadership: { subtitle: 'The people keeping the standard higher.', groups: [{ label: 'Ownership', people: [{ n: 'Jordan', t: 'Owner' }, { n: 'Mike', t: 'Owner' }, { n: 'Johnson', t: 'Owner' }] }, { label: 'Directorship', people: [{ n: 'Juan', t: 'Executive Director' }] }] },
 };
-const MOCK: Point[] = [
-  { index: 1, name: 'Downtown Miami', area: 'Miami-Dade', image: '../img/legion.webp', desc: 'Downtown core — banks, shops and the busiest civilian hub.' },
-  { index: 2, name: 'Jackson Memorial', area: 'Miami-Dade', image: '../img/pillbox.jpg', desc: 'Central medical district next to Pillbox Hospital.' },
-  { index: 3, name: 'Miami International', area: 'Miami-Dade', image: '../img/airport.webp', desc: 'Los Santos International — air ops and the southern highway.' },
-  { index: 4, name: 'Mission Row PD', area: 'MPD — LEO only', image: '../img/missionrow.webp', desc: 'Mission Row police station. Sworn law enforcement only.', locked: true },
-  { index: 5, name: 'Davie', area: 'Broward County', image: '../img/sandyshores.webp', desc: 'Desert town in the county — Sandy SO and the trailer parks.' },
-  { index: 6, name: 'Deerfield Beach', area: 'Broward County', image: '../img/paleto.jpg', desc: 'The far-north coastal town, Paleto SO and the bank.' },
-  { index: 7, name: 'Homestead', area: 'South Dade', image: '../img/grapeseed.webp', desc: 'Quiet farming community east of the Alamo Sea.' },
-  { index: 8, name: 'Coral Gables', area: 'Miami-Dade', image: '../img/vinewood.webp', desc: 'The hills above the city — clubs, mansions and the sign.' },
-  { index: 9, name: 'South Beach', area: 'Miami Beach', image: '../img/delperro.jpg', desc: 'West-side beachfront, the pier and the boardwalk.' },
-  { index: 10, name: 'Coconut Grove', area: 'Miami-Dade', image: '../img/mirrorpark.webp', desc: 'East-side residential neighbourhood around the lake.' },
+const MOCK_POINTS: Point[] = [
+  { index: 1, name: 'Downtown Miami', area: 'Miami-Dade', category: 'civ', allowed: true, image: '../img/legion.webp', desc: 'Bayfront core — banks and the busiest civilian hub.' },
+  { index: 2, name: 'South Beach', area: 'Miami Beach', category: 'civ', allowed: true, image: '../img/delperro.jpg', desc: 'Ocean Drive — the boardwalk and the pier.' },
+  { index: 3, name: 'Coral Gables', area: 'Miami-Dade', category: 'civ', allowed: true, image: '../img/vinewood.webp', desc: 'Tree-lined estates and Miracle Mile.' },
+  { index: 10, name: 'Miami PD Headquarters', area: 'Miami-Dade · MPD', category: 'leo', restricted: true, allowed: false, image: '../img/missionrow.webp', desc: 'City police HQ.' },
+  { index: 13, name: 'Miami Fire Rescue HQ', area: 'Miami-Dade · MFR', category: 'fire', allowed: true, image: '../img/pillbox.jpg', desc: 'EXAMPLE — replace coords. Rescue 1 and the EOC.' },
 ];
