@@ -9,6 +9,7 @@
 --   exports.flrp_permissions:ReloadPermissions()             -> bool
 --   exports.flrp_permissions:ApplyForSource(source)          -> bool
 --   exports.flrp_permissions:GetPermissionMatrix()           -> matrix (for FLRP Manager)
+--   exports.flrp_permissions:GetDiscordRoleIds(source)       -> { 'roleId', ... } | nil
 -- ==========================================================================
 
 function HasPermission(source, key) return FLRPP.HasPermission(source, key) end
@@ -17,6 +18,20 @@ function GetRoles(source) return FLRPP.GetRoles(source) end
 function IsInGroup(source, roleKey) return FLRPP.IsInGroup(source, roleKey) end
 function GetEffectivePermissions(source) return FLRPP.GetEffectivePermissions(source) end
 function ApplyForSource(source) return FLRPP.ApplyForSource(source) end
+
+-- The raw Discord role IDs flrp_access read for this player at the connection
+-- gate (array of numeric strings), for resources that gate on specific guild
+-- roles directly (flrp_spawn LEO lanes, staff vehicles) instead of ACE.
+-- Returns nil when nothing is cached for the player (e.g. this resource was
+-- restarted after they joined) so callers can fall back to a live lookup via
+-- exports.flrp_access:GetDiscordRoleIds. Never returns client-supplied data.
+function GetDiscordRoleIds(source)
+  source = tonumber(source)
+  if not source then return nil end
+  local p = FLRPP.Players[source]
+  local license = (p and p.license) or FLRP.Identity.GetLicense(source)
+  return license and FLRPP.PendingDiscordRoles[license] or nil
+end
 
 -- Resolve a list of raw Discord role IDs to a set of FLRP role keys, using the
 -- same discordMap the gate uses. Pure lookup (no source needed) — used by the

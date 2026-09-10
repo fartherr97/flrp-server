@@ -1,7 +1,7 @@
 /* ==========================================================================
    FLRP Spawn Selector — Miami theme (in-game NUI).
-   The live previewed world renders BEHIND this page (transparent body), so
-   panels are glassy and only a left scrim + accent tint sit over the world.
+   Opaque Miami-sunset gradient backdrop (the game world is NOT shown behind
+   the UI); panels stay glassy over it and the accent tint follows the lane.
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap');
 
@@ -20,14 +20,20 @@
 :root[data-accent="magenta"]{--accent:var(--magenta);--accent-2:#ff5cc8;--tint:255,46,149;}
 :root[data-accent="ember"]{--accent:var(--ember);--accent-2:#ff3b3b;--tint:255,122,58;}
 
-body{background:transparent;color:var(--text);font-family:var(--body);overflow:hidden;user-select:none}
+body{background:#070a18;color:var(--text);font-family:var(--body);overflow:hidden;user-select:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
-/* background layers over the live world */
-.bg{position:fixed;inset:0;z-index:0;pointer-events:none}
-.bg .scrim{position:absolute;inset:0;background:linear-gradient(90deg, rgba(2,3,10,.86) 0%, rgba(2,3,10,.6) 30%, rgba(2,3,10,.22) 54%, transparent 72%)}
-.bg .tint{position:absolute;inset:0;mix-blend-mode:screen;background:radial-gradient(70% 60% at 30% 45%, rgba(var(--tint),.16), transparent 60%);transition:background .8s ease}
-.bg .btm{position:absolute;inset:0;background:linear-gradient(0deg, rgba(2,3,10,.6), transparent 40%)}
+/* Miami-sunset backdrop: navy → violet → plum, a pink sun low on the right,
+   cyan haze top-left, faint horizon bands, and a vignette to seat the panels. */
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;background:#070a18}
+.bg .base{position:absolute;inset:0;background:linear-gradient(165deg,#060a1c 0%,#0b1034 26%,#1a1148 50%,#3a1156 70%,#6b1a55 86%,#8f2452 100%)}
+.bg .sun{position:absolute;inset:0;background:radial-gradient(55% 42% at 78% 94%, rgba(255,120,150,.62) 0%, rgba(255,80,130,.26) 34%, transparent 64%)}
+.bg .haze{position:absolute;inset:0;background:radial-gradient(48% 46% at 12% 12%, rgba(51,225,255,.26) 0%, rgba(51,225,255,.08) 40%, transparent 68%)}
+.bg .tint{position:absolute;inset:0;mix-blend-mode:screen;background:radial-gradient(60% 55% at 50% 50%, rgba(var(--tint),.10), transparent 65%);transition:background .8s ease}
+.bg .bands{position:absolute;left:0;right:0;bottom:0;height:44%;opacity:.26;
+  background:repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0 1px, transparent 1px 24px);
+  -webkit-mask-image:linear-gradient(180deg,transparent,#000 60%);mask-image:linear-gradient(180deg,transparent,#000 60%)}
+.bg .vig{position:absolute;inset:0;background:radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(3,4,12,.72) 100%)}
 
 .topbar{position:fixed;z-index:4;top:26px;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:0 clamp(20px,4vw,60px);pointer-events:none}
 .brandline{font-family:var(--disp);letter-spacing:.34em;font-weight:600;font-size:13px;text-transform:uppercase;color:#dfe9ff;text-shadow:0 1px 8px rgba(0,0,0,.6)}
@@ -65,7 +71,11 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .stage{flex:1;align-self:stretch;min-width:0;display:flex;flex-direction:column;justify-content:flex-start;gap:16px;max-width:1080px;overflow-y:auto;padding-right:8px;scrollbar-width:none}
 .stage{-ms-overflow-style:none}
 .stage::-webkit-scrollbar{width:0;height:0}
-.stage-head{position:sticky;top:0;z-index:3;padding:2px 0 10px;background:linear-gradient(180deg, rgba(4,6,15,.9) 55%, transparent)}
+/* Sticky heading with a progressive blur instead of a dark box: content that
+   scrolls under it softens out, and there is no visible rectangle on top. */
+.stage-head{position:sticky;top:0;z-index:3;padding:2px 0 14px;
+  -webkit-backdrop-filter:blur(16px) saturate(1.1);backdrop-filter:blur(16px) saturate(1.1);
+  -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);mask-image:linear-gradient(180deg,#000 72%,transparent)}
 .back{position:sticky;top:0;z-index:4}
 .stage-head .eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--disp);letter-spacing:.34em;text-transform:uppercase;font-size:13px;color:var(--accent);font-weight:600}
 .stage-head .eyebrow::before{content:"";width:34px;height:2px;background:var(--accent);box-shadow:0 0 10px var(--accent)}

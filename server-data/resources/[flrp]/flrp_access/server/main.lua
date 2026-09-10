@@ -143,6 +143,25 @@ AddEventHandler('playerConnecting', function(name, setKickReason, deferrals)
   deferrals.done()
 end)
 
+-- Live re-read of a connected player's Discord role IDs (blocking; one Discord
+-- API call). Role-gated resources (flrp_spawn's LEO lane, staff vehicles) use
+-- this as a fallback when the roles cached at connect are gone — i.e.
+-- flrp_permissions was restarted mid-session. Re-publishes the roles so
+-- flrp_permissions re-caches them and re-attaches ACE principals too.
+-- Returns the array of role IDs, or nil if Discord can't be reached.
+function GetDiscordRoleIds(source)
+  source = tonumber(source)
+  if not source or not FLRPA.Config.configured then return nil end
+  local discordId = FLRP.Identity.GetDiscordId(source)
+  local license   = FLRP.Identity.GetLicense(source)
+  if not discordId or not license then return nil end
+  local status, member = FLRPA.Discord.GetGuildMember(FLRPA.Config.guildId, discordId)
+  if status ~= 'ok' or not member then return nil end
+  local roleIds = member.roles or {}
+  TriggerEvent('flrp_access:discordRolesResolved', license, roleIds)
+  return roleIds
+end
+
 -- Re-read convars if secrets are reloaded.
 RegisterCommand('flrp_reload_access', function(source)
   if source ~= 0 then return end

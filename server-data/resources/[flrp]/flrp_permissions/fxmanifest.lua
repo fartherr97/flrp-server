@@ -29,6 +29,7 @@ server_scripts {
   '@flrp_core/server/util.lua',
   '@flrp_core/server/db.lua',
   '@flrp_core/server/logging.lua',
+  '@flrp_core/server/identity.lua',
   'server/store.lua',
   'server/resolver.lua',
   'server/ace.lua',
@@ -48,4 +49,5 @@ server_exports {
   'ReloadPermissions',
   'ApplyForSource',
   'GetPermissionMatrix',
+  'GetDiscordRoleIds',
 }

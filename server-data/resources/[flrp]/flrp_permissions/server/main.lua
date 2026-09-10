@@ -82,7 +82,9 @@ RegisterCommand('flrp_perms', function(source, args)
 
   line('== flrp_perms: [%s] %s ==', tostring(target), tostring(GetPlayerName(target)))
   line('license: %s   core record: %s', tostring(license), rec and 'yes' or 'NO')
-  line('discord role ids seen at connect: %s', roleIds and tostring(#roleIds) or 'NONE (gate never published)')
+  line('discord role ids seen at connect: %s', roleIds
+    and (#roleIds > 0 and (#roleIds .. ' -> ' .. table.concat(roleIds, ', ')) or '0')
+    or 'NONE (gate never published)')
 
   -- Which configured convar roles does this player actually hold?
   local held, missing = {}, {}

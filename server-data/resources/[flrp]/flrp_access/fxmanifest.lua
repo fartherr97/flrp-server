@@ -34,3 +34,7 @@ server_scripts {
   'server/tempkick.lua',
   'server/main.lua',
 }
+
+server_exports {
+  'GetDiscordRoleIds',   -- live Discord role read for a connected player (fallback for role gates)
+}

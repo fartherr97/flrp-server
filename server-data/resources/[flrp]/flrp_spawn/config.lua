@@ -2,12 +2,25 @@
 -- FLRP :: flrp_spawn/config.lua — spawn selector points + menu content
 -- ==========================================================================
 -- Points are grouped into CATEGORIES (LEO / Civilian / Fire-EMS) in the NUI.
--- Each point: name, area, category, coords vector4(x,y,z,heading), optional
--- `ace` (only holders — or staff — may spawn there; others see it locked),
--- `desc` (Information box) and `image` (card art, from img/). Ungated points
--- are open to everyone.
+-- Each point: name, area, category, coords vector4(x,y,z,heading), `desc`
+-- (Information box) and `image` (card art, from img/).
+--
+-- Gating is by DISCORD ROLE, checked server-side against the roles flrp_access
+-- read at connect: a category (or a single point) lists `roles = {...}` and the
+-- player must hold AT LEAST ONE of them. No ACE, no staff bypass — to let a
+-- group in, add its role ID to the list. Ungated categories are open to all.
 -- ==========================================================================
 Config = Config or {}
+
+-- ---- LEO access roles ----------------------------------------------------
+-- Main-guild Discord role IDs. Holding ANY ONE of these unlocks the LEO lane.
+-- Override without a deploy: `set flrp_spawn_leo_roles "id1,id2,id3"` in
+-- secrets.cfg (comma-separated) replaces this list at boot (server-side).
+Config.LeoRoles = {
+  '1534380752207220736',
+  '1534380748247666796',
+  '1534911171319042159',
+}
 
 -- ---- Branding / header ---------------------------------------------------
 Config.Header = {
@@ -23,10 +36,11 @@ Config.Header = {
 
 -- ---- Categories ----------------------------------------------------------
 -- accent: cyan | magenta | ember   icon: shield | people | cross
--- ace (optional): a category is locked unless the player holds this ace (or
--- staff bypass). Individual points can still carry their own ace too.
+-- roles (optional): a category is locked unless the player holds at least one
+-- of these Discord role IDs. Individual points can carry their own `roles` too.
 Config.Categories = {
   { id = 'leo',  label = 'LEO Spawn Points',       tag = 'Serve · Protect · Florida', accent = 'cyan',    icon = 'shield',
+    roles = Config.LeoRoles,
     blurb = 'Sworn law enforcement only. Report on duty at your agency, gear up and hit the road.' },
   { id = 'civ',  label = 'Civilian Spawn Points',  tag = 'Live · Work · Explore',     accent = 'magenta', icon = 'people',
     blurb = 'Same state, different stories. Drop into the city, the suburbs or the coast and write your own.' },
@@ -47,10 +61,10 @@ Config.Points = {
   { name = 'Davie',             area = 'Broward County',  category = 'civ', image = '../img/sandyshores.webp',desc = 'Western Broward — ranches, the rodeo grounds and open road.',            coords = vector4(1884.41, 3714.45, 32.93, 210.0) },
   { name = 'Homestead',         area = 'South Dade',      category = 'civ', image = '../img/grapeseed.webp',  desc = 'Quiet Redland farming community — nurseries and packing houses.',        coords = vector4(1654.72, 4825.46, 42.08, 280.0) },
 
-  -- LEO (ace-gated: flrp.leo; staff bypass in server.lua)
-  { name = 'Miami PD Headquarters', area = 'Miami-Dade · MPD',  category = 'leo', ace = 'flrp.leo', image = '../img/missionrow.webp',  desc = 'City police HQ — patrol briefing, CID and the motor pool.',            coords = vector4(440.83, -984.53, 22.85, 268.2) },
-  { name = 'BSO Davie District',    area = 'Broward County · BSO', category = 'leo', ace = 'flrp.leo', image = '../img/sandyshores.webp', desc = "Broward Sheriff's Office district station covering west Broward.",     coords = vector4(1850.71, 3700.96, 33.76, 291.4) },
-  { name = 'FHP Troop E',           area = 'Florida Turnpike · FHP', category = 'leo', ace = 'flrp.leo', image = '../img/grapeseed.webp', desc = 'Highway Patrol Troop E — interstate interdiction and CVE.',            coords = vector4(2821.90, 4763.21, 47.37, 78.8) },
+  -- LEO (gated by Config.LeoRoles through the 'leo' category)
+  { name = 'Miami PD Headquarters', area = 'Miami-Dade · MPD',  category = 'leo', image = '../img/missionrow.webp',  desc = 'City police HQ — patrol briefing, CID and the motor pool.',            coords = vector4(440.83, -984.53, 22.85, 268.2) },
+  { name = 'BSO Davie District',    area = 'Broward County · BSO', category = 'leo', image = '../img/sandyshores.webp', desc = "Broward Sheriff's Office district station covering west Broward.",     coords = vector4(1850.71, 3700.96, 33.76, 291.4) },
+  { name = 'FHP Troop E',           area = 'Florida Turnpike · FHP', category = 'leo', image = '../img/grapeseed.webp', desc = 'Highway Patrol Troop E — interstate interdiction and CVE.',            coords = vector4(2821.90, 4763.21, 47.37, 78.8) },
 
   -- Fire / EMS  (EXAMPLE stations — replace coords with real ones via /coords)
   { name = 'Miami Fire Rescue HQ',  area = 'Miami-Dade · MFR', category = 'fire', image = '../img/pillbox.jpg',     desc = 'EXAMPLE — replace coords. Rescue 1, the training tower and the EOC.',   coords = vector4(298.98, -584.45, 43.26, 70.0) },
@@ -91,9 +105,6 @@ Config.Menu = {
     },
   },
 }
-
--- ---- Preview camera ------------------------------------------------------
-Config.Preview = { dist = 20.0, height = 10.0, fov = 50.0, interp = 900 }
 
 -- Banner logo (top-left of the rail). Bundled locally.
 Config.LogoUrl = '../img/flrp-logo.png'

@@ -33,14 +33,12 @@ export function App() {
   const [catId, setCatId] = useState<string | null>(null);
   const [sel, setSel] = useState<number | null>(null);
   const [spawning, setSpawning] = useState(false);
-  const focusedRef = useRef<number | null>(null);
   const toastRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
   useNuiEvent<{ logo: string; header: Header; categories: Cat[]; menu: Menu; playerName: string }>('open', (d) => {
     setLogo(d.logo || ''); setHeader(d.header || {}); setCats(d.categories || []); setMenu(d.menu || {}); setPlayer(d.playerName || '');
     setOpen(true); setPoints(null); setView('play'); setCatId(null); setSel(null); setSpawning(false);
-    focusedRef.current = null;
   });
   useNuiEvent<{ points: Point[] }>('points', (d) => setPoints(d.points || []));
   useNuiEvent('denied', () => { permToast(); setSel(null); setSpawning(false); });
@@ -64,16 +62,15 @@ export function App() {
     document.documentElement.dataset.accent = view === 'play' && cat ? (cat.accent || '') : '';
   }, [view, cat]);
 
-  const focus = (index: number) => { if (focusedRef.current !== index) { focusedRef.current = index; fetchNui('focus', { index }); } };
   const permToast = () => {
     const t = toastRef.current; if (!t) return;
     t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
     window.clearTimeout(toastTimer.current); toastTimer.current = window.setTimeout(() => t.classList.remove('show'), 1700);
   };
   const catLocked = (c: Cat) => { const ps = byCat[c.id] || []; return ps.length > 0 && ps.every((p) => p.restricted && !p.allowed); };
-  const openCat = (c: Cat) => { if (catLocked(c)) return permToast(); setCatId(c.id); setSel(null); const first = (byCat[c.id] || [])[0]; if (first) focus(first.index); };
+  const openCat = (c: Cat) => { if (catLocked(c)) return permToast(); setCatId(c.id); setSel(null); };
   const goPlay = () => { setView('play'); setCatId(null); setSel(null); };
-  const selectLoc = (p: Point) => { if (p.restricted && !p.allowed) return permToast(); setSel(p.index); focus(p.index); };
+  const selectLoc = (p: Point) => { if (p.restricted && !p.allowed) return permToast(); setSel(p.index); };
   const deploy = () => { if (sel == null) return; setSpawning(true); fetchNui('select', { index: sel }); };
 
   if (!open) return <div ref={toastRef} className="perm-toast"><Lock />Insufficient Permissions!</div>;
@@ -87,7 +84,7 @@ export function App() {
 
   return (
     <>
-      <div className="bg" aria-hidden><div className="scrim" /><div className="tint" /><div className="btm" /></div>
+      <div className="bg" aria-hidden><div className="base" /><div className="sun" /><div className="haze" /><div className="tint" /><div className="bands" /><div className="vig" /></div>
       <div className="topbar">
         <div className="brandline">{header.title === 'FLRP' ? 'Florida Roleplay' : header.title || 'Florida Roleplay'}<small>A Higher Standard</small></div>
         <div className="whoami"><div className="n">{player || 'Player'}</div><div className="t">{header.tagline || 'Florida Roleplay'}</div></div>
@@ -113,7 +110,7 @@ export function App() {
 
         <section className="stage">
           {view === 'play' && !catId && <Categories cats={cats} byCat={byCat} catLocked={catLocked} catImage={(id) => (byCat[id] || [])[0]?.image} onOpen={openCat} />}
-          {view === 'play' && cat && <Locations cat={cat} pts={byCat[cat.id] || []} sel={sel} onBack={() => setCatId(null)} onHover={(p) => focus(p.index)} onPick={selectLoc} />}
+          {view === 'play' && cat && <Locations cat={cat} pts={byCat[cat.id] || []} sel={sel} onBack={() => setCatId(null)} onPick={selectLoc} />}
           {view === 'updates' && <Updates data={menu.updates} />}
           {view === 'about' && <About data={menu.about} />}
           {view === 'leadership' && <Leadership data={menu.leadership} />}
@@ -169,8 +166,8 @@ export function App() {
     );
   }
 
-  function Locations({ cat, pts, sel, onBack, onHover, onPick }:
-    { cat: Cat; pts: Point[]; sel: number | null; onBack: () => void; onHover: (p: Point) => void; onPick: (p: Point) => void }) {
+  function Locations({ cat, pts, sel, onBack, onPick }:
+    { cat: Cat; pts: Point[]; sel: number | null; onBack: () => void; onPick: (p: Point) => void }) {
     const [c1, c2] = ACCENT[cat.accent || 'cyan'] || ACCENT.cyan; const rgb = hex2rgb(c1);
     const example = pts.some((p) => (p.desc || '').startsWith('EXAMPLE'));
     return (
@@ -182,7 +179,7 @@ export function App() {
             const lk = !!(p.restricted && !p.allowed);
             return (
               <div key={p.index} className={'card' + (lk ? ' locked' : '') + (sel === p.index ? ' selected' : '')}
-                style={cvar({ '--i': String(i) })} onMouseEnter={() => !lk && onHover(p)} onClick={() => onPick(p)}>
+                style={cvar({ '--i': String(i) })} onClick={() => onPick(p)}>
                 <div className="art">
                   <img className="photo" src={p.image} alt="" />
                   <div className="wash" style={{ background: `linear-gradient(160deg, rgba(${rgb},.34), transparent 60%), linear-gradient(0deg, rgba(6,9,20,.55), transparent 55%)` }} />
