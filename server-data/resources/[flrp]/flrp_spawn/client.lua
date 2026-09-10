@@ -2,12 +2,35 @@
 -- FLRP :: flrp_spawn/client.lua — spawn selector (open + debuggable)
 -- ==========================================================================
 -- Flow: on join, spawnmanager hands control to us instead of auto-spawning.
--- We hide + freeze the player behind the (opaque, Miami-gradient) NUI, ask
--- the server which points this player may use (Discord-role gating), and on
--- selection spawn via spawnmanager at the chosen coords. Plain Lua throughout.
+-- We hide + freeze the player behind the (opaque, Miami-gradient) NUI with
+-- the camera parked on empty sky, ask the server which points this player may
+-- use (Discord-role gating), and on selection spawn via spawnmanager at the
+-- chosen coords. Plain Lua throughout.
 -- ==========================================================================
 
 local selecting = false
+
+-- While the selector is up the NUI is opaque, so aim the game camera at empty
+-- sky far out over the ocean and move the streaming focus there: nothing to
+-- render or stream behind the menu, which keeps the UI smooth on weaker PCs.
+-- Cleared right before spawning so the destination streams in normally.
+local IDLE_CAM = vector3(-3800.0, -4800.0, 600.0)
+local idleCam  = nil
+
+local function startIdleCam()
+  SetFocusPosAndVel(IDLE_CAM.x, IDLE_CAM.y, IDLE_CAM.z, 0.0, 0.0, 0.0)
+  idleCam = CreateCam('DEFAULT_SCRIPTED_CAMERA', true)
+  SetCamCoord(idleCam, IDLE_CAM.x, IDLE_CAM.y, IDLE_CAM.z)
+  SetCamRot(idleCam, 25.0, 0.0, 180.0, 2)   -- tilted up: sky only
+  SetCamActive(idleCam, true)
+  RenderScriptCams(true, false, 0, true, true)
+end
+
+local function stopIdleCam()
+  RenderScriptCams(false, false, 0, true, true)
+  if idleCam then DestroyCam(idleCam, false); idleCam = nil end
+  ClearFocus()
+end
 
 local function openSelector()
   if selecting then return end
@@ -30,6 +53,7 @@ local function openSelector()
   -- Make sure the connect loading screen is gone so the NUI is visible.
   ShutdownLoadingScreen()
   ShutdownLoadingScreenNui()
+  startIdleCam()
   DoScreenFadeIn(500)
 
   SetNuiFocus(true, true)
@@ -91,6 +115,7 @@ RegisterNetEvent('flrp_spawn:approved', function(index)
 
   SetNuiFocus(false, false)
   SendNUIMessage({ action = 'close' })
+  stopIdleCam()
 
   exports.spawnmanager:spawnPlayer({
     x = p.coords.x, y = p.coords.y, z = p.coords.z, heading = p.coords.w,

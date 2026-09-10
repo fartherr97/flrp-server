@@ -1,7 +1,13 @@
 /* ==========================================================================
    FLRP Spawn Selector — Miami theme (in-game NUI).
    Opaque Miami-sunset gradient backdrop (the game world is NOT shown behind
-   the UI); panels stay glassy over it and the accent tint follows the lane.
+   the UI); panels sit over it and the accent tint follows the lane.
+   The BODY must stay transparent: the page is always rendered by FiveM, and
+   only the .bg layer (mounted while the menu is open) is opaque — an opaque
+   body keeps covering the game after the menu closes (solid black screen).
+   PERF: no backdrop-filter / mix-blend-mode anywhere — FiveM's CEF recomposites
+   those every frame and it makes the whole menu feel laggy. Panels are plain
+   translucent fills instead (indistinguishable over a static gradient).
    ========================================================================== */
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap');
 
@@ -12,7 +18,7 @@
   --cyan:#33e1ff; --magenta:#ff2e95; --ember:#ff7a3a;
   --brand-pink:#ff2e8b; --brand-cyan:#34d9ff;
   --accent:var(--cyan); --accent-2:#12a8ff; --tint:51,225,255;
-  --glass:rgba(9,13,27,.62);
+  --glass:rgba(10,14,30,.84);
   --disp:'Rajdhani','Inter',system-ui,sans-serif;
   --body:'Inter',system-ui,'Segoe UI',sans-serif;
   --speed:150ms;
@@ -20,7 +26,7 @@
 :root[data-accent="magenta"]{--accent:var(--magenta);--accent-2:#ff5cc8;--tint:255,46,149;}
 :root[data-accent="ember"]{--accent:var(--ember);--accent-2:#ff3b3b;--tint:255,122,58;}
 
-body{background:#070a18;color:var(--text);font-family:var(--body);overflow:hidden;user-select:none}
+body{background:transparent;color:var(--text);font-family:var(--body);overflow:hidden;user-select:none}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* Miami-sunset backdrop: navy → violet → plum, a pink sun low on the right,
@@ -29,7 +35,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .bg .base{position:absolute;inset:0;background:linear-gradient(165deg,#060a1c 0%,#0b1034 26%,#1a1148 50%,#3a1156 70%,#6b1a55 86%,#8f2452 100%)}
 .bg .sun{position:absolute;inset:0;background:radial-gradient(55% 42% at 78% 94%, rgba(255,120,150,.62) 0%, rgba(255,80,130,.26) 34%, transparent 64%)}
 .bg .haze{position:absolute;inset:0;background:radial-gradient(48% 46% at 12% 12%, rgba(51,225,255,.26) 0%, rgba(51,225,255,.08) 40%, transparent 68%)}
-.bg .tint{position:absolute;inset:0;mix-blend-mode:screen;background:radial-gradient(60% 55% at 50% 50%, rgba(var(--tint),.10), transparent 65%);transition:background .8s ease}
+.bg .tint{position:absolute;inset:0;background:radial-gradient(60% 55% at 50% 50%, rgba(var(--tint),.14), transparent 65%);transition:background .8s ease}
 .bg .bands{position:absolute;left:0;right:0;bottom:0;height:44%;opacity:.26;
   background:repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0 1px, transparent 1px 24px);
   -webkit-mask-image:linear-gradient(180deg,transparent,#000 60%);mask-image:linear-gradient(180deg,transparent,#000 60%)}
@@ -45,7 +51,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .app{position:relative;z-index:2;height:100vh;display:flex;align-items:stretch;padding:84px clamp(18px,4vw,60px) 30px;gap:clamp(20px,3vw,48px)}
 
 /* left rail */
-.rail{width:clamp(300px,25vw,352px);align-self:stretch;justify-content:flex-start;background:var(--glass);backdrop-filter:blur(18px) saturate(1.2);
+.rail{width:clamp(300px,25vw,352px);align-self:stretch;justify-content:flex-start;background:var(--glass);
   border:1px solid var(--line);border-radius:22px;padding:26px 24px 22px;
   box-shadow:0 30px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.05);display:flex;flex-direction:column;gap:18px}
 .badge{display:flex;justify-content:center}
@@ -71,12 +77,8 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .stage{flex:1;align-self:stretch;min-width:0;display:flex;flex-direction:column;justify-content:flex-start;gap:16px;max-width:1080px;overflow-y:auto;padding-right:8px;scrollbar-width:none}
 .stage{-ms-overflow-style:none}
 .stage::-webkit-scrollbar{width:0;height:0}
-/* Sticky heading with a progressive blur instead of a dark box: content that
-   scrolls under it softens out, and there is no visible rectangle on top. */
-.stage-head{position:sticky;top:0;z-index:3;padding:2px 0 14px;
-  -webkit-backdrop-filter:blur(16px) saturate(1.1);backdrop-filter:blur(16px) saturate(1.1);
-  -webkit-mask-image:linear-gradient(180deg,#000 72%,transparent);mask-image:linear-gradient(180deg,#000 72%,transparent)}
-.back{position:sticky;top:0;z-index:4}
+/* Heading scrolls with the list (not sticky): no backing box, no blur. */
+.stage-head{padding:2px 0 14px}
 .stage-head .eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--disp);letter-spacing:.34em;text-transform:uppercase;font-size:13px;color:var(--accent);font-weight:600}
 .stage-head .eyebrow::before{content:"";width:34px;height:2px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
 .stage-head h1{font-family:var(--disp);text-transform:uppercase;font-weight:700;letter-spacing:.02em;margin:8px 0 4px;
@@ -117,7 +119,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .card.selected{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent),0 0 40px rgba(var(--tint),.4);transform:translateY(-6px)}
 .card.locked{cursor:not-allowed}
 .lockover{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
-  background:rgba(3,5,12,.62);backdrop-filter:blur(2px) saturate(.55);transition:background .25s}
+  background:rgba(3,5,12,.7);transition:background .25s}
 .lockover svg{width:36px;height:36px;color:#fff;filter:drop-shadow(0 0 14px rgba(var(--tint),.7))}
 .lockover span{font-family:var(--disp);letter-spacing:.22em;text-transform:uppercase;font-size:9.5px;color:#cfe0ff}
 .card.locked:hover{transform:translateY(-3px)}
@@ -128,7 +130,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 
 /* deploy bar */
 .deploy{position:fixed;left:50%;bottom:26px;transform:translate(-50%,140%);z-index:6;display:flex;align-items:center;gap:18px;
-  padding:12px 12px 12px 22px;border-radius:16px;background:var(--glass);backdrop-filter:blur(18px);border:1px solid var(--line-2);
+  padding:12px 12px 12px 22px;border-radius:16px;background:var(--glass);border:1px solid var(--line-2);
   box-shadow:0 20px 60px rgba(0,0,0,.6);transition:transform .4s cubic-bezier(.2,.9,.2,1)}
 .deploy.show{transform:translate(-50%,0)}
 .deploy .k{font-family:var(--disp);letter-spacing:.24em;text-transform:uppercase;font-size:10px;color:var(--faint)}
@@ -142,7 +144,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 /* perm toast */
 .perm-toast{position:fixed;left:50%;top:76px;z-index:30;transform:translate(-50%,-20px);opacity:0;pointer-events:none;
   display:inline-flex;align-items:center;gap:10px;padding:12px 20px;border-radius:12px;background:rgba(30,8,12,.86);
-  border:1px solid rgba(255,90,90,.5);backdrop-filter:blur(12px);color:#ffd9d9;font-family:var(--disp);letter-spacing:.12em;
+  border:1px solid rgba(255,90,90,.5);color:#ffd9d9;font-family:var(--disp);letter-spacing:.12em;
   text-transform:uppercase;font-size:13px;font-weight:600;box-shadow:0 16px 50px rgba(0,0,0,.5);transition:.28s}
 .perm-toast svg{width:17px;height:17px;color:#ff6060}
 .perm-toast.show{opacity:1;transform:translate(-50%,0);animation:shake .42s}
