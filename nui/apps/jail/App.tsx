@@ -6,6 +6,10 @@ import type { State, JailPlayer } from './types';
 
 export function App() {
   const [state, setState] = useState<State | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
+  const [notice, setNotice] = useState('');
+  const [staffArmed, setStaffArmed] = useState<number | null>(null);
+  const [jobs, setJobs] = useState(10);
   const [search, setSearch] = useState('');
   const [secs, setSecs] = useState<Record<number, number>>({});
   const [hosp, setHosp] = useState<Record<number, string>>({});
@@ -25,7 +29,7 @@ export function App() {
   const fmt = (s: number) => (s <= 0 ? '—' : s < 60 ? `${s}s` : `${Math.floor(s / 60)}m${s % 60 ? ' ' + (s % 60) + 's' : ''}`);
   const clock = (s: number) => { const m = Math.max(0, Math.floor(s / 60)); const ss = Math.max(0, s % 60); return `${m}:${String(ss).padStart(2, '0')}`; };
 
-  useNuiEvent<{ state: State }>('open', (d) => { setState(d.state); setSearch(''); setArmed(null); });
+  useNuiEvent<{ state: State }>('open', (d) => { setState(d.state); setSearch(''); setArmed(null); setSelected(null); setNotice(''); });
   useNuiEvent('close', () => setState(null));
 
   const close = useCallback(() => { fetchNui('close'); setState(null); }, []);
@@ -61,29 +65,38 @@ export function App() {
     if (busy) return;
     if (armed !== p.id) { setArmed(p.id); setTimeout(() => setArmed((a) => (a === p.id ? null : a)), 3000); return; }
     setArmed(null); setBusy(true);
-    await fetchNui('jail', { id: p.id, seconds: secOf(p.id) });
+    const result = await fetchNui('jail', { id: p.id, seconds: secOf(p.id) });
+    setNotice(result.ok ? 'Sentence assigned.' : (result.error || 'Unable to assign sentence.'));
     setBusy(false); refresh();
   };
   const doHosp = async (p: JailPlayer, cb: string) => {
     if (busy) return; setBusy(true);
-    await fetchNui(cb, { id: p.id, hospital: hospOf(p.id), injury: injOf(p.id) });
+    const result = await fetchNui(cb, { id: p.id, hospital: hospOf(p.id), injury: injOf(p.id) });
+    setNotice(result.ok ? 'Treatment assigned.' : (result.error || 'Unable to assign treatment.'));
     setBusy(false); refresh();
   };
   const doUnjail = async (p: JailPlayer) => {
     if (busy) return; setBusy(true);
-    await fetchNui('unjail', { id: p.id });
+    const result = await fetchNui('unjail', { id: p.id });
+    setNotice(result.ok ? 'Player released.' : (result.error || 'Unable to release player.'));
+    setBusy(false); refresh();
+  };
+  const staffAction = async (p: JailPlayer, release: boolean) => {
+    if (busy) return; setBusy(true);
+    const result = await fetchNui(release ? 'unstaffjail' : 'staffjail', {id:p.id,jobs});
+    setNotice(result.ok ? (release ? 'Staff jail released.' : 'Staff jobs assigned.') : (result.error || 'Action failed.'));
     setBusy(false); refresh();
   };
   const remainingOf = (p: JailPlayer) => (p.untilTs ? p.untilTs - (now + skew) : 0);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/45 p-6 font-sans text-fg">
-      <div className="flex max-h-[90vh] w-full max-w-[1000px] flex-col overflow-hidden rounded-lg border border-border bg-bg shadow-2xl animate-flrp-rise">
+      <div className="flex max-h-[90vh] w-full max-w-[1120px] flex-col overflow-hidden rounded-lg border border-border bg-bg shadow-2xl animate-flrp-rise">
 
         {/* header */}
         <header className="flex items-center gap-3 border-b border-border-soft px-5 py-3.5">
-          <img src={state.logo} alt="" className="size-9 rounded-md object-cover ring-1 ring-border" />
-          <div className="text-lg font-bold">Jail Manager</div>
+          {state.logo && <img src={state.logo} alt="" className="size-9 rounded-md object-cover ring-1 ring-border" />}
+          <div className="text-lg font-bold">Custody & Care</div>
           <div className="ml-auto flex items-center gap-2">
             <button onClick={refresh}
               className="inline-flex items-center gap-1.5 rounded-sm bg-panel-hover px-3 py-1.5 text-[13px] font-semibold text-fg-muted hover:text-fg [&_svg]:size-4">
@@ -96,6 +109,8 @@ export function App() {
           </div>
         </header>
 
+        <div className="flex gap-8 border-b border-border-soft bg-panel px-5 py-3 text-sm text-fg-muted"><span><b className="text-fg">{state.players.length}</b> players online</span><span><b className="text-warning">{state.players.filter(p => p.jailed || p.staffJobs).length}</b> in custody</span><span className="ml-auto">Florida Roleplay · Staff services</span></div>
+        {notice && <div role="status" className="bg-panel-hover px-5 py-3 text-sm text-warning">{notice}</div>}
         {/* search */}
         <div className="px-5 pt-4">
           <div className="relative">
@@ -107,9 +122,9 @@ export function App() {
         </div>
 
         {/* table header */}
-        <div className="grid grid-cols-[58px_minmax(150px,1fr)_168px_78px_78px_auto] items-center gap-3 px-5 pb-1.5 pt-4 text-2xs font-bold uppercase tracking-wider text-fg-faint">
+        <div className="grid grid-cols-[58px_minmax(150px,1fr)_168px_78px_120px_100px] items-center gap-3 px-5 pb-1.5 pt-4 text-2xs font-bold uppercase tracking-wider text-fg-faint">
           <div>ID</div><div>Name</div><div>Discord</div><div>Total Jails</div><div>Status</div>
-          <div className="text-right">Action</div>
+          <div className="text-right">Manage</div>
         </div>
 
         {/* rows */}
@@ -118,20 +133,23 @@ export function App() {
             ? <div className="py-10 text-center text-sm text-fg-faint">No players match your search.</div>
             : rows.map((p) => (
               <div key={p.id}
-                className="grid grid-cols-[58px_minmax(150px,1fr)_168px_78px_78px_auto] items-center gap-3 border-b border-border-soft/70 py-2.5">
+                className="grid grid-cols-[58px_minmax(150px,1fr)_168px_78px_120px_100px] items-center gap-3 border-b border-border-soft/70 py-2.5">
                 <div className="text-[13px] font-bold text-fg-muted">[{p.id}]</div>
                 <div className="truncate text-[13px] font-semibold" title={p.name}>{p.name}</div>
                 <div className="truncate font-mono text-xs text-fg-muted" title={p.discord}>{p.discord || '—'}</div>
                 <div className="text-sm font-bold tabular-nums">{p.total}</div>
                 {(() => { const rem = remainingOf(p); const jailedNow = p.jailed && rem > 0; return (
                   <div className={`text-[13px] font-semibold tabular-nums ${jailedNow ? 'text-danger' : 'text-success'}`}>
-                    {jailedNow ? <>Jailed <span className="text-fg-muted">{clock(rem)}</span></> : 'Free'}
+                    {p.staffJobs ? `${p.staffJobs} staff jobs` : jailedNow ? <>Jailed <span className="text-fg-muted">{clock(rem)}</span></> : 'Free'}
                   </div>
                 ); })()}
 
-                {/* actions */}
-                <div className="flex flex-wrap items-center justify-end gap-1.5">
-                  {perms.jail && (p.jailed && remainingOf(p) > 0 ? (
+                <button onClick={() => { setSelected(selected === p.id ? null : p.id); setArmed(null); setStaffArmed(null); }} className="rounded-md border border-border bg-panel-hover px-3 py-2 text-xs font-semibold">{selected === p.id ? 'Close panel' : 'Manage'}</button>
+                {/* Expand only the selected player to keep the roster readable. */}
+                {selected === p.id && <div className="col-span-6 my-3 rounded-lg border border-border bg-panel p-5">
+                <div className="mb-4"><h2 className="text-lg font-bold">{p.name} <span className="text-sm text-fg-faint">#{p.id}</span></h2><p className="mt-1 text-xs text-fg-muted">Timed custody · staff service jobs · medical treatment</p></div>
+                <div className="flex flex-wrap items-center gap-3">
+                  {perms.jail && !p.staffJobs && (p.jailed && remainingOf(p) > 0 ? (
                     <button onClick={() => doUnjail(p)} disabled={busy} title="Release early"
                       className="inline-flex h-8 items-center gap-1 rounded-sm bg-success px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
                       <DoorOpen />Unjail
@@ -144,7 +162,7 @@ export function App() {
                           <ListPlus />Charges
                         </button>
                       )}
-                      <input type="number" min={1} max={state.maxSeconds} value={secOf(p.id)}
+                      <input aria-label="Sentence in seconds" title="Sentence in seconds" type="number" min={1} max={state.maxSeconds} value={secOf(p.id)}
                         onChange={(e) => setSecs((s) => ({ ...s, [p.id]: Math.max(1, Math.min(state.maxSeconds, +e.target.value || 0)) }))}
                         className="h-8 w-14 rounded-sm border border-border bg-panel px-2 text-center text-xs tabular-nums text-fg focus:border-primary focus:outline-none" />
                       <button onClick={() => doJail(p)} disabled={busy}
@@ -153,14 +171,14 @@ export function App() {
                       </button>
                     </>
                   ))}
-                  {(perms.hospitalize || perms.leoHospitalize) && (
+                  {!p.staffJobs && !p.jailed && (perms.hospitalize || perms.leoHospitalize) && (
                     <select value={hospOf(p.id)} onChange={(e) => setHosp((h) => ({ ...h, [p.id]: e.target.value }))}
                       title="Hospital"
                       className="h-8 max-w-[120px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
                       {state.hospitals.map((h) => <option key={h.id} value={h.id}>{h.label}</option>)}
                     </select>
                   )}
-                  {perms.hospitalize && (
+                  {!p.staffJobs && !p.jailed && perms.hospitalize && (
                     <>
                       <select value={injOf(p.id)} onChange={(e) => setInjury((i) => ({ ...i, [p.id]: e.target.value }))}
                         title="Injury type (sets downtime)"
@@ -173,20 +191,22 @@ export function App() {
                       </button>
                     </>
                   )}
-                  {perms.leoHospitalize && (
+                  {!p.staffJobs && !p.jailed && perms.leoHospitalize && (
                     <button onClick={() => doHosp(p, 'leoHospitalize')} disabled={busy} title={`LEO Hospitalize (${fmt(state.leoHospSeconds)})`}
                       className="inline-flex h-8 items-center gap-1 rounded-sm bg-info px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
                       <ShieldPlus />LEO
                     </button>
                   )}
                 </div>
+                {perms.jail && <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4"><div className="mr-auto"><h3 className="text-sm font-bold">Staff service jobs</h3><p className="mt-1 text-xs text-fg-muted">Cleaning tasks. Progress persists after disconnecting.</p></div>{p.staffJobs ? <button disabled={busy} onClick={() => staffAction(p,true)} className="rounded-md bg-success px-4 py-2 text-sm font-bold text-white">Release staff jail ({p.staffJobs} left)</button> : !p.jailed && <><label className="text-xs text-fg-muted">Jobs <input aria-label="Staff jobs" type="number" min={1} max={200} value={jobs} onChange={e=>setJobs(Math.max(1,Math.min(200,Math.floor(Number(e.target.value)||1))))} className="ml-2 w-20 rounded border border-border bg-bg p-2 text-fg"/></label><button disabled={busy} onClick={() => { if(staffArmed!==p.id) {setStaffArmed(p.id); return;} setStaffArmed(null); staffAction(p,false); }} className="rounded-md bg-warning px-4 py-2 text-sm font-bold text-black">{staffArmed===p.id?'Confirm staff jobs':'Assign staff jobs'}</button></>}</div>}
+                </div>}
               </div>
             ))}
         </div>
 
         {/* footer */}
         <div className="border-t border-border-soft px-5 py-2.5 text-2xs text-fg-faint">
-          Tip: Type <b className="text-fg-muted">/jail</b> to open this menu. Use seconds up to {state.maxSeconds}. Click <b className="text-fg-muted">Jail</b> twice to confirm.
+          Select Manage beside a player. Type <b className="text-fg-muted">/jail</b> to open this menu. Use seconds up to {state.maxSeconds}. Click <b className="text-fg-muted">Jail</b> twice to confirm.
         </div>
       </div>
 
