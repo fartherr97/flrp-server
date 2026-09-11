@@ -8,8 +8,6 @@ export function App() {
   const [state, setState] = useState<State | null>(null);
   const [selected, setSelected] = useState<number | null>(null);
   const [notice, setNotice] = useState('');
-  const [staffArmed, setStaffArmed] = useState<number | null>(null);
-  const [jobs, setJobs] = useState(10);
   const [search, setSearch] = useState('');
   const [secs, setSecs] = useState<Record<number, number>>({});
   const [hosp, setHosp] = useState<Record<number, string>>({});
@@ -81,12 +79,6 @@ export function App() {
     setNotice(result.ok ? 'Player released.' : (result.error || 'Unable to release player.'));
     setBusy(false); refresh();
   };
-  const staffAction = async (p: JailPlayer, release: boolean) => {
-    if (busy) return; setBusy(true);
-    const result = await fetchNui(release ? 'unstaffjail' : 'staffjail', {id:p.id,jobs});
-    setNotice(result.ok ? (release ? 'Staff jail released.' : 'Staff jobs assigned.') : (result.error || 'Action failed.'));
-    setBusy(false); refresh();
-  };
   const remainingOf = (p: JailPlayer) => (p.untilTs ? p.untilTs - (now + skew) : 0);
 
   return (
@@ -109,7 +101,7 @@ export function App() {
           </div>
         </header>
 
-        <div className="flex gap-8 border-b border-border-soft bg-panel px-5 py-3 text-sm text-fg-muted"><span><b className="text-fg">{state.players.length}</b> players online</span><span><b className="text-warning">{state.players.filter(p => p.jailed || p.staffJobs).length}</b> in custody</span><span className="ml-auto">Florida Roleplay · Staff services</span></div>
+        <div className="flex gap-8 border-b border-border-soft bg-panel px-5 py-3 text-sm text-fg-muted"><span><b className="text-fg">{state.players.length}</b> players online</span><span><b className="text-warning">{state.players.filter(p => p.jailed).length}</b> in custody</span><span className="ml-auto">Florida Roleplay · Custody services</span></div>
         {notice && <div role="status" className="bg-panel-hover px-5 py-3 text-sm text-warning">{notice}</div>}
         {/* search */}
         <div className="px-5 pt-4">
@@ -140,16 +132,16 @@ export function App() {
                 <div className="text-sm font-bold tabular-nums">{p.total}</div>
                 {(() => { const rem = remainingOf(p); const jailedNow = p.jailed && rem > 0; return (
                   <div className={`text-[13px] font-semibold tabular-nums ${jailedNow ? 'text-danger' : 'text-success'}`}>
-                    {p.staffJobs ? `${p.staffJobs} staff jobs` : jailedNow ? <>Jailed <span className="text-fg-muted">{clock(rem)}</span></> : 'Free'}
+                    {jailedNow ? <>Jailed <span className="text-fg-muted">{clock(rem)}</span></> : 'Free'}
                   </div>
                 ); })()}
 
-                <button onClick={() => { setSelected(selected === p.id ? null : p.id); setArmed(null); setStaffArmed(null); }} className="rounded-md border border-border bg-panel-hover px-3 py-2 text-xs font-semibold">{selected === p.id ? 'Close panel' : 'Manage'}</button>
+                <button onClick={() => { setSelected(selected === p.id ? null : p.id); setArmed(null); }} className="rounded-md border border-border bg-panel-hover px-3 py-2 text-xs font-semibold">{selected === p.id ? 'Close panel' : 'Manage'}</button>
                 {/* Expand only the selected player to keep the roster readable. */}
                 {selected === p.id && <div className="col-span-6 my-3 rounded-lg border border-border bg-panel p-5">
-                <div className="mb-4"><h2 className="text-lg font-bold">{p.name} <span className="text-sm text-fg-faint">#{p.id}</span></h2><p className="mt-1 text-xs text-fg-muted">Timed custody · staff service jobs · medical treatment</p></div>
+                <div className="mb-4"><h2 className="text-lg font-bold">{p.name} <span className="text-sm text-fg-faint">#{p.id}</span></h2><p className="mt-1 text-xs text-fg-muted">Timed custody · medical treatment</p></div>
                 <div className="flex flex-wrap items-center gap-3">
-                  {perms.jail && !p.staffJobs && (p.jailed && remainingOf(p) > 0 ? (
+                  {perms.jail && (p.jailed && remainingOf(p) > 0 ? (
                     <button onClick={() => doUnjail(p)} disabled={busy} title="Release early"
                       className="inline-flex h-8 items-center gap-1 rounded-sm bg-success px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
                       <DoorOpen />Unjail
@@ -171,14 +163,14 @@ export function App() {
                       </button>
                     </>
                   ))}
-                  {!p.staffJobs && !p.jailed && (perms.hospitalize || perms.leoHospitalize) && (
+                  {!p.jailed && (perms.hospitalize || perms.leoHospitalize) && (
                     <select value={hospOf(p.id)} onChange={(e) => setHosp((h) => ({ ...h, [p.id]: e.target.value }))}
                       title="Hospital"
                       className="h-8 max-w-[120px] rounded-sm border border-border bg-panel px-1.5 text-xs text-fg focus:border-primary focus:outline-none">
                       {state.hospitals.map((h) => <option key={h.id} value={h.id}>{h.label}</option>)}
                     </select>
                   )}
-                  {!p.staffJobs && !p.jailed && perms.hospitalize && (
+                  {!p.jailed && perms.hospitalize && (
                     <>
                       <select value={injOf(p.id)} onChange={(e) => setInjury((i) => ({ ...i, [p.id]: e.target.value }))}
                         title="Injury type (sets downtime)"
@@ -191,14 +183,13 @@ export function App() {
                       </button>
                     </>
                   )}
-                  {!p.staffJobs && !p.jailed && perms.leoHospitalize && (
+                  {!p.jailed && perms.leoHospitalize && (
                     <button onClick={() => doHosp(p, 'leoHospitalize')} disabled={busy} title={`LEO Hospitalize (${fmt(state.leoHospSeconds)})`}
                       className="inline-flex h-8 items-center gap-1 rounded-sm bg-info px-2.5 text-xs font-bold text-white hover:brightness-110 disabled:opacity-50 [&_svg]:size-3.5">
                       <ShieldPlus />LEO
                     </button>
                   )}
                 </div>
-                {perms.jail && <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-border pt-4"><div className="mr-auto"><h3 className="text-sm font-bold">Staff service jobs</h3><p className="mt-1 text-xs text-fg-muted">Cleaning tasks. Progress persists after disconnecting.</p></div>{p.staffJobs ? <button disabled={busy} onClick={() => staffAction(p,true)} className="rounded-md bg-success px-4 py-2 text-sm font-bold text-white">Release staff jail ({p.staffJobs} left)</button> : !p.jailed && <><label className="text-xs text-fg-muted">Jobs <input aria-label="Staff jobs" type="number" min={1} max={200} value={jobs} onChange={e=>setJobs(Math.max(1,Math.min(200,Math.floor(Number(e.target.value)||1))))} className="ml-2 w-20 rounded border border-border bg-bg p-2 text-fg"/></label><button disabled={busy} onClick={() => { if(staffArmed!==p.id) {setStaffArmed(p.id); return;} setStaffArmed(null); staffAction(p,false); }} className="rounded-md bg-warning px-4 py-2 text-sm font-bold text-black">{staffArmed===p.id?'Confirm staff jobs':'Assign staff jobs'}</button></>}</div>}
                 </div>}
               </div>
             ))}
