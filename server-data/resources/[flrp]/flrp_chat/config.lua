@@ -53,11 +53,23 @@ FLRP_CHAT.Tiers = {
 -- ---- RP / OOC chat commands ----------------------------------------------
 -- /ooc  <msg>  local out-of-character (players within OOCRadius metres)
 -- /gooc <msg>  global out-of-character (everyone; streamed to Discord)
--- /me   <msg>  local emote  "* Name does something" (players within MeRadius)
+-- /me   <msg>  local emote  "/me Name does something" (players within MeRadius)
 -- /gme  <msg>  global emote (everyone; streamed to Discord)
+-- Both emotes ALSO float the action text above the player's head for nearby
+-- players (Head3D below) so people can see who is doing what without reading
+-- chat. /me is shown with the literal "/me" word in chat on purpose.
 FLRP_CHAT.RP = {
   OOCRadius = 20.0,
   MeRadius  = 20.0,
+  Head3D = {
+    enabled  = true,
+    duration = 8000,                 -- ms the text stays above the head
+    distance = 20.0,                 -- only drawn for viewers within this many metres
+    colour   = { 195, 155, 211 },    -- lilac, matches the /me chat colour
+    scale    = 0.32,
+    maxLine  = 40,                   -- wrap long actions into lines of ~this many chars
+    zOffset  = 0.45,                 -- metres above the head bone
+  },
   Colors = {
     ooc  = hex('#95a5a6'),   -- grey
     gooc = hex('#3498db'),   -- blue

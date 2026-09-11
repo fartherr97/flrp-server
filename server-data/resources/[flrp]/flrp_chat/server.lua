@@ -81,11 +81,22 @@ local function rpCommand(cmd, opts)
     pcall(function() blocked = exports.flrp_chatfilter:Scan(src, message) end)
     if blocked then return end
     local name = pname(src)
-    local line = { color = opts.color, multiline = true, args = opts.args(name, message) }
-    if opts.radius then
-      for _, pid in ipairs(nearby(src, opts.radius)) do TriggerClientEvent('chat:addMessage', pid, line) end
+    local line = { color = opts.color, multiline = true, args = opts.args(name, message), template = opts.template }
+    local targets = opts.radius and nearby(src, opts.radius) or nil
+    if targets then
+      for _, pid in ipairs(targets) do TriggerClientEvent('chat:addMessage', pid, line) end
     else
       TriggerClientEvent('chat:addMessage', -1, line)
+    end
+    -- Emotes also float above the player's head (client draws it for nearby
+    -- viewers only, see client.lua). Global emotes go to everyone; the client
+    -- distance check keeps it to people who can actually see the player.
+    if opts.head and RP.Head3D and RP.Head3D.enabled then
+      if targets then
+        for _, pid in ipairs(targets) do TriggerClientEvent('flrp_chat:headText', pid, src, message) end
+      else
+        TriggerClientEvent('flrp_chat:headText', -1, src, message)
+      end
     end
     pcall(function() exports.flrp_logs:Send('chat', { player = src, description = ('/%s %s'):format(cmd, message) }) end)
     if opts.relay then pcall(function() exports.flrp_chatbridge:Relay(src, name, message, opts.relay) end) end
@@ -97,10 +108,13 @@ rpCommand('ooc',  { what = 'message', help = 'Local out-of-character chat (nearb
   args = function(name, msg) return { ('OOC | %s'):format(name), msg } end })
 rpCommand('gooc', { what = 'message', help = 'Global out-of-character chat (everyone)', color = RP.Colors.gooc, relay = 'gooc',
   args = function(name, msg) return { ('GOOC | %s'):format(name), msg } end })
-rpCommand('me',   { what = 'action', help = 'Local emote: * Name does something (nearby players)', color = RP.Colors.me, radius = RP.MeRadius,
-  args = function(name, msg) return { ('* %s %s'):format(name, msg) } end })
-rpCommand('gme',  { what = 'action', help = 'Global emote: * Name does something (everyone)', color = RP.Colors.gme,
-  args = function(name, msg) return { ('* %s %s'):format(name, msg) } end })
+-- Emotes render as "/me Name does something" (the command word stays visible so
+-- everyone can tell an action from speech) and float above the head too.
+local EMOTE_TEMPLATE = '<div class="chat-message"><b>{0} {1}</b> {2}</div>'
+rpCommand('me',   { what = 'action', help = 'Local emote: /me Name does something (nearby players)', color = RP.Colors.me, radius = RP.MeRadius, head = true,
+  template = EMOTE_TEMPLATE, args = function(name, msg) return { '/me', name, msg } end })
+rpCommand('gme',  { what = 'action', help = 'Global emote: /gme Name does something (everyone)', color = RP.Colors.gme, head = true,
+  template = EMOTE_TEMPLATE, args = function(name, msg) return { '/gme', name, msg } end })
 
 -- ---- 2. Gated channels ----------------------------------------------------
 -- May this player use / receive a channel? (its ACE, or an optional bypass ACE)
