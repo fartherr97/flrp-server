@@ -112,6 +112,9 @@ RegisterCommand('flrp_perms', function(source, args)
   -- allowed AND that the grant chain in permissions.cfg is intact.
   local aces = {
     { 'flrp.leo',                  'group.flrp.leo_access' },
+    { 'flrp.dept.bso',             'group.flrp.bso' },
+    { 'flrp.dept.fhp',             'group.flrp.fhp' },
+    { 'flrp.dept.mpd',             'group.flrp.mpd' },
     { 'vMenu.Everything',          'group.flrp.media' },
     { 'vMenu.TimeOptions.Menu',    'group.flrp.media' },
     { 'vMenu.TimeOptions.All',     'group.flrp.media' },
