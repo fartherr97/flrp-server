@@ -139,7 +139,6 @@ local function playerList()
       name    = name(pid),
       discord = discordOf(pid) or '',
       total   = totalJails(lic),
-      staffJobs = GetResourceState('flrp_staffcommands') == 'started' and exports.flrp_staffcommands:GetSentence(pid) or 0,
       jailed  = (until_ts ~= nil and until_ts > os.time()),
       untilTs = until_ts,   -- epoch when their jail ends (for the live countdown)
     }
@@ -175,16 +174,6 @@ end
 local H = {}
 
 function H.state(src) return stateFor(src) end
-function H.staffjail(src,p)
-  if not isStaff(src) then return {ok=false,error='Staff only.'} end
-  if GetResourceState('flrp_staffcommands') ~= 'started' then return {ok=false,error='Staff commands are not started.'} end
-  return exports.flrp_staffcommands:ManageJail(src,p.id,p.jobs,false)
-end
-function H.unstaffjail(src,p)
-  if not isStaff(src) then return {ok=false,error='Staff only.'} end
-  if GetResourceState('flrp_staffcommands') ~= 'started' then return {ok=false,error='Staff commands are not started.'} end
-  return exports.flrp_staffcommands:ManageJail(src,p.id,0,true)
-end
 exports('IsInCustody',function(id)
   local untilTs=activeUntil(licenseOf(id))
   return untilTs and untilTs>os.time() or false

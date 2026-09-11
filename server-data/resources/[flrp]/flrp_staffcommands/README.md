@@ -23,8 +23,8 @@ Refresh emergency-models.json when importing new fleets with wildcard manifests.
 Resource startup preserves any command name already registered by another resource.
 No entityviewer command is added.
 
-/jail now expands the selected player's actions, displays staff-job counts,
-supports job sentencing/release and reports server errors. Fixed the missing
+/jail expands the selected player's timed custody and medical actions and reports
+server errors. Staff jail is command-only and has no controls in /jail. Fixed the missing
 unjail NUI callback. Timed jail and job sentences cannot be assigned concurrently.
 The job jail uses the existing Bolingbroke yard coordinates; gameplay testing
 of markers and teleport collision is still required.

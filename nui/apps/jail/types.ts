@@ -1,4 +1,4 @@
-export interface JailPlayer { id: number; name: string; discord: string; total: number; jailed: boolean; staffJobs?: number; untilTs?: number | null }
+export interface JailPlayer { id: number; name: string; discord: string; total: number; jailed: boolean; untilTs?: number | null }
 export interface Hospital { id: string; label: string }
 export interface Injury { id: string; label: string; seconds: number }
 export interface Charge { id: string; code?: string; name: string; class?: string; jailSeconds: number; fine?: number }
