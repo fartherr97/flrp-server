@@ -29,8 +29,9 @@ local ACE_ROLE_KEYS = {
   senior_admin = true, lead_admin = true,
   civ_supervisor = true, civ_manager = true,
   -- Capability roles (ACE group only): SWAT -> full-auto; Dev -> jg-handling
-  -- editor; Media -> vMenu time & weather; leo_access -> LEO spawn points.
-  swat = true, dev = true, media = true, leo_access = true,
+  -- editor; Media -> vMenu time & weather; leo_access -> LEO spawn points;
+  -- donator -> flrp.donator (Donator Vehicles heading in the M menu).
+  swat = true, dev = true, media = true, leo_access = true, donator = true,
 }
 
 -- Track applied principals per license so we can cleanly remove them.
