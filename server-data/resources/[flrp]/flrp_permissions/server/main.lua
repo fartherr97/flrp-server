@@ -100,8 +100,62 @@ RegisterCommand('flrp_perms', function(source, args)
   line('mapped roles HELD: %s', #held > 0 and table.concat(held, ', ') or '(none)')
   line('mapped roles not held: %s', table.concat(missing, ', '))
 
+  -- Every Discord role id the player holds that maps to ANY flrp role, and
+  -- where that mapping comes from (secrets.cfg convar vs a DB
+  -- discord_role_mappings row). This is the line that explains "why does an
+  -- FHP member resolve bso" — look for an unexpected id -> role here.
+  local convarById = {}
+  for convar, key in pairs(FLRPP.Store.ConvarRoleMap or {}) do
+    local id = GetConvar(convar, '')
+    if id ~= '' then convarById[id] = convarById[id] or {}; table.insert(convarById[id], key .. ' (' .. convar .. ')') end
+  end
+  local dbById = {}
+  pcall(function()
+    for _, row in ipairs(FLRP.DB.Query([[
+      SELECT drm.`discord_role_id` AS drid, r.`key` AS role_key, drm.`enabled` AS enabled, drm.`note` AS note
+      FROM `discord_role_mappings` drm JOIN `roles` r ON r.id = drm.role_id
+    ]]) or {}) do
+      local id = tostring(row.drid)
+      dbById[id] = dbById[id] or {}
+      table.insert(dbById[id], ('%s (db%s%s)'):format(row.role_key,
+        (tonumber(row.enabled) == 0) and ', DISABLED' or '', row.note and (', ' .. tostring(row.note)) or ''))
+    end
+  end)
+  line('discord id -> flrp role, for every held id that maps to something:')
+  local any = false
+  for _, id in ipairs(roleIds or {}) do
+    local id = tostring(id)
+    local srcs = {}
+    for _, v in ipairs(convarById[id] or {}) do srcs[#srcs + 1] = v end
+    for _, v in ipairs(dbById[id] or {}) do srcs[#srcs + 1] = v end
+    if #srcs > 0 then any = true; line('  %s -> %s', id, table.concat(srcs, ', ')) end
+  end
+  if not any then line('  (none of the held ids map to an flrp role)') end
+
   local p = FLRPP.Players[target]
   line('resolved flrp roles: %s', p and table.concat(p.roleList or {}, ', ') or '(not resolved yet)')
+
+  -- Inheritance: any resolved role that is reached through inherits_role_id
+  -- rather than held directly. A chain like "fhp -> bso" here means the DB
+  -- roles table makes FHP inherit BSO.
+  for _, key in ipairs((p and p.roleList) or {}) do
+    local chain = FLRPP.Store.ancestors and FLRPP.Store.ancestors[key]
+    if chain and #chain > 1 then line('  inherits: %s', table.concat(chain, ' -> ')) end
+  end
+
+  -- Explicit per-player grants from the player_roles table (website / manual).
+  pcall(function()
+    if not (rec and rec.playerId) then return end
+    local rows = FLRP.DB.Query([[
+      SELECT r.`key` AS role_key, pr.`expires_at` AS expires_at
+      FROM `player_roles` pr JOIN `roles` r ON r.id = pr.role_id WHERE pr.player_id = ?
+    ]], { rec.playerId }) or {}
+    local parts = {}
+    for _, row in ipairs(rows) do
+      parts[#parts + 1] = row.role_key .. (row.expires_at and (' (expires ' .. tostring(row.expires_at) .. ')') or '')
+    end
+    line('player_roles rows (DB, explicit grants): %s', #parts > 0 and table.concat(parts, ', ') or '(none)')
+  end)
   local groups = {}
   for g in pairs((license and FLRPP.Ace.applied[license]) or {}) do groups[#groups + 1] = g end
   table.sort(groups)

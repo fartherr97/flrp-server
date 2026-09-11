@@ -12,6 +12,7 @@
 local CFG    = FLRP_ONDUTY
 local onDuty = {}   -- src -> { entity, rank, callsign, license, discord, name, since, sessionId }
 local ready  = false
+local configSource = 'config.lua defaults'   -- where CFG.Departments came from (loadConfig/saveConfig)
 
 -- ---- helpers -------------------------------------------------------------
 local function idOf(src, prefix)
@@ -537,6 +538,36 @@ AddEventHandler('playerDropped', function()
   if onDuty[src] then goOffInternal(src, 'dropped') end
 end)
 
+-- Console diagnostic: flrp_duty_check <serverId>
+-- Prints exactly what /duty evaluates for ONE connected player: the live
+-- departments config (DB row or config.lua defaults), every rank's ace and
+-- the player's IsPlayerAceAllowed result for it, and which departments end
+-- up visible. Use it when someone sees the wrong department in /duty.
+RegisterCommand('flrp_duty_check', function(src, args)
+  if src ~= 0 and not IsPlayerAceAllowed(src, CFG.ForceOffAce) then return end
+  local target = tonumber(args and args[1] or '')
+  if not target or GetPlayerName(target) == nil then
+    print('[flrp_duty_check] usage: flrp_duty_check <serverId>  (player must be connected)')
+    return
+  end
+  local out = {}
+  local function line(fmt, ...) out[#out + 1] = fmt:format(...) end
+  line('== flrp_duty_check: [%s] %s ==', tostring(target), tostring(GetPlayerName(target)))
+  line('departments config source: %s', configSource)
+  line('override %s = %s', CFG.OverrideAce, tostring(IsPlayerAceAllowed(target, CFG.OverrideAce)))
+  for _, d in ipairs(CFG.Departments) do
+    local visible = false
+    local ranks = {}
+    for _, r in ipairs(d.ranks) do
+      local ok = r.ace and IsPlayerAceAllowed(target, r.ace) or false
+      if ok then visible = true end
+      ranks[#ranks + 1] = ('%s[%s]=%s'):format(r.id, tostring(r.ace or 'NO ACE'), tostring(ok))
+    end
+    line('  %-4s %-8s %s', d.id, visible and 'VISIBLE' or 'hidden', table.concat(ranks, '  '))
+  end
+  print(table.concat(out, '\n'))
+end, true)
+
 -- ==========================================================================
 -- Editable departments config (DB-backed; config.lua is the seed/fallback)
 -- ==========================================================================
@@ -605,12 +636,13 @@ end
 
 local function loadConfig()
   local ok, err = pcall(function()
-    local row = FLRP.DB.Single('SELECT `json` FROM `flrp_duty_config` WHERE `id`=1')
+    local row = FLRP.DB.Single('SELECT `json`, `updated_by` FROM `flrp_duty_config` WHERE `id`=1')
     if row and row.json then
       local decoded = json.decode(row.json)
       local clean = sanitizeDepartments(decoded)
       if clean and #clean > 0 then
         CFG.Departments = clean
+        configSource = 'DB row flrp_duty_config (updated_by ' .. tostring(row.updated_by or '?') .. ')'
         print(('[flrp_onduty] loaded %d department(s) from DB config'):format(#clean))
         return
       end
@@ -635,6 +667,7 @@ local function saveConfig(depts, byName)
   FLRP.DB.Query('REPLACE INTO `flrp_duty_config` (`id`,`json`,`updated_by`,`updated_at`) VALUES (1,?,?,?)',
     { encoded, tostring(byName or 'staff'):sub(1, 100), os.time() })
   CFG.Departments = clean                                   -- hot-apply
+  configSource = 'DB row flrp_duty_config (updated_by ' .. tostring(byName or 'staff') .. ')'
   TriggerClientEvent('flrp_onduty:changed', -1)             -- refresh any open menus
   return true
 end
