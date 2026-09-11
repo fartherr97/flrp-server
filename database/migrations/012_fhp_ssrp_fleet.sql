@@ -1,0 +1,31 @@
+-- Add SSRP FHP vehicles without changing existing registry records.
+INSERT INTO vehicles (spawn_name,display_name,resource,department,category,required_permission,enabled,notes) VALUES
+('b1','FHP SSRP (b1)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b10','FHP SSRP (b10)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b11','FHP SSRP (b11)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b12','FHP SSRP (b12)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b14','FHP SSRP (b14)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b15','FHP SSRP (b15)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b16','FHP SSRP (b16)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b17','FHP SSRP (b17)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b18','FHP SSRP (b18)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b19','FHP SSRP (b19)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b2','FHP SSRP (b2)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b20','FHP SSRP (b20)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b3','FHP SSRP (b3)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b4','FHP SSRP (b4)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b5','FHP SSRP (b5)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b6','FHP SSRP (b6)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b7','FHP SSRP (b7)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b8','FHP SSRP (b8)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b9','FHP SSRP (b9)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('brct','FHP SSRP (brct)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('eodf450','FHP SSRP (eodf450)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('eodf450bb','FHP SSRP (eodf450bb)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('fhpk91','FHP SSRP (fhpk91)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('fhpk92','FHP SSRP (fhpk92)','FHPSSRPMain','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('fhp8','FHP SSRP (fhp8)','FHPSSRPK9','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('fhp9','FHP SSRP (fhp9)','FHPSSRPK9','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved'),
+('b99','FHP SSRP (b99)','FHPSSRPB99','FHP','Patrol','vehicle.fhp.patrol',1,'SSRP Drive addition; existing vehicles preserved')
+ON DUPLICATE KEY UPDATE spawn_name = VALUES(spawn_name);
+INSERT INTO schema_migrations (version,description) VALUES ('012','SSRP FHP fleet additions') ON DUPLICATE KEY UPDATE version=version;
