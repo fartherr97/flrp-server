@@ -391,7 +391,10 @@ function setPlate( cam, plate, index )
 	pl.img.attr( "src", "images/plates/" + index + ".png" );
 
 	// Change the plate text colour depending on the plate itself
-	( index == 1 || index == 2 ) ? pl.fill.removeClass( "plate_blue" ).addClass( "plate_yellow" ) : pl.fill.removeClass( "plate_yellow" ).addClass( "plate_blue" ); 
+	( index == 1 || index == 2 ) ? pl.fill.removeClass( "plate_blue" ).addClass( "plate_yellow" ) : pl.fill.removeClass( "plate_yellow" ).addClass( "plate_blue" );
+	// Florida artwork: readable text matching the author's six designs.
+	const floridaColors = ["#080808", "#336c52", "#080808", "#025a31", "#080808", "#eeeeee"];
+	pl.fill.css("color", floridaColors[index] || "");
 	
 	// If the plate is black or blue then we hide the lolite effect 
 	( index == 1 || index == 2 ) ? pl.lolite.hide() : pl.lolite.show(); 
