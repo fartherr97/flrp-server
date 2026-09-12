@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Play, ScrollText, Info, ShieldCheck, Shield, Users, HeartPulse,
-  Lock, MapPin, ArrowRight, ChevronLeft, ListChecks, AlignLeft,
+  Lock, MapPin, ArrowRight, ChevronLeft, AlignLeft,
 } from 'lucide-react';
 import { fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/components';
 
@@ -33,16 +33,18 @@ export function App() {
   const [catId, setCatId] = useState<string | null>(null);
   const [sel, setSel] = useState<number | null>(null);
   const [spawning, setSpawning] = useState(false);
+  const [query, setQuery] = useState('');
+  const submitRef = useRef(false);
   const toastRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
   const [toastText, setToastText] = useState('Insufficient Permissions!');
 
   useNuiEvent<{ logo: string; header: Header; categories: Cat[]; menu: Menu; playerName: string }>('open', (d) => {
     setLogo(d.logo || ''); setHeader(d.header || {}); setCats(d.categories || []); setMenu(d.menu || {}); setPlayer(d.playerName || '');
-    setOpen(true); setPoints(null); setView('play'); setCatId(null); setSel(null); setSpawning(false);
+    setOpen(true); setPoints(null); setView('play'); setCatId(null); setSel(null); setSpawning(false); setQuery(''); submitRef.current = false;
   });
   useNuiEvent<{ points: Point[] }>('points', (d) => setPoints(d.points || []));
-  useNuiEvent<{ reason?: string }>('denied', (d) => { permToast(d.reason); setSel(null); setSpawning(false); });
+  useNuiEvent<{ reason?: string }>('denied', (d) => { permToast(d.reason); setSel(null); setSpawning(false); submitRef.current = false; });
   useNuiEvent('close', () => setOpen(false));
 
   useEffect(() => {
@@ -58,7 +60,7 @@ export function App() {
   }, [points]);
 
   const cat = cats.find((c) => c.id === catId) || null;
-  const accentName = view === 'play' && cat ? (cat.accent || 'cyan') : 'cyan';
+
   useEffect(() => {
     document.documentElement.dataset.accent = view === 'play' && cat ? (cat.accent || '') : '';
   }, [view, cat]);
@@ -70,10 +72,16 @@ export function App() {
     window.clearTimeout(toastTimer.current); toastTimer.current = window.setTimeout(() => t.classList.remove('show'), 1700);
   };
   const catLocked = (c: Cat) => { const ps = byCat[c.id] || []; return ps.length > 0 && ps.every((p) => p.restricted && !p.allowed); };
-  const openCat = (c: Cat) => { if (catLocked(c)) return permToast(); setCatId(c.id); setSel(null); };
+  const openCat = (c: Cat) => { if (spawning) return; if (catLocked(c)) return permToast(); setCatId(c.id); setSel(null); setQuery(''); };
   const goPlay = () => { setView('play'); setCatId(null); setSel(null); };
-  const selectLoc = (p: Point) => { if (p.allowed === false) return permToast(p.disabledReason); setSel(p.index); };
-  const deploy = () => { if (sel == null) return; setSpawning(true); fetchNui('select', { index: sel }); };
+  const selectLoc = (p: Point) => { if (spawning) return; if (p.allowed === false) return permToast(p.disabledReason); setSel(p.index); };
+  const deploy = async () => {
+    if (sel == null || submitRef.current || !points?.some(p => p.index === sel && p.allowed !== false)) return;
+    submitRef.current = true; setSpawning(true);
+    try { const result = await fetchNui('select', { index: sel }); if (result?.ok === false) throw new Error('Request failed'); }
+    catch { submitRef.current = false; setSpawning(false); permToast('Could not send your spawn request. Please try again.'); }
+  };
+  useEffect(() => () => window.clearTimeout(toastTimer.current), []);
 
   if (!open) return <div ref={toastRef} className="perm-toast"><Lock />{toastText}</div>;
 
@@ -101,7 +109,7 @@ export function App() {
           </div>
           <nav className="menu">
             {NAV.map((n) => (
-              <button key={n.id} className={view === n.id ? 'active' : ''} onClick={() => { setView(n.id); if (n.id === 'play') goPlay(); }}>
+              <button key={n.id} disabled={spawning} aria-current={view === n.id ? 'page' : undefined} className={view === n.id ? 'active' : ''} onClick={() => { setView(n.id); if (n.id === 'play') goPlay(); }}>
                 <n.icon className="ico" /> {n.label}
                 <ChevronRightIcon />
               </button>
@@ -111,8 +119,8 @@ export function App() {
         </aside>
 
         <section className="stage">
-          {view === 'play' && !catId && <Categories cats={cats} byCat={byCat} catLocked={catLocked} catImage={(id) => (byCat[id] || [])[0]?.image} onOpen={openCat} />}
-          {view === 'play' && cat && <Locations cat={cat} pts={byCat[cat.id] || []} sel={sel} onBack={() => setCatId(null)} onPick={selectLoc} />}
+          {view === 'play' && !catId && <Categories header={header} points={points} cats={cats} byCat={byCat} catLocked={catLocked} catImage={(id) => (byCat[id] || [])[0]?.image} onOpen={openCat} />}
+          {view === 'play' && cat && <Locations query={query} setQuery={setQuery} spawning={spawning} cat={cat} pts={byCat[cat.id] || []} sel={sel} onBack={() => setCatId(null)} onPick={selectLoc} />}
           {view === 'updates' && <Updates data={menu.updates} />}
           {view === 'about' && <About data={menu.about} />}
           {view === 'leadership' && <Leadership data={menu.leadership} />}
@@ -127,29 +135,34 @@ export function App() {
           </button>
         </div>
       )}
-      <div ref={toastRef} className="perm-toast"><Lock />{toastText}</div>
+      <div ref={toastRef} className="perm-toast" role="alert"><Info />{toastText}</div>
     </>
   );
 
-  function Categories({ cats, byCat, catLocked, catImage, onOpen }:
-    { cats: Cat[]; byCat: Record<string, Point[]>; catLocked: (c: Cat) => boolean; catImage: (id: string) => string | undefined; onOpen: (c: Cat) => void }) {
+}
+
+  function Categories({ header, points, cats, byCat, catLocked, catImage, onOpen }:
+    { header: Header; points: Point[] | null; cats: Cat[]; byCat: Record<string, Point[]>; catLocked: (c: Cat) => boolean; catImage: (id: string) => string | undefined; onOpen: (c: Cat) => void }) {
     const shown = cats.filter((c) => (byCat[c.id] || []).length > 0);
     return (
       <>
         <div className="stage-head">
           <div className="eyebrow">Select your spawn</div>
-          <h1>{header.subtitle ? 'Choose your path' : 'Choose your path'}</h1>
+          <h1>Where to next?</h1>
           <p>{header.blurb || 'Same state, different stories. Pick a lane, then a location — the world reshapes around you.'}</p>
         </div>
+        {points === null && <div className="empty-state" role="status">Loading your available locations…</div>}
+        {points?.length === 0 && <div className="empty-state" role="status">No spawn locations are available. Please contact staff.</div>}
+        {points !== null && <div className="location-summary"><MapPin size={16} />{points.filter(p => p.allowed !== false).length} available locations <span>Choose a category to explore</span></div>}
         <div className="cards cats">
           {shown.map((c, i) => {
             const [c1, c2] = ACCENT[c.accent || 'cyan'] || ACCENT.cyan;
             const rgb = hex2rgb(c1); const Icon = CAT_ICON[c.icon || 'people'] || Users;
             const lk = catLocked(c); const n = (byCat[c.id] || []).length;
             return (
-              <div key={c.id} className={'card' + (lk ? ' locked' : '')} style={cvar({ '--i': String(i) })} onClick={() => onOpen(c)}>
+              <div key={c.id} role="button" tabIndex={0} aria-disabled={lk} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onOpen(c); } }} className={'card' + (lk ? ' locked' : '')} style={cvar({ '--i': String(i) })} onClick={() => onOpen(c)}>
                 <div className="art">
-                  <img className="photo" src={catImage(c.id)} alt="" />
+                  <img className="photo" onError={e => { e.currentTarget.style.visibility = 'hidden'; }} src={catImage(c.id)} alt="" />
                   <div className="wash" style={{ background: `linear-gradient(160deg, rgba(${rgb},.4), transparent 60%), linear-gradient(0deg, rgba(6,9,20,.55), transparent 55%)` }} />
                   <div className="grad" /><span className="rail-glow" style={cvar({ '--c1': c1, '--c2': c2 })} />
                   <Icon className="cico" />
@@ -168,22 +181,22 @@ export function App() {
     );
   }
 
-  function Locations({ cat, pts, sel, onBack, onPick }:
-    { cat: Cat; pts: Point[]; sel: number | null; onBack: () => void; onPick: (p: Point) => void }) {
+  function Locations({ query, setQuery, spawning, cat, pts, sel, onBack, onPick }:
+    { query: string; setQuery: (value: string) => void; spawning: boolean; cat: Cat; pts: Point[]; sel: number | null; onBack: () => void; onPick: (p: Point) => void }) {
     const [c1, c2] = ACCENT[cat.accent || 'cyan'] || ACCENT.cyan; const rgb = hex2rgb(c1);
-    const example = pts.some((p) => (p.desc || '').startsWith('EXAMPLE'));
     return (
       <>
-        <button className="back" onClick={onBack}><ChevronLeft width={16} height={16} />All categories</button>
+        <button className="back" disabled={spawning} onClick={onBack}><ChevronLeft width={16} height={16} />All categories</button>
         <div className="stage-head"><div className="eyebrow">{cat.tag}</div><h1>{cat.label}</h1><p>{cat.blurb}</p></div>
+        <input className="location-search" aria-label="Search locations" placeholder="Search by location or area…" value={query} disabled={spawning} onChange={e => setQuery(e.target.value)} />
         <div className="cards locs">
-          {pts.map((p, i) => {
+          {pts.filter(p => `${p.name} ${p.area || ''}`.toLowerCase().includes(query.trim().toLowerCase())).map((p, i) => {
             const lk = p.allowed === false;
             return (
-              <div key={p.index} className={'card' + (lk ? ' locked' : '') + (sel === p.index ? ' selected' : '')}
+              <div key={p.index} role="button" tabIndex={0} aria-disabled={lk || spawning} aria-pressed={sel === p.index} onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onPick(p); } }} className={'card' + (lk ? ' locked' : '') + (sel === p.index ? ' selected' : '')}
                 style={cvar({ '--i': String(i) })} onClick={() => onPick(p)}>
                 <div className="art">
-                  <img className="photo" src={p.image} alt="" />
+                  <img className="photo" onError={e => { e.currentTarget.style.visibility = 'hidden'; }} src={p.image} alt="" />
                   <div className="wash" style={{ background: `linear-gradient(160deg, rgba(${rgb},.34), transparent 60%), linear-gradient(0deg, rgba(6,9,20,.55), transparent 55%)` }} />
                   <div className="grad" /><span className="rail-glow" style={cvar({ '--c1': c1, '--c2': c2 })} />
                   {lk && <div className="lockover"><Lock /><span>{p.disabledReason || 'Access required'}</span></div>}
@@ -191,12 +204,12 @@ export function App() {
                 <div className="body">
                   <h3>{p.name}</h3><div className="tag">{p.area}</div>
                   <div className="desc">{(p.desc || '').replace(/^EXAMPLE — replace coords\.\s*/, '')}</div>
-                  <div className="foot"><MapPin className="pin" />Spawn point<ArrowRight className="arrow" width={16} height={16} /></div>
+                  <div className="foot"><MapPin className="pin" />{sel === p.index ? 'Selected · ready to spawn' : lk ? 'Unavailable' : 'Select location'}<ArrowRight className="arrow" width={16} height={16} /></div>
                 </div>
               </div>
             );
           })}
-          {example && <div className="note"><Info />Example stations — wire these to real coordinates in flrp_spawn.</div>}
+          {!pts.some(p => `${p.name} ${p.area || ''}`.toLowerCase().includes(query.trim().toLowerCase())) && <div className="empty-state" role="status">No locations match “{query}”. Try another name or area.</div>}
         </div>
       </>
     );
@@ -254,8 +267,6 @@ export function App() {
       </>
     );
   }
-}
-
 function ChevronRightIcon() {
   return <svg className="chev" width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.4}><path d="M9 6l6 6-6 6" /></svg>;
 }
