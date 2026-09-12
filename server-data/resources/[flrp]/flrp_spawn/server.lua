@@ -60,22 +60,31 @@ end
 -- Which points may this player use?
 RegisterNetEvent('flrp_spawn:requestPoints', function()
   local src = source
+  FLRPSpawnDynamic.suspend(src)
   local held = heldRoles(src)
   local allowed = {}
   for i, p in ipairs(Config.Points) do allowed[i] = canUse(held, p) end
-  TriggerClientEvent('flrp_spawn:points', src, allowed)
+  TriggerClientEvent('flrp_spawn:points', src, allowed, FLRPSpawnDynamic.cards(src))
 end)
 
 -- Approve (or deny) a chosen point after re-checking server-side.
 RegisterNetEvent('flrp_spawn:selectPoint', function(index)
   local src = source
   index = tonumber(index)
+  if index == -1 or index == -2 then
+    local coords, reason = FLRPSpawnDynamic.resolve(src, index)
+    if not coords then TriggerClientEvent('flrp_spawn:denied', src, reason); return end
+    FLRPSpawnDynamic.approved(src)
+    TriggerClientEvent('flrp_spawn:approved', src, index, coords)
+    return
+  end
   local p = index and Config.Points[index]
   if not p then return end
   if not canUse(heldRoles(src), p) then
     TriggerClientEvent('flrp_spawn:denied', src)
     return
   end
+  FLRPSpawnDynamic.approved(src)
   TriggerClientEvent('flrp_spawn:approved', src, index)
 end)
 

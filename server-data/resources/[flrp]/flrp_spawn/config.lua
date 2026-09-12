@@ -39,6 +39,8 @@ Config.Header = {
 -- roles (optional): a category is locked unless the player holds at least one
 -- of these Discord role IDs. Individual points can carry their own `roles` too.
 Config.Categories = {
+  { id = 'quick', label = 'Quick Spawn', tag = 'Return · Join the action', accent = 'cyan', icon = 'people',
+    blurb = 'Head to the current AOP or return to your last saved location.' },
   { id = 'leo',  label = 'LEO Spawn Points',       tag = 'Serve · Protect · Florida', accent = 'cyan',    icon = 'shield',
     roles = Config.LeoRoles,
     blurb = 'Sworn law enforcement only. Report on duty at your agency, gear up and hit the road.' },
@@ -49,6 +51,18 @@ Config.Categories = {
 }
 
 -- ---- Points --------------------------------------------------------------
+-- Public destinations for Nex HUD area codes; no department-only spawn reuse.
+Config.AopSpawns = {
+  ss={label='Sandy Shores',coords=vector4(1884.41,3714.45,32.93,210.0)},
+  pb={label='Paleto Bay',coords=vector4(-134.20,6212.20,31.21,47.09)},
+  gs={label='Grapeseed',coords=vector4(1654.72,4825.46,42.08,280.0)},
+  bc={label='Blaine County',coords=vector4(1884.41,3714.45,32.93,210.0)},
+  nls={label='North Los Santos',coords=vector4(436.64,218.38,103.62,160.0)},
+  sls={label='South Los Santos',coords=vector4(-1037.74,-2738.04,20.17,330.0)},
+  mp={label='Mirror Park',coords=vector4(1130.21,-645.9,56.58,272.0)},
+  ls={label='Los Santos',coords=vector4(197.94,-932.4,30.69,320.0)},
+  sw={label='Statewide',coords=vector4(197.94,-932.4,30.69,320.0)},
+}
 Config.Points = {
   -- Civilian (open to everyone)
   { name = 'Downtown Miami',    area = 'Miami-Dade',      category = 'civ', image = '../img/legion.webp',     desc = 'Bayfront core — banks, high-rises and the busiest civilian hub.',        coords = vector4(197.94, -932.4, 30.69, 320.0) },

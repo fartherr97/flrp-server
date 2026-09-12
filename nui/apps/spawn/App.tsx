@@ -7,7 +7,7 @@ import { fetchNui, useNuiEvent, isBrowser, mockMessage } from '@flrp/components'
 
 interface Header { title?: string; subtitle?: string; blurb?: string; tagline?: string; welcome?: string; welcomeA?: string; welcomeB?: string; flourish?: string }
 interface Cat { id: string; label: string; tag?: string; blurb?: string; accent?: string; icon?: string }
-interface Point { index: number; name: string; area?: string; desc?: string; image?: string; category: string; restricted?: boolean; allowed?: boolean }
+interface Point { index: number; name: string; area?: string; desc?: string; image?: string; category: string; restricted?: boolean; allowed?: boolean; disabledReason?: string }
 interface UpdateItem { tag: string; color: string; title: string; hash?: string; by?: string; when?: string; body?: string }
 interface Menu {
   updates?: { note?: string; items?: UpdateItem[] };
@@ -35,13 +35,14 @@ export function App() {
   const [spawning, setSpawning] = useState(false);
   const toastRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
+  const [toastText, setToastText] = useState('Insufficient Permissions!');
 
   useNuiEvent<{ logo: string; header: Header; categories: Cat[]; menu: Menu; playerName: string }>('open', (d) => {
     setLogo(d.logo || ''); setHeader(d.header || {}); setCats(d.categories || []); setMenu(d.menu || {}); setPlayer(d.playerName || '');
     setOpen(true); setPoints(null); setView('play'); setCatId(null); setSel(null); setSpawning(false);
   });
   useNuiEvent<{ points: Point[] }>('points', (d) => setPoints(d.points || []));
-  useNuiEvent('denied', () => { permToast(); setSel(null); setSpawning(false); });
+  useNuiEvent<{ reason?: string }>('denied', (d) => { permToast(d.reason); setSel(null); setSpawning(false); });
   useNuiEvent('close', () => setOpen(false));
 
   useEffect(() => {
@@ -62,7 +63,8 @@ export function App() {
     document.documentElement.dataset.accent = view === 'play' && cat ? (cat.accent || '') : '';
   }, [view, cat]);
 
-  const permToast = () => {
+  const permToast = (reason?: string) => {
+    setToastText(reason || 'Insufficient Permissions!');
     const t = toastRef.current; if (!t) return;
     t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
     window.clearTimeout(toastTimer.current); toastTimer.current = window.setTimeout(() => t.classList.remove('show'), 1700);
@@ -70,10 +72,10 @@ export function App() {
   const catLocked = (c: Cat) => { const ps = byCat[c.id] || []; return ps.length > 0 && ps.every((p) => p.restricted && !p.allowed); };
   const openCat = (c: Cat) => { if (catLocked(c)) return permToast(); setCatId(c.id); setSel(null); };
   const goPlay = () => { setView('play'); setCatId(null); setSel(null); };
-  const selectLoc = (p: Point) => { if (p.restricted && !p.allowed) return permToast(); setSel(p.index); };
+  const selectLoc = (p: Point) => { if (p.allowed === false) return permToast(p.disabledReason); setSel(p.index); };
   const deploy = () => { if (sel == null) return; setSpawning(true); fetchNui('select', { index: sel }); };
 
-  if (!open) return <div ref={toastRef} className="perm-toast"><Lock />Insufficient Permissions!</div>;
+  if (!open) return <div ref={toastRef} className="perm-toast"><Lock />{toastText}</div>;
 
   const NAV: { id: View; label: string; icon: typeof Play }[] = [
     { id: 'play', label: 'Play', icon: Play },
@@ -125,7 +127,7 @@ export function App() {
           </button>
         </div>
       )}
-      <div ref={toastRef} className="perm-toast"><Lock />Insufficient Permissions!</div>
+      <div ref={toastRef} className="perm-toast"><Lock />{toastText}</div>
     </>
   );
 
@@ -176,7 +178,7 @@ export function App() {
         <div className="stage-head"><div className="eyebrow">{cat.tag}</div><h1>{cat.label}</h1><p>{cat.blurb}</p></div>
         <div className="cards locs">
           {pts.map((p, i) => {
-            const lk = !!(p.restricted && !p.allowed);
+            const lk = p.allowed === false;
             return (
               <div key={p.index} className={'card' + (lk ? ' locked' : '') + (sel === p.index ? ' selected' : '')}
                 style={cvar({ '--i': String(i) })} onClick={() => onPick(p)}>
@@ -184,7 +186,7 @@ export function App() {
                   <img className="photo" src={p.image} alt="" />
                   <div className="wash" style={{ background: `linear-gradient(160deg, rgba(${rgb},.34), transparent 60%), linear-gradient(0deg, rgba(6,9,20,.55), transparent 55%)` }} />
                   <div className="grad" /><span className="rail-glow" style={cvar({ '--c1': c1, '--c2': c2 })} />
-                  {lk && <div className="lockover"><Lock /><span>Access required</span></div>}
+                  {lk && <div className="lockover"><Lock /><span>{p.disabledReason || 'Access required'}</span></div>}
                 </div>
                 <div className="body">
                   <h3>{p.name}</h3><div className="tag">{p.area}</div>
