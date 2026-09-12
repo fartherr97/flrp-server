@@ -19,6 +19,7 @@ dependency 'flrp_core'
 -- runtime export dep: flrp_permissions
 
 client_scripts { 'client/main.lua' }
+shared_script 'policy.lua'
 
 server_scripts {
   -- Shared flrp_core server libs (FiveM resources have separate Lua states,
@@ -31,6 +32,7 @@ server_scripts {
   'server/registry.lua',
   'server/exports.lua',
   'server/main.lua',
+  'server/guard.lua',
 }
 
 server_exports {

@@ -1,0 +1,767 @@
+[
+  {
+    "model": "akula",
+    "name": "Akula",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "annihilator",
+    "name": "Annihilator",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "annihilator2",
+    "name": "Annihilator Stealth",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "apc",
+    "name": "APC",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "ardent",
+    "name": "Ardent",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "avenger",
+    "name": "Avenger",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "avenger2",
+    "name": "Avenger",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "avenger3",
+    "name": "Avenger",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "avenger4",
+    "name": "Avenger",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "avisa",
+    "name": "Avisa",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "barracks",
+    "name": "Barracks",
+    "reason": "military / train"
+  },
+  {
+    "model": "barracks2",
+    "name": "Barracks Semi",
+    "reason": "military / train"
+  },
+  {
+    "model": "barracks3",
+    "name": "Barracks",
+    "reason": "military / train"
+  },
+  {
+    "model": "barrage",
+    "name": "Barrage",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "blazer5",
+    "name": "Blazer Aqua",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "blimp",
+    "name": "Atomic Blimp",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "blimp2",
+    "name": "Xero Blimp",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "blimp3",
+    "name": "Blimp",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "bombushka",
+    "name": "RM-10 Bombushka",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "boxville5",
+    "name": "Armored Boxville",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "bruiser",
+    "name": "Apocalypse Bruiser",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "bruiser2",
+    "name": "Future Shock Bruiser",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "bruiser3",
+    "name": "Nightmare Bruiser",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "brutus",
+    "name": "Apocalypse Brutus",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "brutus2",
+    "name": "Future Shock Brutus",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "brutus3",
+    "name": "Nightmare Brutus",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "buffalo4",
+    "name": "Buffalo STX",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "buzzard",
+    "name": "Buzzard Attack Chopper",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "cablecar",
+    "name": "Cable Car",
+    "reason": "military / train"
+  },
+  {
+    "model": "caracara",
+    "name": "Caracara",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "cargoplane",
+    "name": "Cargo Plane",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "cargoplane2",
+    "name": "Cargo Plane",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "cerberus",
+    "name": "Apocalypse Cerberus",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "cerberus2",
+    "name": "Future Shock Cerberus",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "cerberus3",
+    "name": "Nightmare Cerberus",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "champion",
+    "name": "Champion",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "chernobog",
+    "name": "Chernobog",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "comet4",
+    "name": "Comet Safari",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "conada2",
+    "name": "Weaponized Conada",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "crusader",
+    "name": "Crusader",
+    "reason": "military / train"
+  },
+  {
+    "model": "deathbike",
+    "name": "Apocalypse Deathbike",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "deathbike2",
+    "name": "Future Shock Deathbike",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "deathbike3",
+    "name": "Nightmare Deathbike",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "deity",
+    "name": "Deity",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "deluxo",
+    "name": "Deluxo",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "dinghy5",
+    "name": "Weaponized Dinghy",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "dominator4",
+    "name": "Apocalypse Dominator",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "dominator5",
+    "name": "Future Shock Dominator",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "dominator6",
+    "name": "Nightmare Dominator",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "dune3",
+    "name": "Dune FAV",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "duster2",
+    "name": "Duster 300-H",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "freight",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freight2",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freightcar",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freightcar2",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freightcar3",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freightcont1",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freightcont2",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "freightgrain",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "granger2",
+    "name": "Granger 3600LX",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "halftrack",
+    "name": "Half-track",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "havok",
+    "name": "Havok",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "hunter",
+    "name": "FH-1 Hunter",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "hydra",
+    "name": "Hydra",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "ignus2",
+    "name": "Weaponized Ignus",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "impaler2",
+    "name": "Apocalypse Impaler",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "impaler3",
+    "name": "Future Shock Impaler",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "impaler4",
+    "name": "Nightmare Impaler",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "imperator",
+    "name": "Apocalypse Imperator",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "imperator2",
+    "name": "Future Shock Imperator",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "imperator3",
+    "name": "Nightmare Imperator",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "insurgent",
+    "name": "Insurgent Pick-Up",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "insurgent2",
+    "name": "Insurgent",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "insurgent3",
+    "name": "Insurgent Pick-Up Custom",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "issi4",
+    "name": "Apocalypse Issi",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "issi5",
+    "name": "Future Shock Issi",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "issi6",
+    "name": "Nightmare Issi",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "jb7002",
+    "name": "JB 700W",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "jet",
+    "name": "Jet",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "jubilee",
+    "name": "Jubilee",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "khanjali",
+    "name": "TM-02 Khanjali",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "kosatka",
+    "name": "Kosatka",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "lazer",
+    "name": "P-996 LAZER",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "limo2",
+    "name": "Turreted Limo",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "menacer",
+    "name": "Menacer",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "metrotrain",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "microlight",
+    "name": "Ultralight",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "minitank",
+    "name": "Invade and Persuade Tank",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "mogul",
+    "name": "Mogul",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "molotok",
+    "name": "V-65 Molotok",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "monster3",
+    "name": "Apocalypse Sasquatch",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "monster4",
+    "name": "Future Shock Sasquatch",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "monster5",
+    "name": "Nightmare Sasquatch",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "mule4",
+    "name": "Mule Custom",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "nightshark",
+    "name": "Nightshark",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "nokota",
+    "name": "P-45 Nokota",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "oppressor",
+    "name": "Oppressor",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "oppressor2",
+    "name": "Oppressor Mk II",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "paragon2",
+    "name": "Paragon R (Armored)",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "patriot3",
+    "name": "Patriot Mil-Spec",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "patrolboat",
+    "name": "Kurtz 31 Patrol Boat",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "pounder2",
+    "name": "Pounder Custom",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "predator",
+    "name": "Police Predator",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "pyro",
+    "name": "Pyro",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "raiju",
+    "name": "F-160 Raiju",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "revolter",
+    "name": "Revolter",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "rhino",
+    "name": "Rhino Tank",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "rogue",
+    "name": "Rogue",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "ruiner2",
+    "name": "Ruiner 2000",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "ruiner3",
+    "name": "Ruiner",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "savage",
+    "name": "Savage",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "savestra",
+    "name": "Savestra",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "scarab",
+    "name": "Apocalypse Scarab",
+    "reason": "military / train, mounted weapons, Arena War"
+  },
+  {
+    "model": "scarab2",
+    "name": "Future Shock Scarab",
+    "reason": "military / train, mounted weapons, Arena War"
+  },
+  {
+    "model": "scarab3",
+    "name": "Nightmare Scarab",
+    "reason": "military / train, mounted weapons, Arena War"
+  },
+  {
+    "model": "scramjet",
+    "name": "Scramjet",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "seabreeze",
+    "name": "Seabreeze",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "seasparrow",
+    "name": "Sea Sparrow",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "seasparrow2",
+    "name": "Sparrow",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "seasparrow3",
+    "name": "Sparrow",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "slamvan4",
+    "name": "Apocalypse Slamvan",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "slamvan5",
+    "name": "Future Shock Slamvan",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "slamvan6",
+    "name": "Nightmare Slamvan",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "speedo4",
+    "name": "Speedo Custom",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "speedo5",
+    "name": "Speedo Custom",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "starling",
+    "name": "LF-22 Starling",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "streamer216",
+    "name": "Streamer216",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "strikeforce",
+    "name": "B-11 Strikeforce",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "stromberg",
+    "name": "Stromberg",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "submersible",
+    "name": "Submersible",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "submersible2",
+    "name": "Kraken",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "tampa3",
+    "name": "Weaponized Tampa",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "tankercar",
+    "name": "Freight Train",
+    "reason": "military / train"
+  },
+  {
+    "model": "technical",
+    "name": "Technical",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "technical2",
+    "name": "Technical Aqua",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "technical3",
+    "name": "Technical Custom",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "terbyte",
+    "name": "Terrorbyte",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "thruster",
+    "name": "Thruster",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "titan2",
+    "name": "Titan 250 D",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "toreador",
+    "name": "Toreador",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "trailerlarge",
+    "name": "Mobile Operations Center",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "trailersmall2",
+    "name": "Anti-Aircraft Trailer",
+    "reason": "military / train, mounted weapons"
+  },
+  {
+    "model": "tula",
+    "name": "Tula",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "valkyrie",
+    "name": "Valkyrie",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "valkyrie2",
+    "name": "Valkyrie MOD.0",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "vetir",
+    "name": "Vetir",
+    "reason": "military / train"
+  },
+  {
+    "model": "vigilante",
+    "name": "Vigilante",
+    "reason": "mounted weapons, special / oversized / unrealistic"
+  },
+  {
+    "model": "viseris",
+    "name": "Viseris",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "volatol",
+    "name": "Volatol",
+    "reason": "mounted weapons"
+  },
+  {
+    "model": "voltic2",
+    "name": "Rocket Voltic",
+    "reason": "special / oversized / unrealistic"
+  },
+  {
+    "model": "zr380",
+    "name": "Apocalypse ZR380",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "zr3802",
+    "name": "Future Shock ZR380",
+    "reason": "mounted weapons, Arena War"
+  },
+  {
+    "model": "zr3803",
+    "name": "Nightmare ZR380",
+    "reason": "mounted weapons, Arena War"
+  }
+]

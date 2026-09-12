@@ -1,0 +1,1298 @@
+[
+  {
+    "model": "09chargerciv",
+    "label": "2009 Dodge Charger",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\RedneckPack\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "18tahoe",
+    "label": "2018 Chevrolet Tahoe",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\RedneckPack\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "19van350",
+    "label": "2019 Ford E-350",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\e350\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bcsm",
+    "label": "Kenworth T800 Sparks Motors",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\bcsm\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "exmark",
+    "label": "Exmark Mower",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\exmark\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "flatbedm2",
+    "label": "Freightliner M2 Flatbed",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\flatbedm2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "13capriceciv",
+    "label": "2013 Chevrolet Caprice",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\RedneckPack\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "16charger",
+    "label": "2016 Dodge Charger",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\16charger\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "17jamb",
+    "label": "2017 Ford Fleetwood Jamboree",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\17jamb\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "18taurusciv",
+    "label": "2018 Ford Taurus",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\RedneckPack\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "3500flatbed",
+    "label": "2010 Ram 3500 Flatbed",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\3500flatbed\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cayenne",
+    "label": "Porsche Cayenne",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\cayenne\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "corollacross20",
+    "label": "2020 Toyota Corolla Cross",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\corollacross20\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "dl2016",
+    "label": "2016 Dodge Charger",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\dl2016\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "fhauler",
+    "label": "Freightliner M2 Hauler",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\fhauler\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "freeman",
+    "label": "Freeman Boat",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\freeman\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "2022kiak5gt",
+    "label": "2022 Kia K5 GT",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\2022kiak5gt\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "4runner",
+    "label": "Toyota 4Runner",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\4runner\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "classicxl",
+    "label": "Freightliner Classic XL",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\classicxl\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "hdiron883",
+    "label": "Harley-Davidson Iron 883",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\HDIRON883\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "montego",
+    "label": "Mercury Montego",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\montego\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "silv20",
+    "label": "2020 Chevrolet Silverado",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\silv20\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sr650fly",
+    "label": "Sea Ray 650 Fly",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\SR650Fly\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "t680d",
+    "label": "Kenworth T680",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\t680d\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "vnl780",
+    "label": "Volvo VNL 780",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\VNL\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "w900",
+    "label": "Kenworth W900",
+    "tier": 1,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\W900\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "21avant",
+    "label": "2021 Audi RS6 Avant",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\RS6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "23hayabusa",
+    "label": "2023 Suzuki Hayabusa",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\23hayabusa\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "czr1",
+    "label": "Chevrolet Corvette ZR1",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\czr1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "745le",
+    "label": "BMW 745Le",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\745le\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "21camaro",
+    "label": "2021 Chevrolet Camaro",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\21camaro\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "gmcyd",
+    "label": "GMC Yukon Denali",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\gmcyd\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "gmcat4",
+    "label": "GMC Sierra AT4",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\gmcat4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "gr86",
+    "label": "Toyota GR86",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\gr86\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "gxs15",
+    "label": "Nissan Silvia S15",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\GXS15\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "k5",
+    "label": "Ford F-100 K5",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\K5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "gxrx7",
+    "label": "Mazda RX-7",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\gxrx7\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "m3f80",
+    "label": "BMW M3 F80",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\m3f80\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "m4csr3b",
+    "label": "BMW M4 CS",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\m4csr3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "m6f13",
+    "label": "BMW M6 F13",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\BMWM6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "mgt",
+    "label": "Ford Mustang GT",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\mgt\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "redeye",
+    "label": "Dodge Challenger Hellcat Redeye",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\redeye\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "ody18",
+    "label": "2018 Honda Odyssey",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\ody18\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "repotruck",
+    "label": "Repo Tow Truck",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\repotruck\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "rs3s20",
+    "label": "2020 Audi RS3 Sedan",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\rs3s20\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "rs7",
+    "label": "Audi RS7",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\rs7\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "s30",
+    "label": "Nissan Fairlady Z S30",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\s30\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "skyline",
+    "label": "Nissan Skyline GT-R",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\SKYLINE\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sportage",
+    "label": "Kia Sportage",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\sportage\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "techart17",
+    "label": "2017 Porsche Panamera Techart",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\techart17\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "toysupmk4",
+    "label": "Toyota Supra Mk IV",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\toysupmk4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "trx",
+    "label": "Ram 1500 TRX",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\trx\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "v250",
+    "label": "Mercedes-Benz V250",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\v250\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "worktruckf150",
+    "label": "Ford F-150 Work Truck",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\WorkF150\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "worktruckgmc",
+    "label": "GMC Work Truck",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\WorkGMC\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "wrx19",
+    "label": "2019 Subaru WRX",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\wrx\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "yzfr7",
+    "label": "Yamaha YZF-R7",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\yzfr7\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "m422",
+    "label": "2022 BMW M4 Competition",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\BMWM4Comp\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "370z",
+    "label": "Nissan 370Z",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\370z\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "m4lci",
+    "label": "BMW M4 LCI",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\M4LCI\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "raptor2017",
+    "label": "2017 Ford F-150 Raptor",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\aventador\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "bmwm8",
+    "label": "BMW M8",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\bmwm8\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cla250",
+    "label": "Mercedes-Benz CLA250",
+    "tier": 2,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\cla250\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "911turbos",
+    "label": "2016 Porsche 911 Turbo S",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\911turbos\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "agerars",
+    "label": "Koenigsegg Agera RS",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\agerars\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "navigator",
+    "label": "2017 Lincoln Navigator",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\17Navigator\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "urus",
+    "label": "Lamborghini Urus",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\URUS\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sawlx500d",
+    "label": "Lexus LX 500d",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\sawlx500d\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "mache",
+    "label": "Ford Mustang Mach-E",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPack\\data\\mache\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cybertruckv",
+    "label": "Tesla Cybertruck",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\CyberTruckV\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "720s",
+    "label": "McLaren 720S",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\720s\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "aventador",
+    "label": "Lamborghini Aventador",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\aventador\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "ben17",
+    "label": "2017 Bentley Continental GT",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\ben17\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "laferrari",
+    "label": "Ferrari LaFerrari",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\aventador\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "mustangbkit",
+    "label": "Ford Mustang Body Kit",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\aventador\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "teslax",
+    "label": "Tesla Model X",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\teslax\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "wraith",
+    "label": "Rolls-Royce Wraith",
+    "tier": 3,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCertPlusPack\\data\\wrath\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "i8",
+    "label": "BMW i8",
+    "tier": 4,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCommandPack\\data\\i8\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "civdepthead",
+    "label": "Ferrari SF90",
+    "tier": 4,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCommandPack\\data\\civdepthead\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "oyclc500",
+    "label": "Lexus LC500",
+    "tier": 4,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCommandPack\\data\\oyclc500\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "r820",
+    "label": "2020 Audi R8",
+    "tier": 4,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCommandPack\\data\\r820\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "stingray",
+    "label": "Chevrolet Corvette C8 Stingray",
+    "tier": 4,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCommandPack\\data\\stingray\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "gtr",
+    "label": "Nissan GT-R",
+    "tier": 5,
+    "resource": "CivilianFleet",
+    "path": "[Civilian]\\CivilianFleet\\packs\\CivCommandPack\\data\\gtr\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cdono1",
+    "label": "cdono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\common\\cdono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cdono2",
+    "label": "cdono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\common\\cdono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cdono3",
+    "label": "cdono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\common\\cdono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cdono4",
+    "label": "cdono4",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\common\\cdono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cdono5",
+    "label": "cdono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\common\\cdono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cdono6",
+    "label": "cdono6",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\common\\cdono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "odono1",
+    "label": "odono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\offroad\\odono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "odono2",
+    "label": "odono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\offroad\\odono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "odono3",
+    "label": "odono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\offroad\\odono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "odono4",
+    "label": "odono4",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\offroad\\odono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "odono5",
+    "label": "odono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\offroad\\odono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "odono6",
+    "label": "odono6",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\offroad\\odono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sdono1",
+    "label": "sdono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\sports\\sdono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sdono2",
+    "label": "sdono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\sports\\sdono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sdono3",
+    "label": "sdono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\sports\\sdono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sdono4",
+    "label": "sdono4",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\sports\\sdono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sdono5",
+    "label": "sdono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\sports\\sdono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sdono6",
+    "label": "sdono6",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\sports\\sdono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sudono1",
+    "label": "sudono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\super\\sudono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sudono2",
+    "label": "sudono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\super\\sudono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sudono3",
+    "label": "sudono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\super\\sudono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sudono4",
+    "label": "sudono4",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\super\\sudono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sudono5",
+    "label": "sudono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\super\\sudono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sudono6",
+    "label": "LAMBO SVJ63 [sudono6]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle\\data\\super\\sudono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bikedono1",
+    "label": "CBR1000RR R",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\bikedono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bikedono2",
+    "label": "bikedono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\bikedono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bikedono3",
+    "label": "bikedono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\bikedono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bikedono4",
+    "label": "bikedono4",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\bikedono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bikedono5",
+    "label": "bikedono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\bikedono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "bikedono6",
+    "label": "bikedono6",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\bikedono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "dragdono1",
+    "label": "dragdono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\dragdono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "dragdono2",
+    "label": "dragdono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\dragdono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "dragdono3",
+    "label": "Camaro SS Sick Seconds 1969",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\dragdono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "driftdono1",
+    "label": "driftdono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\driftdono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "m3e36normal",
+    "label": "m3e36normal",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\driftdono1\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "driftdono2",
+    "label": "driftdono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\driftdono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "muscledono1",
+    "label": "500ikx3 [muscledono1]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\muscledono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "muscledono2",
+    "label": "gtdikx3 [muscledono2]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\muscledono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "muscledono3",
+    "label": "scatikx3 [muscledono3]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\muscledono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "muscledono4",
+    "label": "sheikx3 [muscledono4]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\muscledono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "muscledono5",
+    "label": "chargerikx3 [muscledono5]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\muscledono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "muscledono6",
+    "label": "novaikx3 [muscledono6]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\muscledono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sedandono1",
+    "label": "BMW M5 [sedandono1]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\sedandono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sedandono2",
+    "label": "sedandono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\sedandono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "sedandono3",
+    "label": "DEWBAUCH EXEMPLAR [sedandono3]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\sedandono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono1",
+    "label": "G63 Mercedes [suvdono1]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono2",
+    "label": "suvdono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono3",
+    "label": "suvdono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono4",
+    "label": "novitec MASERATI [suvdono4]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono5",
+    "label": "suvdono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono6",
+    "label": "suvdono6",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono6\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "suvdono7",
+    "label": "suvdono7",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\suvdono7\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "truckdono1",
+    "label": "truckdono1",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "truckdono2",
+    "label": "truckdono2",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "truckdono3",
+    "label": "truckdono3",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pjtrailer",
+    "label": "PJ Trailer",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono3\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "truckdono4",
+    "label": "VAPID SANDKING [truckdono4]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "cararv",
+    "label": "VAPID CARACARA2 [cararv]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono4\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "guardianrv",
+    "label": "VAPID GUARDIAN [guardianrv]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono4\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "sandkingrv",
+    "label": "VAPID SANDKING [sandkingrv]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono4\\vehicles.meta",
+    "available": false
+  },
+  {
+    "model": "truckdono5",
+    "label": "truckdono5",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\civilianbundle2\\data\\truckdono5\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono1",
+    "label": "Dodge HCSOFleet [pddono1]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono1\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono11",
+    "label": "HCSOFleet [pddono11]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono11\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono12",
+    "label": "FHPFleet [pddono12]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono12\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono17",
+    "label": "F450XL HCSOFleet [pddono17]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono17\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono18",
+    "label": "F450XL FHPFleet [pddono18]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono18\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono2",
+    "label": "Dodge FHPFleet [pddono2]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono2\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono3",
+    "label": "Dodge HCSOFleet [pddono3]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono3\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono4",
+    "label": "Dodge FHPFleet [pddono4]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono4\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono7",
+    "label": "FORD HCSOFleet [pddono7]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono7\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono8",
+    "label": "FHPFleet [pddono8]",
+    "tier": "donator",
+    "resource": "DonatorFleet",
+    "path": "[Donator]\\DonatorFleet\\packs\\leodonopack\\data\\pddono8\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono10",
+    "label": "FHPFleet [pddono10]",
+    "tier": "donator",
+    "resource": "pddono10",
+    "path": "[Donator]\\[Protected]\\pddono10\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono9",
+    "label": "HCSOFleet [pddono9]",
+    "tier": "donator",
+    "resource": "pddono9",
+    "path": "[Donator]\\[Protected]\\pddono9\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono13",
+    "label": "TacomaTRD HCSOFleet [pddono13]",
+    "tier": "donator",
+    "resource": "pddono13",
+    "path": "[Donator]\\[Protected]\\pddono13\\data\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono14",
+    "label": "TacomaTRD FHPFleet [pddono14]",
+    "tier": "donator",
+    "resource": "pddono14",
+    "path": "[Donator]\\[Protected]\\pddono14\\data\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono15",
+    "label": "1500LH HCSOFleet [pddono15]",
+    "tier": "donator",
+    "resource": "pddono15",
+    "path": "[Donator]\\[Protected]\\pddono15\\data\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono16",
+    "label": "1500LH FHPFleet [pddono16]",
+    "tier": "donator",
+    "resource": "pddono16",
+    "path": "[Donator]\\[Protected]\\pddono16\\data\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono5",
+    "label": "Chevrolet HCSOFleet [pddono5]",
+    "tier": "donator",
+    "resource": "pddono5",
+    "path": "[Donator]\\[Protected]\\pddono5\\data\\vehicles.meta",
+    "available": true
+  },
+  {
+    "model": "pddono6",
+    "label": "Chevrolet FHPFleet [pddono6]",
+    "tier": "donator",
+    "resource": "pddono6",
+    "path": "[Donator]\\[Protected]\\pddono6\\data\\vehicles.meta",
+    "available": true
+  }
+]

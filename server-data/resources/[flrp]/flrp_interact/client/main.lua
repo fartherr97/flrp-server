@@ -187,8 +187,8 @@ local function toolboxMenu(title, items)
   return m
 end
 
-local function vehicleMenu(vehicles)
-  local m = FLRPMenu.New(FLRP_INTERACT.Title, 'DONATOR VEHICLES')
+local function vehicleMenu(vehicles, title)
+  local m = FLRPMenu.New(FLRP_INTERACT.Title, title or 'DONATOR VEHICLES')
   if not vehicles or #vehicles == 0 then
     m:Item({ label = 'No vehicles available', desc = 'Spawn access is granted per vehicle.', disabled = true })
     return m
@@ -196,8 +196,7 @@ local function vehicleMenu(vehicles)
   for _, v in ipairs(vehicles) do
     m:Item({
       label = v.displayName or v.spawnName,
-      right = v.department or nil,
-      desc  = ('Spawn %s.'):format(v.displayName or v.spawnName),
+      desc  = ('%s | Spawn code: %s'):format(v.displayName or v.spawnName, v.spawnName),
       onSelect = function()
         FLRPMenu.Close()
         exports.flrp_vehicles:TrySpawn(v.spawnName)
@@ -255,9 +254,26 @@ local function build(manifest)
               sub = vehicleControlsMenu() })
 
   -- Donator vehicle spawns
+  local civilian = FLRPMenu.New(FLRP_INTERACT.Title, 'CIVILIAN GARAGE')
+  for _, tier in ipairs(manifest.civilian or {}) do
+    civilian:Item({ label = tier.label, right = tostring(#tier.vehicles),
+      desc = #tier.vehicles > 0 and 'Browse vehicles available for your certification.' or 'This tier requires the matching civilian role.',
+      disabled = #tier.vehicles == 0, sub = vehicleMenu(tier.vehicles, tier.label:upper()) })
+  end
+  root:Item({ label = 'Civilian Garage', right = '›', desc = 'Certified civilian and command vehicles, sorted by tier.', sub = civilian })
   if manifest.donator then
+    local donor = FLRPMenu.New(FLRP_INTERACT.Title, 'DONATOR GARAGE')
+    -- Split a large catalog into alphabetic pages rather than a 250-row list.
+    for first = 1, #manifest.vehicles, 20 do
+      local page = {}
+      for i = first, math.min(first + 19, #manifest.vehicles) do page[#page+1] = manifest.vehicles[i] end
+      donor:Item({ label = ('Vehicles %d–%d'):format(first, first + #page - 1), right = '›',
+        desc = (page[1].displayName or page[1].spawnName) .. ' — ' .. (page[#page].displayName or page[#page].spawnName),
+        sub = vehicleMenu(page) })
+    end
+    if #manifest.vehicles == 0 then donor:Item({ label = 'No vehicles available', disabled = true }) end
     root:Item({ label = 'Donator Vehicles', right = '›', desc = 'Spawn your donator vehicles.',
-                sub = vehicleMenu(manifest.vehicles) })
+                sub = donor })
   end
 
   -- Civilian advertisement (everyone)
@@ -275,7 +291,11 @@ local function build(manifest)
 end
 
 -- ---- keybind -------------------------------------------------------------
+local lastToggle = -1000
 local function openMenu()
+  local now = GetGameTimer()
+  if now - lastToggle < 250 then return end
+  lastToggle = now
   if FLRPMenu.IsOpen() then return FLRPMenu.Close() end
   if building then return end
   if IsPauseMenuActive() then return end
