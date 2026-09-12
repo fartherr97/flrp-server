@@ -9,6 +9,7 @@
 -- ==========================================================================
 
 local selecting = false
+local transitioning = false
 
 -- While the selector is up the NUI is opaque, so aim the game camera at empty
 -- sky far out over the ocean and move the streaming focus there: nothing to
@@ -96,7 +97,7 @@ end)
 -- Player clicked a card -> ask the server to approve it.
 RegisterNUICallback('select', function(data, cb)
   local index = tonumber(data.index)
-  if index then
+  if selecting and not transitioning and index then
     TriggerServerEvent('flrp_spawn:selectPoint', index)
   end
   cb('ok')
@@ -108,9 +109,10 @@ end)
 
 -- Approved: spawn there via spawnmanager and clean up.
 RegisterNetEvent('flrp_spawn:approved', function(index, coords)
-  if not selecting then return end
+  if not selecting or transitioning then return end
   local p = (index == -1 or index == -2) and coords and {coords=coords} or Config.Points[index]
   if not p then return end
+  transitioning = true
 
   DoScreenFadeOut(500)
   Wait(500)
@@ -132,8 +134,19 @@ RegisterNetEvent('flrp_spawn:approved', function(index, coords)
     Wait(300)
     DoScreenFadeIn(500)
     selecting = false
+    transitioning = false
     TriggerServerEvent('flrp_spawn:spawned')
   end)
+end)
+
+AddEventHandler('onClientResourceStop', function(resource)
+  if resource ~= GetCurrentResourceName() or not selecting then return end
+  SetNuiFocus(false, false)
+  stopIdleCam()
+  SetEntityVisible(PlayerPedId(), true, false)
+  FreezeEntityPosition(PlayerPedId(), false)
+  SetPlayerControl(PlayerId(), true, 0)
+  DoScreenFadeIn(0)
 end)
 
 -- Hand the spawn flow to us instead of letting spawnmanager auto-spawn.
