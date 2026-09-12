@@ -76,6 +76,7 @@ local CONVAR_ROLE_MAP = {
 FLRPP.Store.ConvarRoleMap = CONVAR_ROLE_MAP  -- read-only view for diagnostics (flrp_perms)
 
 local function addDiscordMap(discordRoleId, roleKey)
+  if type(discordRoleId) == 'string' then discordRoleId = discordRoleId:match('^%s*(.-)%s*$') end
   if not discordRoleId or discordRoleId == '' or discordRoleId == 'REPLACE_ME' then return end
   local m = FLRPP.Store.discordMap
   m[discordRoleId] = m[discordRoleId] or {}
