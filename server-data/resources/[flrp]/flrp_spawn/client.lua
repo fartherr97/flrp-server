@@ -70,7 +70,7 @@ local function openSelector()
 end
 
 -- The server tells us which points are allowed; build the card list.
-RegisterNetEvent('flrp_spawn:points', function(allowed)
+RegisterNetEvent('flrp_spawn:points', function(allowed, dynamic)
   local list = {}
   for i, p in ipairs(Config.Points) do
     local cat
@@ -89,6 +89,7 @@ RegisterNetEvent('flrp_spawn:points', function(allowed)
       allowed    = allowed[i] == true,   -- whether THIS player may use it
     }
   end
+  for _, p in ipairs(dynamic or {}) do list[#list+1] = p end
   SendNUIMessage({ action = 'points', points = list })
 end)
 
@@ -101,13 +102,14 @@ RegisterNUICallback('select', function(data, cb)
   cb('ok')
 end)
 
-RegisterNetEvent('flrp_spawn:denied', function()
-  SendNUIMessage({ action = 'denied' })
+RegisterNetEvent('flrp_spawn:denied', function(reason)
+  SendNUIMessage({ action = 'denied', reason = reason })
 end)
 
 -- Approved: spawn there via spawnmanager and clean up.
-RegisterNetEvent('flrp_spawn:approved', function(index)
-  local p = Config.Points[index]
+RegisterNetEvent('flrp_spawn:approved', function(index, coords)
+  if not selecting then return end
+  local p = (index == -1 or index == -2) and coords and {coords=coords} or Config.Points[index]
   if not p then return end
 
   DoScreenFadeOut(500)
@@ -130,6 +132,7 @@ RegisterNetEvent('flrp_spawn:approved', function(index)
     Wait(300)
     DoScreenFadeIn(500)
     selecting = false
+    TriggerServerEvent('flrp_spawn:spawned')
   end)
 end)
 
