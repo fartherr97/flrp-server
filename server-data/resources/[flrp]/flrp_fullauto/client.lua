@@ -9,11 +9,12 @@
 -- ==========================================================================
 
 local INPUT_ATTACK, INPUT_ATTACK2 = 24, 257
+local canSniper = false
 local canAuto = false   -- fail safe: locked until the server confirms access
 
 local function refresh() TriggerServerEvent('flrp_fullauto:check') end
 
-RegisterNetEvent('flrp_fullauto:set', function(v) canAuto = v and true or false end)
+RegisterNetEvent('flrp_fullauto:set', function(v, sniper) canAuto = v == true; canSniper = sniper == true end)
 
 -- Ask on resource start, once in-session, then re-verify on a timer.
 AddEventHandler('onClientResourceStart', function(res)
@@ -51,4 +52,28 @@ CreateThread(function()
       end
     end
   end
+end)
+
+-- Remove unauthorized sniper grants from menus, saved loadouts and pickups.
+-- Block firing each frame, so the removal interval cannot allow a quick shot.
+local snipers = {}
+for _, name in ipairs(FLRP_FULLAUTO.Snipers) do snipers[GetHashKey(name)] = true end
+CreateThread(function()
+    local nextSweep = 0
+    while true do
+        if canSniper then Wait(250) else
+            Wait(0)
+            local ped = PlayerPedId()
+            if snipers[GetSelectedPedWeapon(ped)] then
+                DisablePlayerFiring(PlayerId(), true)
+                SetCurrentPedWeapon(ped, GetHashKey('WEAPON_UNARMED'), true)
+            end
+            if GetGameTimer() >= nextSweep then
+                for hash in pairs(snipers) do
+                    if HasPedGotWeapon(ped, hash, false) then RemoveWeaponFromPed(ped, hash) end
+                end
+                nextSweep = GetGameTimer() + 250
+            end
+        end
+    end
 end)
