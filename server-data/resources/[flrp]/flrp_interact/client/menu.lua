@@ -23,11 +23,11 @@ local closeCbs   = {}
 local VISIBLE_ROWS = 10
 
 -- ---- geometry (screen fractions, origin top-left) ------------------------
-local X, Y, W = 0.055, 0.045, 0.205    -- top-left corner + width
+local X, Y, W = 0.035, 0.045, 0.285    -- top-left corner + width
 local BANNER_H = 0.055
 local SUB_H    = 0.030
-local ROW_H    = 0.030
-local DESC_H   = 0.040
+local ROW_H    = 0.035
+local DESC_H   = 0.070
 local HINT_H   = 0.026
 local PAD      = 0.006
 local CX       = X + W / 2
@@ -166,7 +166,7 @@ local function draw()
 
   -- subtitle / counter bar
   rect(CX, y + SUB_H / 2, W, SUB_H, T.subtitle)
-  text('BROWSE', X + PAD, y + 0.005, 0.28, T.accent, { font = 0 })
+  text(#stack > 1 and 'GARAGE / ACTIONS' or 'FLORIDA ROLEPLAY', X + PAD, y + 0.005, 0.28, T.accent, { font = 0 })
   if n > 0 then
     text(('%d / %d'):format(m.index, n), X + W - PAD, y + 0.005, 0.28, T.textIdle, { right = true, edge = X + W - PAD })
   end

@@ -25,7 +25,7 @@ local function donatorVehicles(src)
   for _, c in ipairs(FLRP_INTERACT.DonatorVehicleCategories) do want[tostring(c):lower()] = true end
   local out = {}
   for _, v in ipairs(list) do
-    if v.category and want[tostring(v.category):lower()] then
+    if v.accessTier == 'donator' and v.category and want[tostring(v.category):lower()] then
       out[#out + 1] = v
     end
   end
@@ -52,9 +52,20 @@ function H.open(src)
   -- Director & Ownership (flrp.staff.direct; ownership inherits) get every
   -- category — full interaction access regardless of their own aces.
   local staff = IsPlayerAceAllowed(src, 'flrp.staff.direct')
+  local civilian = {}
+  local ok, list = pcall(function() return exports.flrp_vehicles:ListForPlayer(src) end)
+  local categories = { 'Cert Civ I', 'Cert Civ II', 'Cert Civ III', 'Civ Command', 'Community Director' }
+  for _, category in ipairs(categories) do
+    local entries = {}
+    for _, vehicle in ipairs(ok and list or {}) do
+      if vehicle.category == category then entries[#entries+1] = vehicle end
+    end
+    civilian[#civilian+1] = { label = category, vehicles = entries }
+  end
   return {
     leo     = staff or IsPlayerAceAllowed(src, 'flrp.leo'),
-    donator = staff or IsPlayerAceAllowed(src, FLRP_INTERACT.DonatorAce) or false,
+    donator = exports.flrp_permissions:IsInGroup(src, 'donator'),
+    civilian = civilian,
     vehicles = donatorVehicles(src),
   }
 end

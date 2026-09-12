@@ -59,6 +59,23 @@ end
 -- `flrp_vehicles_allow_unlisted` convar (default true -> defer to vMenu's own
 -- ACE checks; false -> only registry-listed permitted vehicles may spawn).
 function FLRPV.Registry.CanSpawn(source, spawnName)
+  local name = norm(spawnName)
+  if not name then return false, 'invalid_model' end
+  if FLRPVehiclePolicy.blocked[name] then return false, 'blacklisted' end
+  local tier = FLRPVehiclePolicy.models[name]
+  if tier then
+    local function group(key) return exports.flrp_permissions:IsInGroup(source, key) end
+    local allowed = false
+    if tier == 'donator' then
+      allowed = group('donator') -- donor role required, including for staff
+    elseif tier == '5' then
+      allowed = group('director') or group('ownership')
+    else
+      allowed = group('civ_manager') or group('director') or group('ownership')
+      for level = tonumber(tier), 3 do allowed = allowed or group('cert_civ_' .. level) end
+    end
+    if not allowed then return false, 'need_vehicle_tier' end
+  end
   local enforce = FLRP.Util.ConvarBool('flrp_vehicles_enforce_permissions', true)
   if not enforce then return true, 'enforcement_disabled' end
 
@@ -103,6 +120,7 @@ function FLRPV.Registry.ListForPlayer(source)
         out[#out + 1] = {
           spawnName = v.spawnName, displayName = v.displayName,
           department = v.department, category = v.category,
+          accessTier = FLRPVehiclePolicy.models[v.spawnName],
         }
       end
     end
